@@ -1,0 +1,31 @@
+{
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "rules": {
+    "interface-name": [true, "never-prefix"],
+    "jsx-no-multiline-js": false,
+    "member-ordering": [
+      true,
+      "public-before-private",
+      "static-before-instance",
+      "variables-before-functions"
+    ],
+    "no-any": true,
+    "no-console": [true, "log", "debug", "time", "timeEnd", "trace"],
+    "no-namespace": [true, "allow-declarations"],
+    "no-switch-case-fall-through": true,
+    "object-literal-sort-keys": [false, "match-declaration-order"],
+    "prettier": true,
+    "switch-default": true,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "member-variable-declaration"
+    ]
+  },
+  "linterOptions": {
+    "exclude": ["node_modules/**/*", "src/generated/*"]
+  }
+}
