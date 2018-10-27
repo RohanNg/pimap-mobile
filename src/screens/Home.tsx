@@ -16,13 +16,10 @@ interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
-export class HomeScreen extends React.Component<HomeScreenProps> {
-  public static navigationOptions: NavigationBottomTabScreenOptions & {
-    tabBarColor: string
-  } = {
+export class Home extends React.Component<HomeScreenProps> {
+  public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Home',
     tabBarIcon: tabBarIcon('home'),
-    tabBarColor: 'blue',
   }
 
   public render(): React.ReactNode {
@@ -31,17 +28,12 @@ export class HomeScreen extends React.Component<HomeScreenProps> {
         <Text>Home Screen</Text>
         <Button
           title="Go to Details"
-          onPress={() =>
-            this.props.navigation.navigate('Details', {
-              itemId: 86,
-              otherParam: 'anything you want here',
-            })
-          }
+          onPress={() => this.props.navigation.navigate('NearbyActivities')}
         />
         <Button
           title="Log out"
-          onPress={() => {
-            firebase.auth().signOut()
+          onPress={async () => {
+            await firebase.auth().signOut()
             this.props.navigation.navigate('Login')
           }}
         />

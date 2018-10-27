@@ -13,6 +13,6 @@ export const tabBarIcon = (name: string) => ({
     style={{ backgroundColor: 'transparent' }}
     name={name}
     color={tintColor || 'black'}
-    size={focused ? 24 : 30}
+    size={focused ? 24 : 28}
   />
 )

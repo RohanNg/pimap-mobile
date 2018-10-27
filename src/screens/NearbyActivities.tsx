@@ -12,22 +12,13 @@ import {
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-export class DetailsScreen extends React.Component<{
-  navigation: NavigationScreenProp<
-    {},
-    {
-      itemId: number
-      otherParam: string
-    }
-  >
+export class NearbyActivities extends React.Component<{
+  navigation: NavigationScreenProp<{}, {}>
   user: firebase.User
 }> {
-  public static navigationOptions: NavigationBottomTabScreenOptions & {
-    tabBarColor: string
-  } = {
-    title: 'Detailed',
+  public static navigationOptions: NavigationBottomTabScreenOptions = {
+    title: 'Near By',
     tabBarIcon: tabBarIcon('near-me'),
-    tabBarColor: 'lightblue',
   }
 
   public render(): React.ReactNode {

@@ -7,19 +7,23 @@ import { createMaterialBottomTabNavigator } from 'react-navigation-material-bott
 
 import * as firebase from 'firebase'
 
-import { DetailsScreen } from '../screens/DetailedScreen'
-import { HomeScreen } from '../screens/HomeScreen'
+import { Home } from '../screens/Home'
 import { MyActivities } from '../screens/MyActivities'
+import { NearbyActivities } from '../screens/NearbyActivities'
 import { withAuthenticatedUser } from '../services/AuthService'
 
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
-    Home: HomeScreen,
-    Details: withAuthenticatedUser(DetailsScreen),
-    Activities: MyActivities,
+    Home,
+    NearbyActivities: withAuthenticatedUser(NearbyActivities),
+    MyActivities,
   },
   {
     initialRouteName: 'Home',
     shifting: true,
+    barStyle: {
+      height: 72,
+      paddingBottom: 20,
+    },
   },
 )

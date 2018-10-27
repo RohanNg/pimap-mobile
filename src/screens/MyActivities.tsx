@@ -20,7 +20,7 @@ export class MyActivities extends React.Component<MyActivitiesProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions & {
     tabBarColor: string
   } = {
-    title: 'Activities',
+    title: 'My Activities',
     tabBarIcon: tabBarIcon('list'),
     tabBarColor: 'orange',
   }
@@ -32,7 +32,7 @@ export class MyActivities extends React.Component<MyActivitiesProps> {
         <Button
           title="Go to Details"
           onPress={() =>
-            this.props.navigation.navigate('Details', {
+            this.props.navigation.navigate('NearbyActivities', {
               itemId: 86,
               otherParam: 'anything you want here',
             })
