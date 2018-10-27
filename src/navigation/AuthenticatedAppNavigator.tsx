@@ -19,7 +19,7 @@ export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBott
     MyActivities,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'MyActivities',
     shifting: true,
     barStyle: {
       height: 72,

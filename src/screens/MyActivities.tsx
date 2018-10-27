@@ -1,6 +1,6 @@
 import { Facebook } from 'expo'
 import * as React from 'react'
-import { Alert, Button, Text, View } from 'react-native'
+import { Alert, Button, ScrollView, StyleSheet, Text, View } from 'react-native'
 import {
   createStackNavigator,
   NavigationBottomTabScreenOptions,
@@ -12,40 +12,55 @@ import {
 import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
+import { Appbar, TextInput } from 'react-native-paper'
+
 interface MyActivitiesProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
 export class MyActivities extends React.Component<MyActivitiesProps> {
-  public static navigationOptions: NavigationBottomTabScreenOptions & {
-    tabBarColor: string
-  } = {
+  public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'My Activities',
     tabBarIcon: tabBarIcon('list'),
-    tabBarColor: 'orange',
   }
 
   public render(): React.ReactNode {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>My Activities</Text>
-        <Button
-          title="Go to Details"
-          onPress={() =>
-            this.props.navigation.navigate('NearbyActivities', {
-              itemId: 86,
-              otherParam: 'anything you want here',
-            })
-          }
-        />
-        <Button
-          title="Log out"
-          onPress={() => {
-            firebase.auth().signOut()
-            this.props.navigation.navigate('Login')
-          }}
-        />
+      <View style={styles.wrapper}>
+        <Appbar.Header>
+          <Appbar.Content title="Create Activity" />
+        </Appbar.Header>
+        <ScrollView style={styles.container} removeClippedSubviews={false}>
+          <TextInput
+            mode="outlined"
+            style={styles.inputContainerStyle}
+            label="Activity Name"
+            placeholder="Short name of your activities"
+            value={undefined}
+          />
+          <TextInput
+            mode="outlined"
+            style={styles.inputContainerStyle}
+            label="Description"
+            placeholder="Please describe your activities"
+            value={undefined}
+            multiline={true}
+          />
+        </ScrollView>
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 8,
+  },
+  wrapper: {
+    flex: 1,
+  },
+  inputContainerStyle: {
+    margin: 8,
+  },
+})
