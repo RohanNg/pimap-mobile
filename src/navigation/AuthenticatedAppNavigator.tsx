@@ -1,33 +1,25 @@
 /* tslint:disable:max-classes-per-file */
 import { Facebook } from 'expo'
 import * as React from 'react'
-import { createStackNavigator } from 'react-navigation'
+import { createStackNavigator, NavigationContainer } from 'react-navigation'
+
+import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 
 import * as firebase from 'firebase'
 
 import { DetailsScreen } from '../screens/DetailedScreen'
 import { HomeScreen } from '../screens/HomeScreen'
+import { MyActivities } from '../screens/MyActivities'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-export const AuthenticatedAppNavigator: NavigationContainer = createStackNavigator(
+export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
-    Home: {
-      screen: HomeScreen,
-    },
-    Details: {
-      screen: withAuthenticatedUser(DetailsScreen),
-    },
+    Home: HomeScreen,
+    Details: withAuthenticatedUser(DetailsScreen),
+    Activities: MyActivities,
   },
   {
     initialRouteName: 'Home',
-    navigationOptions: {
-      headerStyle: {
-        backgroundColor: '#f4511e',
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    },
+    shifting: true,
   },
 )

@@ -12,23 +12,23 @@ import {
 import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
-interface HomeScreenProps {
+interface MyActivitiesProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
-export class HomeScreen extends React.Component<HomeScreenProps> {
+export class MyActivities extends React.Component<MyActivitiesProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions & {
     tabBarColor: string
   } = {
-    title: 'Home',
-    tabBarIcon: tabBarIcon('home'),
-    tabBarColor: 'blue',
+    title: 'Activities',
+    tabBarIcon: tabBarIcon('list'),
+    tabBarColor: 'orange',
   }
 
   public render(): React.ReactNode {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
+        <Text>My Activities</Text>
         <Button
           title="Go to Details"
           onPress={() =>
