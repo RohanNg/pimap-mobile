@@ -102,9 +102,6 @@ export class AutoCompleteTest extends React.Component<
     }
 
     const suggestion = []
-    if (!existingValues.contains(qryLowercase)) {
-      suggestion.push(`${CREATE_TAG_PREFIX} '${qryLowercase}'`)
-    }
     for (const tag of tagsLowerCase) {
       if (suggestion.length > 15) {
         break
@@ -116,6 +113,14 @@ export class AutoCompleteTest extends React.Component<
       ) {
         suggestion.push(tag)
       }
+    }
+
+    // Suggest user to create new tags
+    if (
+      !existingValues.contains(qryLowercase) &&
+      !suggestion.some(s => s === qryLowercase)
+    ) {
+      suggestion.push(`${CREATE_TAG_PREFIX} '${qryLowercase}'`)
     }
 
     return suggestion
