@@ -1,6 +1,6 @@
-import { Facebook } from 'expo'
+import { Constants, Facebook, Location, Permissions } from 'expo'
 import * as React from 'react'
-import { Alert, Button, Text, View } from 'react-native'
+import { Alert, Button, Platform, Text, View } from 'react-native'
 import {
   createStackNavigator,
   NavigationBottomTabScreenOptions,
