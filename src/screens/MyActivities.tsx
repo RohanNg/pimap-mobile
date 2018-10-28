@@ -37,6 +37,7 @@ import {
 
 interface CreateActivityState {
   privateActivity: boolean
+  recurrningActivity: boolean
   isDateTimePickerVisible: boolean
   date?: Date
 }
@@ -58,8 +59,12 @@ export class MyActivities extends React.Component<
     super(props)
     this.state = {
       privateActivity: true,
+      recurrningActivity: false,
       isDateTimePickerVisible: false,
     }
+
+    this.togglePrivateActivity = this.togglePrivateActivity.bind(this)
+    this.toggleRecurringActivity = this.toggleRecurringActivity.bind(this)
 
     this.hideDateTimePicker = this.hideDateTimePicker.bind(this)
     this.showDateTimePicker = this.showDateTimePicker.bind(this)
@@ -97,6 +102,24 @@ export class MyActivities extends React.Component<
             value={undefined}
           />
           <View style={styles.inputContainerStyle}>
+            <Subheading>Time for my activity</Subheading>
+            <Button
+              onPress={this.showDateTimePicker}
+              mode={'outlined'}
+              icon={getIcon}
+            >
+              <Text>{date ? this.format(date) : 'Set time'}</Text>
+            </Button>
+            <DateTimePicker
+              isVisible={this.state.isDateTimePickerVisible}
+              onConfirm={this.handleDatePicked}
+              onCancel={this.hideDateTimePicker}
+              minimumDate={new Date()}
+              minuteInterval={5}
+              mode={'datetime'}
+            />
+          </View>
+          <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
                 My activity is{' '}
@@ -120,22 +143,21 @@ export class MyActivities extends React.Component<
             </Paragraph>
           </View>
           <View style={styles.inputContainerStyle}>
-            <Subheading>Time for my activity</Subheading>
-            <Button
-              onPress={this.showDateTimePicker}
-              mode={'outlined'}
-              icon={getIcon}
-            >
-              <Text>{date ? this.format(date) : 'Set time'}</Text>
-            </Button>
-            <DateTimePicker
-              isVisible={this.state.isDateTimePickerVisible}
-              onConfirm={this.handleDatePicked}
-              onCancel={this.hideDateTimePicker}
-              minimumDate={new Date()}
-              minuteInterval={5}
-              mode={'datetime'}
-            />
+            <View style={styles.row}>
+              <Subheading>
+                My activity is{' '}
+                {this.state.recurrningActivity ? 'recurrning' : 'one time'}
+              </Subheading>
+              <Switch
+                value={!this.state.recurrningActivity}
+                onValueChange={this.toggleRecurringActivity}
+              />
+            </View>
+            {this.state.recurrningActivity && (
+              <Paragraph>
+                You will be asked to confirm the next occurence
+              </Paragraph>
+            )}
           </View>
         </ScrollView>
       </View>
@@ -154,6 +176,22 @@ export class MyActivities extends React.Component<
     this.setState({
       isDateTimePickerVisible: false,
       date,
+    })
+  }
+
+  private togglePrivateActivity(): void {
+    this.setState(({ privateActivity }) => {
+      return {
+        privateActivity: !privateActivity,
+      }
+    })
+  }
+
+  private toggleRecurringActivity(): void {
+    this.setState(({ recurrningActivity }) => {
+      return {
+        recurrningActivity: !recurrningActivity,
+      }
     })
   }
 
