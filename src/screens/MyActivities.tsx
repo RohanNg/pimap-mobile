@@ -155,7 +155,7 @@ export class MyActivities extends React.Component<
             </View>
             {this.state.recurrningActivity && (
               <Paragraph>
-                You will be asked to confirm the next occurence
+                You will be asked to confirm the next occurence.
               </Paragraph>
             )}
           </View>
@@ -196,7 +196,7 @@ export class MyActivities extends React.Component<
   }
 
   private format(date: Date): string {
-    return moment(date).format('MM/DD hh:mm')
+    return moment(date).format('ddd DD MMM at hh:mm')
   }
 }
 
