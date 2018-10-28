@@ -66,6 +66,13 @@ export class MyActivities extends React.Component<
             value={undefined}
             multiline={true}
           />
+          <TextInput
+            mode="outlined"
+            style={styles.inputContainerStyle}
+            label="Location"
+            placeholder="Please type the activity location"
+            value={undefined}
+          />
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
