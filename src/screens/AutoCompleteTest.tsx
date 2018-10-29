@@ -22,6 +22,7 @@ const tagsLowerCase = tags.map(v => v.toLocaleLowerCase())
 
 interface TaggingComponenState {
   query: string
+  inputFieldFocused: boolean
   taggedValues: Immutable.OrderedSet<string>
 }
 
@@ -35,27 +36,32 @@ export class AutoCompleteTest extends React.Component<
     super(props)
     this.state = {
       query: '',
+      inputFieldFocused: false,
       taggedValues: Immutable.OrderedSet(),
     }
 
     this.addTag = this.addTag.bind(this)
     this.removeTag = this.removeTag.bind(this)
+
+    this.onInputFieldFocused = this.onInputFieldFocused.bind(this)
+    this.onInputFieldBlurred = this.onInputFieldBlurred.bind(this)
   }
 
   public render(): React.ReactNode {
-    const { query, taggedValues } = this.state
-    const data = this.filterData(query, taggedValues)
+    const { query, taggedValues, inputFieldFocused } = this.state
+    const data = inputFieldFocused ? this.filterData(query, taggedValues) : []
+
     return (
       <View style={styles.container}>
         <Text> What the fuck is going on</Text>
         <View style={styles.taggingComponentContainer}>
-          <View style={styles.selectedChipsContainer}>
+          <View style={styles.selectionContainer}>
             <ChipList
               values={this.state.taggedValues.toArray()}
               onClose={this.removeTag}
             />
             <TextInput
-              placeholder={'...'}
+              placeholder={'Search...'}
               style={styles.inputField}
               autoCorrect={false}
               onChangeText={text =>
@@ -63,11 +69,15 @@ export class AutoCompleteTest extends React.Component<
                   query: text,
                 })
               }
+              onFocus={this.onInputFieldFocused}
+              onBlur={this.onInputFieldBlurred}
             />
           </View>
-          <View style={styles.selectedChipsContainer}>
-            <ChipList values={data} onPress={this.addTag} />
-          </View>
+          {data.length && (
+            <View style={styles.suggestionContainer}>
+              <ChipList values={data} onPress={this.addTag} />
+            </View>
+          )}
         </View>
       </View>
     )
@@ -92,6 +102,14 @@ export class AutoCompleteTest extends React.Component<
     }))
   }
 
+  private onInputFieldFocused(): void {
+    this.setState({ inputFieldFocused: true })
+  }
+
+  private onInputFieldBlurred(): void {
+    this.setState({ inputFieldFocused: false })
+  }
+
   private filterData(
     query: string,
     existingValues: Immutable.Set<string>,
@@ -101,7 +119,7 @@ export class AutoCompleteTest extends React.Component<
       return []
     }
 
-    const suggestion = []
+    let suggestion = []
     for (const tag of tagsLowerCase) {
       if (suggestion.length > 15) {
         break
@@ -120,7 +138,7 @@ export class AutoCompleteTest extends React.Component<
       !existingValues.contains(qryLowercase) &&
       !suggestion.some(s => s === qryLowercase)
     ) {
-      suggestion.push(`${CREATE_TAG_PREFIX} '${qryLowercase}'`)
+      suggestion = [`${CREATE_TAG_PREFIX} '${qryLowercase}'`, ...suggestion]
     }
 
     return suggestion
@@ -168,7 +186,24 @@ const styles = StyleSheet.create({
     ...border,
     borderRadius: 4,
     borderWidth: 2,
-    paddingBottom: 4,
+  },
+  selectionContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderColor: '#b9b9b9',
+    borderWidth: 2,
+    marginHorizontal: -2,
+    marginVertical: -2,
+    borderRadius: 4,
+    paddingTop: 4,
+    paddingBottom: 8,
+  },
+  suggestionContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    borderColor: '#b9b9b9',
+    paddingTop: 4,
+    paddingBottom: 8,
   },
   chip: {
     marginLeft: 4,
@@ -180,9 +215,5 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     paddingLeft: 10,
     minWidth: 40,
-  },
-  selectedChipsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
   },
 })
