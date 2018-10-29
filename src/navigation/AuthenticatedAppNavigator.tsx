@@ -5,9 +5,6 @@ import { createStackNavigator, NavigationContainer } from 'react-navigation'
 
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 
-import * as firebase from 'firebase'
-
-import { AutoCompleteTest } from '../screens/AutoCompleteTest'
 import { Home } from '../screens/Home'
 import { MyActivities } from '../screens/MyActivities'
 import { NearbyActivities } from '../screens/NearbyActivities'
@@ -15,13 +12,12 @@ import { withAuthenticatedUser } from '../services/AuthService'
 
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
-    AutoCompleteTest,
     Home,
     NearbyActivities: withAuthenticatedUser(NearbyActivities),
     MyActivities,
   },
   {
-    initialRouteName: 'AutoCompleteTest',
+    initialRouteName: 'MyActivities',
     shifting: true,
     barStyle: {
       height: 72,

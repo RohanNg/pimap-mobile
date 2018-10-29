@@ -35,6 +35,8 @@ import {
   TextInput,
 } from 'react-native-paper'
 
+import { ActivityTaggingInput } from './ActivityTaggingInput'
+
 interface CreateActivityState {
   privateActivity: boolean
   recurrningActivity: boolean
@@ -78,7 +80,7 @@ export class MyActivities extends React.Component<
         <Appbar.Header>
           <Appbar.Content title="Create Activity" />
         </Appbar.Header>
-        <ScrollView style={styles.container} removeClippedSubviews={false}>
+        <ScrollView style={styles.container} removeClippedSubviews={false} keyboardShouldPersistTaps={'always'}>
           <TextInput
             mode="outlined"
             label="Activity Name"
@@ -119,6 +121,7 @@ export class MyActivities extends React.Component<
               mode={'datetime'}
             />
           </View>
+          <ActivityTaggingInput style={{ marginHorizontal: 8 }} />
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>

@@ -28,11 +28,15 @@ interface TaggingComponenState {
 
 const CREATE_TAG_PREFIX = 'Create tag'
 
-export class AutoCompleteTest extends React.Component<
-  {},
+interface ActivityTaggingInputProps {
+  style?: {}
+}
+
+export class ActivityTaggingInput extends React.Component<
+  ActivityTaggingInputProps,
   TaggingComponenState
 > {
-  public constructor(props: {}) {
+  public constructor(props: ActivityTaggingInputProps) {
     super(props)
     this.state = {
       query: '',
@@ -52,33 +56,30 @@ export class AutoCompleteTest extends React.Component<
     const data = inputFieldFocused ? this.filterData(query, taggedValues) : []
 
     return (
-      <View style={styles.container}>
-        <Text> What the fuck is going on</Text>
-        <View style={styles.taggingComponentContainer}>
-          <View style={styles.selectionContainer}>
-            <ChipList
-              values={this.state.taggedValues.toArray()}
-              onClose={this.removeTag}
-            />
-            <TextInput
-              placeholder={'Search...'}
-              style={styles.inputField}
-              autoCorrect={false}
-              onChangeText={text =>
-                this.setState({
-                  query: text,
-                })
-              }
-              onFocus={this.onInputFieldFocused}
-              onBlur={this.onInputFieldBlurred}
-            />
-          </View>
-          {data.length && (
-            <View style={styles.suggestionContainer}>
-              <ChipList values={data} onPress={this.addTag} />
-            </View>
-          )}
+      <View style={[styles.taggingComponentContainer, this.props.style]}>
+        <View style={styles.selectionContainer}>
+          <ChipList
+            values={this.state.taggedValues.toArray()}
+            onClose={this.removeTag}
+          />
+          <TextInput
+            placeholder="Search..."
+            style={styles.inputField}
+            autoCorrect={false}
+            onChangeText={text =>
+              this.setState({
+                query: text,
+              })
+            }
+            onFocus={this.onInputFieldFocused}
+            onBlur={this.onInputFieldBlurred}
+          />
         </View>
+        {data.length && (
+          <View style={styles.suggestionContainer}>
+            <ChipList values={data} onPress={this.addTag} />
+          </View>
+        )}
       </View>
     )
   }
@@ -170,10 +171,12 @@ const ChipList: React.SFC<ChipSetting> = ({ onClose, onPress, values }) => {
   )
 }
 
+const BORDER_WITH = 1
+
 const border = {
   borderColor: '#b9b9b9',
   borderRadius: 1,
-  borderWidth: 1,
+  borderWidth: BORDER_WITH,
 }
 
 const styles = StyleSheet.create({
@@ -185,15 +188,15 @@ const styles = StyleSheet.create({
   taggingComponentContainer: {
     ...border,
     borderRadius: 4,
-    borderWidth: 2,
+    borderWidth: BORDER_WITH,
   },
   selectionContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     borderColor: '#b9b9b9',
-    borderWidth: 2,
-    marginHorizontal: -2,
-    marginVertical: -2,
+    borderWidth: BORDER_WITH,
+    marginHorizontal: -BORDER_WITH,
+    marginVertical: -BORDER_WITH,
     borderRadius: 4,
     paddingTop: 4,
     paddingBottom: 8,
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
   inputField: {
     flex: 1,
     marginTop: 8,
-    marginLeft: 6,
+    marginLeft: 4,
     paddingLeft: 10,
     minWidth: 40,
   },
