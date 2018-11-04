@@ -80,7 +80,11 @@ export class MyActivities extends React.Component<
         <Appbar.Header>
           <Appbar.Content title="Create Activity" />
         </Appbar.Header>
-        <ScrollView style={styles.container} removeClippedSubviews={false} keyboardShouldPersistTaps={'always'}>
+        <ScrollView
+          style={styles.container}
+          removeClippedSubviews={false}
+          keyboardShouldPersistTaps={'always'}
+        >
           <TextInput
             mode="outlined"
             label="Activity Name"

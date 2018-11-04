@@ -1,4 +1,3 @@
-/* tslint:disable:max-classes-per-file */
 import { Facebook } from 'expo'
 import * as React from 'react'
 import { createStackNavigator, NavigationContainer } from 'react-navigation'
@@ -10,14 +9,17 @@ import { MyActivities } from '../screens/MyActivities'
 import { NearbyActivities } from '../screens/NearbyActivities'
 import { withAuthenticatedUser } from '../services/AuthService'
 
+import { Chat } from '../components/chat/Chat'
+
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
     NearbyActivities: withAuthenticatedUser(NearbyActivities),
     MyActivities,
+    Chat,
   },
   {
-    initialRouteName: 'MyActivities',
+    initialRouteName: 'Chat',
     shifting: true,
     barStyle: {
       height: 72,
