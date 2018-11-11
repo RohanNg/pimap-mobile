@@ -37,14 +37,26 @@ interface CreateActivityState {
   recurrningActivity: boolean
   isDateTimePickerVisible: boolean
   date?: Date
+  coordinate?: {
+    longitude: number
+    latitude: number
+  }
 }
 
-interface MyActivitiesProps {
-  navigation: NavigationScreenProp<{}, {}>
+interface CreateActivityProps {
+  navigation: NavigationScreenProp<
+    {},
+    {
+      coordinate: {
+        latitude: number
+        longitude: number
+      }
+    }
+  >
 }
 
-export class MyActivities extends React.Component<
-  MyActivitiesProps,
+export class CreateActivity extends React.Component<
+  CreateActivityProps,
   CreateActivityState
 > {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
@@ -52,7 +64,22 @@ export class MyActivities extends React.Component<
     tabBarIcon: tabBarIcon('list'),
   }
 
-  constructor(props: MyActivitiesProps) {
+  public static getDerivedStateFromProps(
+    props: CreateActivityProps,
+    state: CreateActivityState,
+  ): CreateActivityState | null {
+    const propsCoordinate = props.navigation.getParam('coordinate')
+    if (propsCoordinate) {
+      return {
+        ...state,
+        coordinate: propsCoordinate,
+      }
+    }
+
+    return null
+  }
+
+  constructor(props: CreateActivityProps) {
     super(props)
     this.state = {
       privateActivity: true,
@@ -62,6 +89,9 @@ export class MyActivities extends React.Component<
 
     this.togglePrivateActivity = this.togglePrivateActivity.bind(this)
     this.toggleRecurringActivity = this.toggleRecurringActivity.bind(this)
+    this.navigateToLocationSelectionView = this.navigateToLocationSelectionView.bind(
+      this,
+    )
 
     this.hideDateTimePicker = this.hideDateTimePicker.bind(this)
     this.showDateTimePicker = this.showDateTimePicker.bind(this)
@@ -95,13 +125,24 @@ export class MyActivities extends React.Component<
             value={undefined}
             multiline={true}
           />
-          <TextInput
-            mode="outlined"
-            label="Location"
-            style={styles.inputContainerStyle}
-            placeholder="Please type the activity location"
-            value={undefined}
-          />
+          <View style={[styles.inputContainerStyle, styles.row]}>
+            <Subheading>Location</Subheading>
+            <Button
+              onPress={this.navigateToLocationSelectionView}
+              mode={'outlined'}
+              icon={locationIcon}
+              style={{ minWidth: 180 }}
+            >
+              <Text>
+                {this.state.coordinate
+                  ? `${this.state.coordinate.latitude},${
+                      this.state.coordinate.longitude
+                    }`
+                  : 'Set'}
+              </Text>
+            </Button>
+          </View>
+
           <View style={[styles.inputContainerStyle, styles.row]}>
             <Subheading>Time</Subheading>
             <Button
@@ -154,10 +195,12 @@ export class MyActivities extends React.Component<
                 onValueChange={this.toggleRecurringActivity}
               />
             </View>
-            {this.state.recurrningActivity && (
+            {this.state.recurrningActivity ? (
               <Paragraph>
                 You will be asked to confirm the next occurence.
               </Paragraph>
+            ) : (
+              <Paragraph>This activity happens once.</Paragraph>
             )}
           </View>
           <View style={styles.submitButtonContainer}>
@@ -168,6 +211,10 @@ export class MyActivities extends React.Component<
         </ScrollView>
       </View>
     )
+  }
+
+  private navigateToLocationSelectionView(): void {
+    this.props.navigation.navigate('LocationSelection')
   }
 
   private showDateTimePicker(): void {
@@ -208,6 +255,16 @@ export class MyActivities extends React.Component<
 
 const getIcon = ({ color, size }: { color: string; size: number }) => {
   return <MaterialCommunityIcons size={size} color={color} name={'calendar'} />
+}
+
+const locationIcon = ({ color, size }: { color: string; size: number }) => {
+  return (
+    <MaterialCommunityIcons
+      size={size}
+      color={color}
+      name={'map-marker-radius'}
+    />
+  )
 }
 
 const styles = StyleSheet.create({

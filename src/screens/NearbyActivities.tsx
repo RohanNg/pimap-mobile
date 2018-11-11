@@ -6,6 +6,7 @@ import {
   Button,
   Platform,
   StatusBar,
+  StyleSheet,
   Text,
   View,
 } from 'react-native'
@@ -17,7 +18,7 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { withAuthenticatedUser } from '../services/AuthService'
@@ -44,9 +45,14 @@ export class NearbyActivities extends React.Component<
     tabBarIcon: tabBarIcon('near-me'),
   }
 
-  public state: NearByActivitiesState = {
-    location: undefined,
-    errorMessage: undefined,
+  constructor(props: NearByActivityProps) {
+    super(props)
+    this.onMapPress = this.onMapPress.bind(this)
+
+    this.state = {
+      location: undefined,
+      errorMessage: undefined,
+    }
   }
 
   public componentWillMount(): void {
@@ -66,7 +72,7 @@ export class NearbyActivities extends React.Component<
     console.info(JSON.stringify(user))
 
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.wrapper}>
         {!this.state.location ? (
           <View
             style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
@@ -82,10 +88,27 @@ export class NearbyActivities extends React.Component<
               latitudeDelta: 0.0422,
               longitudeDelta: 0.0221,
             }}
-          />
+            onPress={this.onMapPress}
+          >
+            <Marker
+              coordinate={{
+                latitude: this.state.location.lat,
+                longitude: this.state.location.lon,
+              }}
+            />
+          </MapView>
         )}
       </View>
     )
+  }
+
+  private onMapPress(e: any): void {
+    this.setState({
+      location: {
+        lat: e.nativeEvent.coordinate.latitude,
+        lon: e.nativeEvent.coordinate.longitude,
+      },
+    })
   }
 
   private getLocationAsync = async () => {
@@ -107,3 +130,7 @@ export class NearbyActivities extends React.Component<
     })
   }
 }
+
+const styles = StyleSheet.create({
+  wrapper: { flex: 1 },
+})
