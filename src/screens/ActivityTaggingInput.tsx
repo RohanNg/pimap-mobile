@@ -63,7 +63,7 @@ export class ActivityTaggingInput extends React.Component<
             onClose={this.removeTag}
           />
           <TextInput
-            placeholder="Search..."
+            placeholder="Add tags..."
             style={styles.inputField}
             autoCorrect={false}
             onChangeText={text =>

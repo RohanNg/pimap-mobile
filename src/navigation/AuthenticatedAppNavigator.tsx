@@ -5,12 +5,12 @@ import { createStackNavigator, NavigationContainer } from 'react-navigation'
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 
 import { Home } from '../screens/Home'
+import { MeScreen } from '../screens/MeScreen'
 import { MyActivities } from '../screens/MyActivities'
 import { NearbyActivities } from '../screens/NearbyActivities'
-import { withAuthenticatedUser } from '../services/AuthService'
-
-import { MeScreen } from '../screens/MeScreen'
 import { NotificationScreen } from '../screens/NotificationScreen'
+import { withAuthenticatedUser } from '../services/AuthService'
+import { theme } from '../theme'
 
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
@@ -21,7 +21,7 @@ export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBott
     MeScreen,
   },
   {
-    initialRouteName: 'NotificationScreen',
+    initialRouteName: 'MyActivities',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',
@@ -33,6 +33,6 @@ export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBott
       marginRight: 2,
       // TODO: add card style
     },
-    activeTintColor: '#F27979',
+    activeTintColor: theme.colors!.primary,
   },
 )

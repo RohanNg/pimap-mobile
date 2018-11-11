@@ -1,13 +1,26 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Facebook } from 'expo'
+import moment from 'moment'
 import * as React from 'react'
 import {
   Alert,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
+import DateTimePicker from 'react-native-modal-datetime-picker'
+import {
+  Appbar,
+  Button,
+  Headline,
+  Paragraph,
+  Subheading,
+  Switch,
+  Text,
+  TextInput,
+  Title,
+} from 'react-native-paper'
 import {
   createStackNavigator,
   NavigationBottomTabScreenOptions,
@@ -16,25 +29,7 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import moment from 'moment'
-
-import DateTimePicker from 'react-native-modal-datetime-picker'
-
-import { Button } from 'react-native-paper'
-
-import { MaterialCommunityIcons } from '@expo/vector-icons'
-
-import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-
-import {
-  Appbar,
-  Paragraph,
-  Subheading,
-  Switch,
-  TextInput,
-} from 'react-native-paper'
-
 import { ActivityTaggingInput } from './ActivityTaggingInput'
 
 interface CreateActivityState {
@@ -78,7 +73,7 @@ export class MyActivities extends React.Component<
     return (
       <View style={styles.wrapper}>
         <Appbar.Header>
-          <Appbar.Content title="Create Activity" />
+          <Appbar.Content title="Create a new activity" />
         </Appbar.Header>
         <ScrollView
           style={styles.container}
@@ -107,14 +102,15 @@ export class MyActivities extends React.Component<
             placeholder="Please type the activity location"
             value={undefined}
           />
-          <View style={styles.inputContainerStyle}>
-            <Subheading>Time for my activity</Subheading>
+          <View style={[styles.inputContainerStyle, styles.row]}>
+            <Subheading>Time</Subheading>
             <Button
               onPress={this.showDateTimePicker}
               mode={'outlined'}
               icon={getIcon}
+              style={{ minWidth: 180 }}
             >
-              <Text>{date ? this.format(date) : 'Set time'}</Text>
+              <Text>{date ? this.format(date) : 'Set'}</Text>
             </Button>
             <DateTimePicker
               isVisible={this.state.isDateTimePickerVisible}
@@ -129,8 +125,7 @@ export class MyActivities extends React.Component<
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
-                My activity is{' '}
-                {this.state.privateActivity ? 'private' : 'public'}
+                {this.state.privateActivity ? 'Private' : 'Public'}
               </Subheading>
               <Switch
                 value={!this.state.privateActivity}
@@ -152,8 +147,7 @@ export class MyActivities extends React.Component<
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
-                My activity is{' '}
-                {this.state.recurrningActivity ? 'recurrning' : 'one time'}
+                {this.state.recurrningActivity ? 'Recurrning' : 'One time'}
               </Subheading>
               <Switch
                 value={!this.state.recurrningActivity}
@@ -165,6 +159,11 @@ export class MyActivities extends React.Component<
                 You will be asked to confirm the next occurence.
               </Paragraph>
             )}
+          </View>
+          <View style={styles.submitButtonContainer}>
+            <Button mode="contained" style={styles.submitButton}>
+              <Text>Create</Text>
+            </Button>
           </View>
         </ScrollView>
       </View>
@@ -203,7 +202,7 @@ export class MyActivities extends React.Component<
   }
 
   private format(date: Date): string {
-    return moment(date).format('ddd DD MMM at hh:mm')
+    return moment(date).format('hh:mm ddd DD/MM')
   }
 }
 
@@ -227,4 +226,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  submitButtonContainer: {
+    marginTop: 24,
+    alignItems: 'center',
+  },
+  submitButton: { backgroundColor: '#F27979', width: 120 },
 })
