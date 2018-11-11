@@ -40,7 +40,7 @@ export class NearbyActivities extends React.Component<
   NearByActivitiesState
 > {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
-    title: 'Near By',
+    title: 'Nearby',
     tabBarIcon: tabBarIcon('near-me'),
   }
 

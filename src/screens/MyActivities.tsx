@@ -53,7 +53,7 @@ export class MyActivities extends React.Component<
   CreateActivityState
 > {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
-    title: 'My Activities',
+    title: 'Activities',
     tabBarIcon: tabBarIcon('list'),
   }
 

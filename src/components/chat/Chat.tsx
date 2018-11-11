@@ -103,7 +103,7 @@ export class Chat extends Component<{}, ChatState> {
         createdAt: new Date(),
         system: true,
       },
-    ]
+    ] as IMessage[]
 
     this.setState({
       messages,

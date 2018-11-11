@@ -9,21 +9,30 @@ import { MyActivities } from '../screens/MyActivities'
 import { NearbyActivities } from '../screens/NearbyActivities'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-import { Chat } from '../components/chat/Chat'
+import { MeScreen } from '../screens/MeScreen'
+import { NotificationScreen } from '../screens/NotificationScreen'
 
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
     NearbyActivities: withAuthenticatedUser(NearbyActivities),
     MyActivities,
-    Chat,
+    NotificationScreen,
+    MeScreen,
   },
   {
-    initialRouteName: 'Chat',
-    shifting: true,
+    initialRouteName: 'NotificationScreen',
+    shifting: false,
     barStyle: {
-      height: 72,
-      paddingBottom: 20,
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 4,
+      marginBottom: 2,
+      marginLeft: 2,
+      marginRight: 2,
+      // TODO: add card style
     },
+    activeTintColor: '#F27979',
   },
 )
