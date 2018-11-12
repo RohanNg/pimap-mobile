@@ -12,18 +12,18 @@ import { MyActivities } from '../screens/MyActivities'
 import { NearbyActivities } from '../screens/NearbyActivities'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-<<<<<<< HEAD
-=======
 
->>>>>>> adding new screen for users to enter their hobbies, interests
+
 export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
     NearbyActivities: withAuthenticatedUser(NearbyActivities),
     MyActivities,
+
+
   },
   {
-    initialRouteName: 'MyActivities',
+    initialRouteName: 'Home',
     shifting: true,
     barStyle: {
       height: 72,
