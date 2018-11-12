@@ -22,10 +22,7 @@ import MapView from 'react-native-maps'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-<<<<<<< HEAD
-=======
 
->>>>>>> adding new screen for users to enter their hobbies, interests
 interface NearByActivitiesState {
   location?: {
     lat: number

@@ -2,6 +2,7 @@ import { Constants, Facebook, Location, Permissions } from 'expo'
 import * as React from 'react'
 import {
   ActivityIndicator,
+  SafeAreaView,
   Alert,
   Button,
   Platform,
@@ -53,14 +54,18 @@ export class UserInfo extends React.Component<UserInfoScreenProps> {
 	public render(): React.ReactNode {	
 		
 	 return (
-	 <View>
-	 	<Text title="Please choose your Hobby"/>
-        <SelectMultiple
+	 <SafeAreaView>
+      <Text style={{ fontSize: 24, fontWeight: '700' }}>
+            Hobby
+          </Text>    
+            <SelectMultiple
           items={hobby}
           selectedItems={this.state.selectedHobby}
           onSelectionsChange={this.onSelectionsHobbyChange} />
           
-         <Text title="Please choose your Interest"/>
+         <Text style={{ fontSize: 24, fontWeight: '700' }}>
+            Interests
+          </Text>
 
           <SelectMultiple
           items={interests}
@@ -70,7 +75,9 @@ export class UserInfo extends React.Component<UserInfoScreenProps> {
           	onPress={() =>this.props.navigation.navigate('App')}
           	title="Done"
           />
-      </View>
+
+          
+      </SafeAreaView>
 	 	);
 	}
 	

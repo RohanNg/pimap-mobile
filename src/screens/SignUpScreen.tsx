@@ -134,11 +134,7 @@ export class SignUpScreen extends Component<
       const authCred = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-<<<<<<< HEAD
-      this.props.navigation.navigate('App')
-=======
       this.props.navigation.navigate('User')
->>>>>>> adding new screen for users to enter their hobbies, interests
     } catch (error) {
       const errorCode = error.code
       let errorInfo

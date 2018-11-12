@@ -1,6 +1,15 @@
 import { Constants, Facebook, Location, Permissions } from 'expo'
 import * as React from 'react'
-import { Alert, Button, Platform, Text, View } from 'react-native'
+import { Alert, Button, View, 
+    Text,
+    StyleSheet,
+    SafeAreaView,
+    TextInput,
+    Platform,
+    StatusBar,
+    ScrollView,
+    Image,
+    Dimensions } from 'react-native'
 import {
   createStackNavigator,
   NavigationBottomTabScreenOptions,
@@ -11,20 +20,21 @@ import {
 
 import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-<<<<<<< HEAD
-=======
+
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu'
+import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
+import Item from '../components/Item'
+import SideMenu from '../components/SideMenu'
 
 
->>>>>>> adding new screen for users to enter their hobbies, interests
+const { height, width } = Dimensions.get('window')
 
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
 export class Home extends React.Component<HomeScreenProps> {
-<<<<<<< HEAD
-=======
+
   constructor(props: HomeScreenProps){
     super(props);
     this.state = {
@@ -38,62 +48,123 @@ export class Home extends React.Component<HomeScreenProps> {
     .then((data) => {this.setState({events : data.data}); console.log(data.data);});
 
   }
->>>>>>> adding new screen for users to enter their hobbies, interests
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Home',
     tabBarIcon: tabBarIcon('home'),
   }
-<<<<<<< HEAD
-
-  public render(): React.ReactNode {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-=======
    _menu = null;
  
     setMenuRef = ref => {
       this._menu = ref;
     };
    
-    hideMenu = () => {
-      this._menu.hide();
+    toMap = () => {
+        this.props.navigation.navigate('NearbyActivities')
     };
-   
-    showMenu = () => {
-      this._menu.show();
+
+     logOut = async () => {
+      await firebase.auth().signOut()
+        this.props.navigation.navigate('Login')
+          
     };
 
   public render(): React.ReactNode {
 
-    
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Menu
-          ref={this.setMenuRef}
-          button={<Text onPress={this.showMenu}>Show menu</Text>}
-        >
-          <MenuItem onPress={this.hideMenu}>Menu item 1</MenuItem>
-          <MenuItem onPress={this.hideMenu}>Menu item 2</MenuItem>
-          <MenuItem onPress={this.hideMenu} disabled>
-            Menu item 3
-          </MenuItem>
-          <MenuDivider />
-          <MenuItem onPress={this.hideMenu}>Menu item 4</MenuItem>
-        </Menu>
->>>>>>> adding new screen for users to enter their hobbies, interests
-        <Text>Home Screen</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('NearbyActivities')}
-        />
-        <Button
-          title="Log out"
-          onPress={async () => {
-            await firebase.auth().signOut()
-            this.props.navigation.navigate('Login')
-          }}
-        />
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+   
+        
+        <ScrollView
+          scrollEventThrottle={16}
+          >
+            <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 20 }}>
+               <SideMenu toMap = {this.toMap} logOut = {this.logOut}/>
+
+              <Text style={{ fontSize: 24, fontWeight: '700', paddingHorizontal: 20 }}>
+                Popular Events 
+              </Text>
+
+              <View style={{ height: 130, marginTop: 20 }}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Home" press={() =>this.props.navigation.navigate('Details')} 
+                />
+
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Experiences"
+                />
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Resturant"
+                />
+              </ScrollView>
+              </View>
+              <View style={{ marginTop: 40, paddingHorizontal: 20 }}>
+                <Text style={{ fontSize: 24, fontWeight: '700' }}>
+                  Trending
+                </Text>
+                <Text style={{ fontWeight: '100', marginTop: 10 }}>
+                   Can you find your favorite events ?
+
+                </Text>
+                <View style={{ height: 200, marginTop: 20 }}>
+              <ScrollView
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+              >
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Home" press={() =>this.props.navigation.navigate('Details')} 
+                />
+
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Experiences"
+                />
+                <Item imageUri={require('../components/resource/football.jpg')}
+                  name="Resturant"
+               />
+              </ScrollView>
+
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+        
+           
+      </SafeAreaView>   
     )
   }
 }
+
+const styles = StyleSheet.create({
+  column: {
+    flex: 1,
+    flexDirection: "column"
+  },
+  row: {
+    flex: 1,
+    flexDirection: "row"
+  },
+  box1: {
+    flex: 1
+  },
+  box2: {
+    flex: 1
+  },
+  button: {
+    shadowColor: 'rgba(0,0,0, .4)', // IOS
+    shadowOffset: { height: 1, width: 1 }, // IOS
+    shadowOpacity: 1, // IOS
+    shadowRadius: 1, //IOS,
+    borderRadius: 5,
+    backgroundColor: '#fff',
+    elevation: 2, // Android
+    maxHeight: 54,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5,
+    padding: 5
+  }
+});
+
