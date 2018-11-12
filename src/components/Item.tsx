@@ -3,7 +3,8 @@ import {
     View,
     Text,
     StyleSheet,
-    Image
+    Image,
+    Button
 } from "react-native";
 
 class Item extends Component {
@@ -16,7 +17,10 @@ class Item extends Component {
                     />
                 </View>
                 <View style={{ flex: 1, paddingLeft: 10, paddingTop: 10 }}>
-                    <Text>{this.props.name}</Text>
+                    <Text >{this.props.name}</Text>
+                </View>
+                <View>
+                    <Button onPress={this.props.press} title = "Detail"/> 
                 </View>
             </View>
         );
