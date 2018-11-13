@@ -35,6 +35,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
       marginRight: 2,
       // TODO: add card style
     },
+    labeled: false,
     activeTintColor: theme.colors!.primary,
   },
 )

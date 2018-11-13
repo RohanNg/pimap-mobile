@@ -4,6 +4,7 @@ import moment from 'moment'
 import * as React from 'react'
 import {
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -31,6 +32,8 @@ import {
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from './ActivityTaggingInput'
+
+import { theme } from '../theme'
 
 interface CreateActivityState {
   privateActivity: boolean
@@ -102,9 +105,21 @@ export class CreateActivity extends React.Component<
     const { date } = this.state
     return (
       <View style={styles.wrapper}>
-        <Appbar.Header>
-          <Appbar.Content title="Create a new activity" />
-        </Appbar.Header>
+        <SafeAreaView style={{ backgroundColor: theme.colors!.primary }}>
+          <Appbar>
+            <Appbar.Content
+              style={{
+                flex: 0,
+                marginLeft: -48,
+              }}
+              titleStyle={{
+                fontWeight: 'bold',
+                fontSize: 28,
+              }}
+              title="Create Activity"
+            />
+          </Appbar>
+        </SafeAreaView>
         <ScrollView
           style={styles.container}
           removeClippedSubviews={false}
@@ -135,9 +150,9 @@ export class CreateActivity extends React.Component<
             >
               <Text>
                 {this.state.coordinate
-                  ? `${this.state.coordinate.latitude},${
-                      this.state.coordinate.longitude
-                    }`
+                  ? `${this.state.coordinate.latitude.toFixed(
+                      4,
+                    )},${this.state.coordinate.longitude.toFixed(4)}`
                   : 'Set'}
               </Text>
             </Button>
