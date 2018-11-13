@@ -7,6 +7,8 @@ import {
   View,
 } from 'react-native'
 
+import { Font } from 'expo'
+
 import * as firebase from 'firebase'
 
 import { NavigationScreenProp } from 'react-navigation'
@@ -22,8 +24,13 @@ export class AuthLoadingScreen extends React.Component<AuthLoadingScreenProps> {
     super(props)
   }
 
-  public componentWillMount(): void {
-    this.unsubscribed = firebase.auth().onAuthStateChanged(user => {
+  public componentDidMount(): void {
+    this.unsubscribed = firebase.auth().onAuthStateChanged(async user => {
+      await Font.loadAsync({
+        // This font family is needed when using react-native-papter Button component
+        'Material Icons': require('@expo/vector-icons/fonts/MaterialIcons.ttf'),
+      })
+
       this.props.navigation.navigate(user ? 'App' : 'Auth')
     })
   }

@@ -9,31 +9,21 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
-interface HomeScreenProps {
+interface MeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
-export class Home extends React.Component<HomeScreenProps> {
+import { Chat } from '../components/chat/Chat'
+
+export class MeScreen extends React.Component<MeScreenProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
-    title: 'Home',
-    tabBarIcon: tabBarIcon('home'),
+    title: 'Me',
+    tabBarIcon: tabBarIcon('person'),
   }
 
   public render(): React.ReactNode {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-        <Button
-          title="Log out"
-          onPress={async () => {
-            await firebase.auth().signOut()
-            this.props.navigation.navigate('Login')
-          }}
-        />
-      </View>
-    )
+    return <Chat />
   }
 }

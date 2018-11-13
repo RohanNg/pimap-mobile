@@ -4,7 +4,6 @@ import { MaterialIcons } from '@expo/vector-icons'
 
 export const tabBarIcon = (name: string) => ({
   tintColor,
-  focused,
 }: {
   tintColor: string | null
   focused: boolean
@@ -13,6 +12,6 @@ export const tabBarIcon = (name: string) => ({
     style={{ backgroundColor: 'transparent' }}
     name={name}
     color={tintColor || 'black'}
-    size={focused ? 24 : 28}
+    size={24}
   />
 )

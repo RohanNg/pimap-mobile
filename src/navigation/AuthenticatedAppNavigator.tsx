@@ -1,29 +1,50 @@
-/* tslint:disable:max-classes-per-file */
 import { Facebook } from 'expo'
 import * as React from 'react'
 import { createStackNavigator, NavigationContainer } from 'react-navigation'
 
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 
-import * as firebase from 'firebase'
-
+import { CreateActivity } from '../screens/CreateActivity'
 import { Home } from '../screens/Home'
-import { MyActivities } from '../screens/MyActivities'
+import { MeScreen } from '../screens/MeScreen'
 import { NearbyActivities } from '../screens/NearbyActivities'
+import { NotificationScreen } from '../screens/NotificationScreen'
 import { withAuthenticatedUser } from '../services/AuthService'
+import { theme } from '../theme'
 
-export const AuthenticatedAppNavigator: NavigationContainer = createMaterialBottomTabNavigator(
+import { LocationSelection } from '../screens/LocationSelection'
+
+export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
     NearbyActivities: withAuthenticatedUser(NearbyActivities),
-    MyActivities,
+    CreateActivity,
+    NotificationScreen,
+    MeScreen,
   },
   {
-    initialRouteName: 'Home',
-    shifting: true,
+    initialRouteName: 'CreateActivity',
+    shifting: false,
     barStyle: {
-      height: 72,
-      paddingBottom: 20,
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 4,
+      marginBottom: 2,
+      marginLeft: 2,
+      marginRight: 2,
+      // TODO: add card style
     },
+    activeTintColor: theme.colors!.primary,
+  },
+)
+
+export const AuthenticatedAppNavigator = createStackNavigator(
+  {
+    authenticatedApp: MainTabNavigator,
+    LocationSelection,
+  },
+  {
+    headerMode: 'none',
   },
 )
