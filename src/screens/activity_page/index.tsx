@@ -25,7 +25,7 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
   public state: ActivityPageState = {
     index: 0,
     routes: [
-      { key: 'details', icon: 'md-contact' },
+      { key: 'details', icon: 'md-information-circle' },
       { key: 'chat', icon: 'md-chatbubbles' },
     ],
   }
