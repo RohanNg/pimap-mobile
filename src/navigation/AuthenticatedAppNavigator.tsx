@@ -14,6 +14,8 @@ import { theme } from '../theme'
 
 import { LocationSelection } from '../screens/LocationSelection'
 
+import { ActivityPage } from '../screens/activity_page/'
+
 export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
@@ -21,9 +23,10 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     CreateActivity,
     NotificationScreen,
     MeScreen,
+    ActivityPage,
   },
   {
-    initialRouteName: 'CreateActivity',
+    initialRouteName: 'ActivityPage',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',

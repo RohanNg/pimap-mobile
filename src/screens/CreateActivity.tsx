@@ -4,7 +4,6 @@ import moment from 'moment'
 import * as React from 'react'
 import {
   Alert,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -33,7 +32,7 @@ import {
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from './ActivityTaggingInput'
 
-import { theme } from '../theme'
+import { Header } from '../components/header'
 
 interface CreateActivityState {
   privateActivity: boolean
@@ -105,21 +104,7 @@ export class CreateActivity extends React.Component<
     const { date } = this.state
     return (
       <View style={styles.wrapper}>
-        <SafeAreaView style={{ backgroundColor: theme.colors!.primary }}>
-          <Appbar>
-            <Appbar.Content
-              style={{
-                flex: 0,
-                marginLeft: -48,
-              }}
-              titleStyle={{
-                fontWeight: 'bold',
-                fontSize: 28,
-              }}
-              title="Create Activity"
-            />
-          </Appbar>
-        </SafeAreaView>
+        <Header title="Create Activity" />
         <ScrollView
           style={styles.container}
           removeClippedSubviews={false}
