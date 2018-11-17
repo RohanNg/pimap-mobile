@@ -12,35 +12,31 @@ import {
 export default class Topic extends React.Component {
   render() {
     return (
-      <View
+      <ImageBackground
+        source={require('../resources/soccer.jpg')}
         style={{
-          height: 130,
-          width: 130,
-          marginLeft: 20,
-          borderWidth: 0.5,
-          borderColor: '#ffffff',
+          flex: 1,
+          height: 120,
+          width: 160,
+          margin: 8,
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
+        imageStyle={{ resizeMode: 'cover' }}
       >
-        <View style={{ flex: 2 }}>
-          <ImageBackground
-            source={require('../resources/football.jpg')}
-            style={{ flex: 1, height: 120, width: 120, borderRadius: 15 }}
-          >
-            <View
-              style={{
-                flex: 1,
+        <View
+          style={{
+            flex: 1,
 
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
-              <Text style={{ fontSize: 14, fontWeight: '600', color: 'white' }}>
-                Football
-              </Text>
-            </View>
-          </ImageBackground>
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Text style={{ fontSize: 14, fontWeight: '600', color: 'white' }}>
+            Football
+          </Text>
         </View>
-      </View>
+      </ImageBackground>
     )
   }
 }

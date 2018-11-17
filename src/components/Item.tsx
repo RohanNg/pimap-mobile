@@ -15,9 +15,7 @@ export default class Item extends React.Component {
         style={{
           height: 130,
           width: 130,
-          marginLeft: 20,
-          borderWidth: 0.5,
-          borderColor: '#ffffff',
+          margin: 8,
         }}
       >
         <View style={{ flex: 2 }}>

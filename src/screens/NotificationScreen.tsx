@@ -50,7 +50,7 @@ export class NotificationScreen extends React.Component<
                 </Text>
 
                 <View
-                  style={{ height: 220, marginTop: 20, alignItems: 'center' }}
+                  style={{ height: 220, marginTop: 5, alignItems: 'center' }}
                 >
                   <ScrollView
                     horizontal={true}
@@ -65,24 +65,7 @@ export class NotificationScreen extends React.Component<
                   Activities
                 </Text>
 
-                <View style={{ height: 200, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  />
-                </View>
-              </View>
-              <View style={{ marginTop: -10, paddingHorizontal: 17 }}>
-                <Text style={{ fontSize: 24, fontWeight: '700' }}>
-                  Popular, right now
-                </Text>
-
-                <View style={{ height: 200, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  />
-                </View>
+                <View style={{ height: 200, marginTop: 20 }} />
               </View>
             </View>
           </ScrollView>

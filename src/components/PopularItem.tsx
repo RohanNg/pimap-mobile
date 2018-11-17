@@ -9,7 +9,7 @@ export default class PopularItem extends React.Component {
           flex: 1,
           height: 150,
           width: 230,
-          marginLeft: 20,
+          margin: 8,
           borderWidth: 0.5,
           borderColor: 'white',
         }}

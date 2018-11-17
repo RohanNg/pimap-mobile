@@ -1,16 +1,15 @@
 import { Facebook, Google } from 'expo'
 import * as firebase from 'firebase'
-import gql from 'graphql-tag'
 import React, { Component } from 'react'
-import { Mutation } from 'react-apollo'
 import {
+  Image,
   Alert,
-  Button,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
 import {
   NavigationScreenProp,
@@ -18,6 +17,7 @@ import {
 } from 'react-navigation'
 
 import { SignUpScreen } from './SignUpScreen'
+import { Appbar, TextInput, Title, Button } from 'react-native-paper'
 
 interface LoginScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -30,9 +30,7 @@ interface LoginScreenState {
 }
 
 export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
-  public static navigationOptions: NavigationStackScreenOptions = {
-    title: 'Log In',
-  }
+  public static navigationOptions: NavigationStackScreenOptions = {}
 
   constructor(props: LoginScreenProps) {
     super(props)
@@ -48,48 +46,96 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
 
   public render(): React.ReactNode {
     return (
-      <View style={styles.container}>
-        <Button onPress={this.loginWithGoogle} title="Log in with Google" />
-        {this.state.error && (
-          <Text style={styles.error}>{this.state.error}</Text>
-        )}
-        <Button onPress={this.loginWithFacebook} title="Log in with Fakebook" />
-        {this.state.error && (
-          <Text style={styles.error}>{this.state.error}</Text>
-        )}
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          style={styles.textInput}
-          onChangeText={email => this.setState({ email })}
-          placeholder="Email"
-        />
-        <TextInput
-          style={styles.textInput}
-          secureTextEntry={true}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={password => this.setState({ password })}
-          placeholder="Password"
-        />
-        <Button
-          disabled={!this.validateInput()}
-          onPress={this.loginWithEmailPassword}
-          title="Log in"
-        />
-        <Text
-          style={[styles.signUpText, styles.signUpMargin]}
-          onPress={() => this.props.navigation.navigate('SignUp')}
-        >
-          Sign up as a new user!
-        </Text>
-        <Text
-          style={styles.signUpText}
-          onPress={() => this.props.navigation.navigate('PasswordRecovery')}
-        >
-          Forget password
-        </Text>
-      </View>
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView scrollEventThrottle={16}>
+          <View style={styles.container}>
+            <Title style={{ fontSize: 24 }}>Sign in</Title>
+
+            <Text style={{ marginTop: 20, fontWeight: '600' }}>
+              Login using Social Media
+            </Text>
+            <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
+              <TouchableOpacity onPress={this.loginWithFacebook}>
+                <Image
+                  source={require('../resources/facebook.png')}
+                  fadeDuration={0}
+                  style={{ width: 30, height: 30, marginTop: 10 }}
+                >
+                  {this.state.error && (
+                    <Text style={styles.error}>{this.state.error}</Text>
+                  )}
+                </Image>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.loginWithGoogle}>
+                <Image
+                  source={require('../resources/google.png')}
+                  fadeDuration={0}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    marginTop: 10,
+                    marginLeft: 10,
+                  }}
+                >
+                  {this.state.error && (
+                    <Text style={styles.error}>{this.state.error}</Text>
+                  )}
+                </Image>
+              </TouchableOpacity>
+            </View>
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ marginTop: 10 }}>Email address</Text>
+              <TextInput
+                mode="outlined"
+                autoCapitalize="none"
+                autoCorrect={false}
+                style={styles.textInput}
+                onChangeText={email => this.setState({ email })}
+                placeholder="john.doe@gmail.com"
+              />
+              <Text style={{ marginTop: 10 }}>Password</Text>
+
+              <TextInput
+                mode="outlined"
+                style={styles.textInput}
+                secureTextEntry={true}
+                autoCapitalize="none"
+                autoCorrect={false}
+                onChangeText={password => this.setState({ password })}
+                placeholder="*********"
+              />
+              <Button
+                disabled={!this.validateInput()}
+                onPress={this.loginWithEmailPassword}
+                mode="contained"
+                style={{
+                  marginTop: 20,
+                  height: 40,
+                  width: 140,
+                  alignSelf: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ color: 'white', fontSize: 14 }}>Log in</Text>
+              </Button>
+              <Text
+                style={[styles.signUpText, styles.signUpMargin]}
+                onPress={() => this.props.navigation.navigate('SignUp')}
+              >
+                Sign up as a new user!
+              </Text>
+              <Text
+                style={styles.signUpText}
+                onPress={() =>
+                  this.props.navigation.navigate('PasswordRecovery')
+                }
+              >
+                Forget password
+              </Text>
+            </View>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     )
   }
 
@@ -141,23 +187,24 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 17,
+    marginTop: 30,
+    marginBottom: 20,
   },
   textInput: {
-    margin: 10,
-    paddingLeft: 20,
+    height: 46,
+    textAlign: 'justify',
   },
   error: {
     textAlign: 'center',
   },
   signUpMargin: {
-    marginTop: 80,
+    marginTop: 20,
   },
   signUpText: {
     marginTop: 20,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 14,
   },
 })
 

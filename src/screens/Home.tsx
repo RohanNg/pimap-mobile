@@ -60,8 +60,15 @@ export class Home extends React.Component<HomeScreenProps> {
         </Appbar.Header>
         <View style={{ flex: 1 }}>
           <ScrollView scrollEventThrottle={16}>
-            <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 20 }}>
-              <View style={{ paddingHorizontal: 17 }}>
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: 'white',
+                paddingTop: 20,
+                paddingHorizontal: 17,
+              }}
+            >
+              <View>
                 <Text style={{ fontSize: 24, fontWeight: '700' }}>Topics</Text>
                 <Text style={{ fontWeight: '100', marginTop: 10 }}>
                   See interesting event grouped by topic
@@ -78,7 +85,7 @@ export class Home extends React.Component<HomeScreenProps> {
                   <Topic children="Football" />
                 </ScrollView>
               </View>
-              <View style={{ marginTop: 40, paddingHorizontal: 17 }}>
+              <View style={{ marginTop: 20 }}>
                 <Text style={{ fontSize: 24, fontWeight: '700' }}>
                   Trending
                 </Text>
@@ -94,7 +101,7 @@ export class Home extends React.Component<HomeScreenProps> {
                   </ScrollView>
                 </View>
               </View>
-              <View style={{ marginTop: -10, paddingHorizontal: 17 }}>
+              <View style={{}}>
                 <Text style={{ fontSize: 24, fontWeight: '700' }}>
                   Popular, right now
                 </Text>
