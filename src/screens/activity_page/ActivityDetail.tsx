@@ -52,7 +52,7 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Title style={styles.headLine}>Aurora watcher</Title>
+        <Title style={styles.headLine}>Aurora watcher Helsinki</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>
           Aurora activity tonight in the Helsinki region.
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
     fontSize: 34,
     fontFamily: 'shrikhand',
-    lineHeight: (34 / 2) * 3,
+    lineHeight: 34 * 1.2,
     letterSpacing: 0.25,
     marginBottom: -6,
   },
