@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Image } from 'react-native'
 
 import {
   NavigationState,
@@ -15,6 +15,7 @@ import { Chat } from '../../components/chat/Chat'
 import { Ionicons } from '@expo/vector-icons'
 import { Header } from '../../components/header'
 import { ActivityDetail } from './ActivityDetail'
+import { theme } from '../../theme'
 
 type RouteProps = Route<{
   key: string
@@ -38,7 +39,10 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
-        <Header title={'Aurora Watcher Espoo'} />
+        <Image
+          source={require('../../resources/aurora.jpg')}
+          style={{ maxHeight: 200 }}
+        />
         <TabView
           style={styles.container}
           navigationState={this.state}
@@ -56,7 +60,9 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
     })
 
   private renderTabIcon: React.SFC<{ route: RouteProps }> = ({ route }) => {
-    return <Ionicons name={route.icon} size={24} color="white" />
+    return (
+      <Ionicons name={route.icon} size={24} color={theme.colors!.primary} />
+    )
   }
 
   private renderTabBar: React.SFC<SceneRendererProps<RouteProps>> = props => {
@@ -76,9 +82,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabbar: {
-    backgroundColor: '#e91e63',
+    backgroundColor: 'white',
   },
   indicator: {
-    backgroundColor: '#ffeb3b',
+    backgroundColor: theme.colors!.primary,
   },
 })
