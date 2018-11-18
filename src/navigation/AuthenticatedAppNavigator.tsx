@@ -43,9 +43,9 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
 
 export const AuthenticatedAppNavigator = createStackNavigator(
   {
+    ActivityPage,
     authenticatedApp: MainTabNavigator,
     LocationSelection,
-    ActivityPage,
   },
   {
     headerMode: 'none',

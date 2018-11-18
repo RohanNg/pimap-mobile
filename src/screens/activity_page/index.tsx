@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, View, Text, Image } from 'react-native'
+import { StyleSheet, View, Text, Image, Dimensions } from 'react-native'
 
 import {
   NavigationState,
@@ -41,7 +41,12 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
       <View style={styles.container}>
         <Image
           source={require('../../resources/aurora.jpg')}
-          style={{ maxHeight: 200 }}
+          style={{
+            maxHeight: 220,
+            width: Dimensions.get('window').width,
+            flex: 1,
+          }}
+          resizeMode={'cover'}
         />
         <TabView
           style={styles.container}
