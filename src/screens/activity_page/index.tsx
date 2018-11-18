@@ -1,6 +1,14 @@
 import * as React from 'react'
-import { StyleSheet, View, Text, Image, Dimensions } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
+import { Button } from 'react-native-paper'
 import {
   NavigationState,
   Route,
@@ -9,45 +17,61 @@ import {
   TabBar,
   TabView,
 } from 'react-native-tab-view'
-
+import { NavigationScreenProp } from 'react-navigation'
 import { Chat } from '../../components/chat/Chat'
 
 import { Ionicons } from '@expo/vector-icons'
 import { Header } from '../../components/header'
 import { ActivityDetail } from './ActivityDetail'
+import { Albums } from './Album'
+
 import { theme } from '../../theme'
 
+interface ActivityPageProps {
+  navigation: NavigationScreenProp<{}, {}>
+}
 type RouteProps = Route<{
   key: string
   icon: string
 }>
+
 type ActivityPageState = NavigationState<RouteProps>
-export class ActivityPage extends React.Component<{}, ActivityPageState> {
+export class ActivityPage extends React.Component<
+  ActivityPageProps,
+  ActivityPageState
+> {
   public state: ActivityPageState = {
     index: 0,
     routes: [
       { key: 'details', icon: 'md-information-circle' },
       { key: 'chat', icon: 'md-chatbubbles' },
+      { key: 'images', icon: 'md-photos' },
     ],
   }
 
   private renderScene = SceneMap({
     details: ActivityDetail,
     chat: Chat,
+    images: Albums,
   })
 
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
+        <Button
+          onPress={() => this.props.navigation.goBack()}
+          mode="outlined"
+          style={styles.backButton}
+          icon="arrow-back"
+        >
+          back
+        </Button>
         <Image
           source={require('../../resources/aurora.jpg')}
-          style={{
-            maxHeight: 220,
-            width: Dimensions.get('window').width,
-            flex: 1,
-          }}
-          resizeMode={'cover'}
+          style={styles.coverImage}
+          resizeMode="cover"
         />
+
         <TabView
           style={styles.container}
           navigationState={this.state}
@@ -74,7 +98,7 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
     return (
       <TabBar
         {...props}
-        indicatorStyle={styles.indicator}
+        indicatorStyle={styles.tabbar_activeTabIndicator}
         style={styles.tabbar}
         renderIcon={this.renderTabIcon}
       />
@@ -85,11 +109,23 @@ export class ActivityPage extends React.Component<{}, ActivityPageState> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.colors!.background,
   },
   tabbar: {
     backgroundColor: 'white',
   },
-  indicator: {
+  tabbar_activeTabIndicator: {
     backgroundColor: theme.colors!.primary,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 28,
+    left: 4,
+    zIndex: 1000,
+  },
+  coverImage: {
+    maxHeight: 220,
+    width: Dimensions.get('window').width,
+    flex: 1,
   },
 })

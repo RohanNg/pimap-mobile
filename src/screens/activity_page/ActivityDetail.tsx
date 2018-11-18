@@ -2,13 +2,13 @@ import * as React from 'react'
 import {
   Alert,
   Image,
+  ImageSourcePropType,
   Platform,
   ScrollView,
   StyleProp,
   StyleSheet,
   View,
   ViewStyle,
-  ImageSourcePropType,
 } from 'react-native'
 import {
   NavigationBottomTabScreenOptions,

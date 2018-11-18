@@ -3,12 +3,12 @@ import * as React from 'react'
 import {
   Alert,
   Button,
+  Dimensions,
   Platform,
-  Text,
-  View,
   SafeAreaView,
   ScrollView,
-  Dimensions,
+  Text,
+  View,
 } from 'react-native'
 import {
   createStackNavigator,
@@ -29,10 +29,10 @@ import {
 } from 'react-native-paper'
 
 import * as firebase from 'firebase'
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import Item from '../components/Item'
-import Topic from '../components/Topic'
+import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import PopularItem from '../components/PopularItem'
+import Topic from '../components/Topic'
 
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>

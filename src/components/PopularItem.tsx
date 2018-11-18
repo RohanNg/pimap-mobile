@@ -1,8 +1,8 @@
 import * as React from 'react'
-import { Button, Card, Title, Paragraph, Text } from 'react-native-paper'
+import { Button, Card, Paragraph, Text, Title } from 'react-native-paper'
 
 export default class PopularItem extends React.Component {
-  render() {
+  public render() {
     return (
       <Card
         style={{

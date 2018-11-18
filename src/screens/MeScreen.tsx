@@ -3,14 +3,14 @@ import * as React from 'react'
 import {
   Alert,
   Button,
+  Image,
   Platform,
+  ScrollView,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  Image,
-  ScrollView,
 } from 'react-native'
-import { IconButton, Colors, Card, Paragraph } from 'react-native-paper'
+import { Card, Colors, IconButton, Paragraph } from 'react-native-paper'
 
 import {
   createStackNavigator,
@@ -19,8 +19,8 @@ import {
   NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
-import ProfilePic from '../components/ProfilePic'
 import Item from '../components/Item'
+import ProfilePic from '../components/ProfilePic'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
