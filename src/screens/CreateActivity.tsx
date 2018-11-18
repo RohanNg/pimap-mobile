@@ -204,7 +204,11 @@ export class CreateActivity extends React.Component<
             )}
           </View>
           <View style={styles.submitButtonContainer}>
-            <Button mode="contained" style={styles.submitButton}>
+            <Button
+              mode="contained"
+              style={styles.submitButton}
+              onPress={() => this.props.navigation.navigate('ActivityPage')}
+            >
               <Text>Create</Text>
             </Button>
           </View>
