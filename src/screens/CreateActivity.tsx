@@ -32,6 +32,8 @@ import {
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from './ActivityTaggingInput'
 
+import { Header } from '../components/header'
+
 interface CreateActivityState {
   privateActivity: boolean
   recurrningActivity: boolean
@@ -102,9 +104,7 @@ export class CreateActivity extends React.Component<
     const { date } = this.state
     return (
       <View style={styles.wrapper}>
-        <Appbar.Header>
-          <Appbar.Content title="Create a new activity" />
-        </Appbar.Header>
+        <Header title="Create Activity" />
         <ScrollView
           style={styles.container}
           removeClippedSubviews={false}
@@ -135,9 +135,9 @@ export class CreateActivity extends React.Component<
             >
               <Text>
                 {this.state.coordinate
-                  ? `${this.state.coordinate.latitude},${
-                      this.state.coordinate.longitude
-                    }`
+                  ? `${this.state.coordinate.latitude.toFixed(
+                      4,
+                    )},${this.state.coordinate.longitude.toFixed(4)}`
                   : 'Set'}
               </Text>
             </Button>
@@ -204,7 +204,11 @@ export class CreateActivity extends React.Component<
             )}
           </View>
           <View style={styles.submitButtonContainer}>
-            <Button mode="contained" style={styles.submitButton}>
+            <Button
+              mode="contained"
+              style={styles.submitButton}
+              onPress={() => this.props.navigation.navigate('ActivityPage')}
+            >
               <Text>Create</Text>
             </Button>
           </View>

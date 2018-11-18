@@ -12,6 +12,7 @@ import { NotificationScreen } from '../screens/NotificationScreen'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
 
+import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
 
 export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
@@ -23,7 +24,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen,
   },
   {
-    initialRouteName: 'CreateActivity',
+    initialRouteName: 'Home',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',
@@ -35,6 +36,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
       marginRight: 2,
       // TODO: add card style
     },
+    labeled: false,
     activeTintColor: theme.colors!.primary,
   },
 )
@@ -43,6 +45,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
   {
     authenticatedApp: MainTabNavigator,
     LocationSelection,
+    ActivityPage,
   },
   {
     headerMode: 'none',
