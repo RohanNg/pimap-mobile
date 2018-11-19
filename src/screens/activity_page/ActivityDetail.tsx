@@ -70,6 +70,8 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
             mode="contained"
             onPress={() => console.info('cool')}
             icon={flightIcon}
+            style={styles.backButton}
+            color={'black'}
           >
             Accept Invitation
           </Button>
@@ -161,6 +163,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: SECTION_SPACING,
+    backgroundColor: 'black',
+    zIndex: 10000,
   },
   peopleListContainer: {
     marginTop: SECTION_SPACING,
@@ -173,5 +177,8 @@ const styles = StyleSheet.create({
     width: 80,
     borderRadius: theme.roundness,
     marginRight: 12,
+  },
+  backButton: {
+    backgroundColor: 'black',
   },
 })

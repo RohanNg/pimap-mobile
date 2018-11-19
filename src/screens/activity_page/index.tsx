@@ -58,14 +58,10 @@ export class ActivityPage extends React.Component<
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
-        <Button
-          onPress={() => this.props.navigation.goBack()}
-          mode="outlined"
-          style={styles.backButton}
-          icon="arrow-back"
-        >
-          back
-        </Button>
+        <Header
+          title={'Activity page'}
+          goBack={() => this.props.navigation.goBack()}
+        />
         <Image
           source={require('../../resources/aurora.jpg')}
           style={styles.coverImage}
@@ -122,6 +118,7 @@ const styles = StyleSheet.create({
     top: 28,
     left: 4,
     zIndex: 1000,
+    backgroundColor: theme.colors!.background,
   },
   coverImage: {
     maxHeight: 220,
