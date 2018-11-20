@@ -15,21 +15,21 @@ export default class Item extends React.Component {
         style={{
           height: 130,
           width: 130,
-          margin: 8,
+          margin: 4,
         }}
       >
         <View style={{ flex: 2 }}>
           <Image
             source={require('../componentresources/aurora.jpg')}
-            style={{ flex: 1, height: 130, width: 130, resizeMode: 'cover' }}
+            style={styles.image}
           />
         </View>
-        <View style={{ flex: 1, paddingLeft: 10, paddingTop: 10 }}>
+        <View style={{ flex: 1, paddingLeft: 10, paddingTop: 5 }}>
           <Text style={{ fontSize: 14, fontWeight: '600' }}>
             Aurora Watcher
           </Text>
           <TouchableOpacity style={styles.button}>
-            <Text style={{ fontSize: 7, color: 'white', alignItems: 'center' }}>
+            <Text style={{ fontSize: 7, color: 'white', textAlign: 'center' }}>
               Private
             </Text>
           </TouchableOpacity>
@@ -41,7 +41,7 @@ export default class Item extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    marginBottom: 15,
+    marginBottom: 17,
     paddingTop: 8,
     paddingBottom: 8,
     marginLeft: 70,
@@ -51,5 +51,12 @@ const styles = StyleSheet.create({
     borderColor: '#fff',
     backgroundColor: '#F27979',
     padding: 10,
+  },
+  image: {
+    flex: 1,
+    height: 130,
+    width: 130,
+    resizeMode: 'cover',
+    borderRadius: 7,
   },
 })

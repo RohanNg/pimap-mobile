@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
   },
 
   nameuser: {
-    textAlign: 'center',
     marginTop: 20,
+    textAlign: 'center',
     fontSize: 20,
     color: 'black',
     fontWeight: '300',

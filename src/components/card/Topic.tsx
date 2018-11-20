@@ -15,7 +15,7 @@ export default class Topic extends React.Component {
       <ImageBackground
         source={require('../componentresources/soccer.jpg')}
         style={styles.background}
-        imageStyle={{ resizeMode: 'cover' }}
+        imageStyle={{ borderRadius: 7 }}
       >
         <View style={styles.textpostion}>
           <Text style={styles.text}>Football</Text>
@@ -27,12 +27,13 @@ export default class Topic extends React.Component {
 
 const styles = StyleSheet.create({
   background: {
+    flex: 1,
     height: 120,
     width: 160,
-    margin: 8,
+    margin: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 30,
+    borderRadius: 50,
   },
   textpostion: {
     justifyContent: 'center',

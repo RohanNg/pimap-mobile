@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   ScrollView,
   Dimensions,
+  StyleSheet,
 } from 'react-native'
 import {
   createStackNavigator,
@@ -90,7 +91,7 @@ export class Home extends React.Component<HomeScreenProps> {
                   Trending
                 </Text>
 
-                <View style={{ height: 200, marginTop: 20 }}>
+                <View style={{ height: 170, marginTop: 20 }}>
                   <ScrollView
                     horizontal={true}
                     showsHorizontalScrollIndicator={false}
@@ -124,3 +125,5 @@ export class Home extends React.Component<HomeScreenProps> {
     )
   }
 }
+
+const styles = StyleSheet.create({})
