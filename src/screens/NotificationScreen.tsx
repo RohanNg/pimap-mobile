@@ -4,10 +4,10 @@ import {
   Alert,
   Button,
   Platform,
-  Text,
-  View,
   SafeAreaView,
   ScrollView,
+  Text,
+  View,
 } from 'react-native'
 import {
   createStackNavigator,
@@ -17,9 +17,9 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
+import { Appbar } from 'react-native-paper'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import RequestItem from '../components/notification/requestItem'
-import { Appbar } from 'react-native-paper'
 
 interface NotificationScreenProps {
   navigation: NavigationScreenProp<{}, {}>

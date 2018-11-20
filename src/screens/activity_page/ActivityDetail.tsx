@@ -2,13 +2,13 @@ import * as React from 'react'
 import {
   Alert,
   Image,
+  ImageSourcePropType,
   Platform,
   ScrollView,
   StyleProp,
   StyleSheet,
   View,
   ViewStyle,
-  ImageSourcePropType,
 } from 'react-native'
 import {
   NavigationBottomTabScreenOptions,
@@ -52,7 +52,7 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Title style={styles.headLine}>Aurora watcher</Title>
+        <Title style={styles.headLine}>Aurora watcher Helsinki</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>
           Aurora activity tonight in the Helsinki region.
@@ -70,6 +70,8 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
             mode="contained"
             onPress={() => console.info('cool')}
             icon={flightIcon}
+            style={styles.backButton}
+            color={'black'}
           >
             Accept Invitation
           </Button>
@@ -148,7 +150,7 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
     fontSize: 34,
     fontFamily: 'shrikhand',
-    lineHeight: (34 / 2) * 3,
+    lineHeight: 34 * 1.2,
     letterSpacing: 0.25,
     marginBottom: -6,
   },
@@ -161,6 +163,8 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: SECTION_SPACING,
+    backgroundColor: 'black',
+    zIndex: 10000,
   },
   peopleListContainer: {
     marginTop: SECTION_SPACING,
@@ -173,5 +177,8 @@ const styles = StyleSheet.create({
     width: 80,
     borderRadius: theme.roundness,
     marginRight: 12,
+  },
+  backButton: {
+    backgroundColor: 'black',
   },
 })

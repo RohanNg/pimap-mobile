@@ -2,15 +2,15 @@ import * as React from 'react'
 import {
   Alert,
   Button,
+  Image,
   Platform,
+  StyleSheet,
   Text,
   View,
-  StyleSheet,
-  Image,
 } from 'react-native'
 
 export default class ProfilePic extends React.Component {
-  render() {
+  public render() {
     return (
       <View>
         <View style={styles.profilepicWrap}>

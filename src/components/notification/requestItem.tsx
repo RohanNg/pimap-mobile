@@ -1,6 +1,6 @@
 import * as React from 'react'
+import { Button, Image, Text, TouchableOpacity, View } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
-import { Button, Image, View, Text, TouchableOpacity } from 'react-native'
 
 export default class RequestItem extends React.Component {
   public render() {
