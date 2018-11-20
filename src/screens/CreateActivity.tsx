@@ -29,12 +29,18 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
+import { inject, observer } from 'mobx-react'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from './ActivityTaggingInput'
 
 import { Header } from '../components/header'
+import { ActivityStore } from '../statestore/ActivityStore'
+
+import { AppStateStore } from '../statestore'
 
 interface CreateActivityState {
+  title: string
+  description: string
   privateActivity: boolean
   recurrningActivity: boolean
   isDateTimePickerVisible: boolean
@@ -55,8 +61,12 @@ interface CreateActivityProps {
       }
     }
   >
+  activityStore: ActivityStore
 }
 
+@inject<AppStateStore, CreateActivityProps>(allStores => ({
+  activityStore: allStores.activityStore,
+}))
 export class CreateActivity extends React.Component<
   CreateActivityProps,
   CreateActivityState
@@ -87,6 +97,8 @@ export class CreateActivity extends React.Component<
       privateActivity: true,
       recurrningActivity: false,
       isDateTimePickerVisible: false,
+      title: '',
+      description: '',
     }
 
     this.togglePrivateActivity = this.togglePrivateActivity.bind(this)
@@ -102,6 +114,7 @@ export class CreateActivity extends React.Component<
 
   public render(): React.ReactNode {
     const { date } = this.state
+
     return (
       <View style={styles.wrapper}>
         <Header title="Create Activity" />
@@ -116,6 +129,7 @@ export class CreateActivity extends React.Component<
             style={styles.inputContainerStyle}
             placeholder="Short name of your activities"
             value={undefined}
+            onChangeText={this.activityTitleChanged}
           />
           <TextInput
             mode="outlined"
@@ -124,6 +138,7 @@ export class CreateActivity extends React.Component<
             placeholder="Please describe your activities"
             value={undefined}
             multiline={true}
+            onChangeText={this.activityDescChanged}
           />
           <View style={[styles.inputContainerStyle, styles.row]}>
             <Subheading>Location</Subheading>
@@ -207,7 +222,7 @@ export class CreateActivity extends React.Component<
             <Button
               mode="contained"
               style={styles.submitButton}
-              onPress={() => this.props.navigation.navigate('ActivityPage')}
+              onPress={this.createActivity}
             >
               <Text>Create</Text>
             </Button>
@@ -215,6 +230,40 @@ export class CreateActivity extends React.Component<
         </ScrollView>
       </View>
     )
+  }
+
+  private activityTitleChanged = (title: string) => {
+    this.setState({ title })
+  }
+
+  private activityDescChanged = (desc: string) => {
+    this.setState({ description: desc })
+  }
+
+  private createActivity = () => {
+    const {
+      title,
+      description,
+      coordinate,
+      date,
+      privateActivity,
+      recurrningActivity,
+    } = this.state
+    this.props.activityStore.addActivity({
+      description,
+      title,
+      time: date!,
+      id: 'activity-id',
+      images: [],
+      location: coordinate,
+      mode: recurrningActivity ? 'recurring' : 'onetime',
+      privary: privateActivity ? 'private' : 'public',
+      userID: 'dangnguyen',
+    })
+
+    this.props.navigation.navigate('ActivityPage', {
+      activityID: 'activity-id',
+    })
   }
 
   private navigateToLocationSelectionView(): void {

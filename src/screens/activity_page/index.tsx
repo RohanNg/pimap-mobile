@@ -1,3 +1,4 @@
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
   Dimensions,
@@ -7,7 +8,6 @@ import {
   Text,
   View,
 } from 'react-native'
-
 import { Button } from 'react-native-paper'
 import {
   NavigationState,
@@ -18,24 +18,36 @@ import {
   TabView,
 } from 'react-native-tab-view'
 import { NavigationScreenProp } from 'react-navigation'
-import { Chat } from '../../components/chat/Chat'
 
 import { Ionicons } from '@expo/vector-icons'
+import { Chat } from '../../components/chat/Chat'
 import { Header } from '../../components/header'
+import { ActivityStore, AppStateStore } from '../../statestore'
+import { theme } from '../../theme'
 import { ActivityDetail } from './ActivityDetail'
 import { Albums } from './Album'
 
-import { theme } from '../../theme'
-
 interface ActivityPageProps {
-  navigation: NavigationScreenProp<{}, {}>
+  navigation: NavigationScreenProp<
+    {},
+    {
+      activityID: string
+    }
+  >
+  activityStore: ActivityStore
 }
+
 type RouteProps = Route<{
-  key: string
+  key: 'details' | 'chat' | 'images'
   icon: string
 }>
 
 type ActivityPageState = NavigationState<RouteProps>
+
+@inject<AppStateStore, ActivityPageProps>(allStores => ({
+  activityStore: allStores.activityStore,
+}))
+@observer
 export class ActivityPage extends React.Component<
   ActivityPageProps,
   ActivityPageState
@@ -49,11 +61,21 @@ export class ActivityPage extends React.Component<
     ],
   }
 
-  private renderScene = SceneMap({
-    details: ActivityDetail,
-    chat: Chat,
-    images: Albums,
-  })
+  private renderScreen: (props: { route: RouteProps }) => React.ReactNode = ({
+    route: { key },
+  }) => {
+    const activity = this.props.activityStore.getActivity(
+      this.props.navigation.getParam('activityID')!,
+    )
+
+    if (key === 'chat') {
+      return <Chat />
+    } else if (key === 'images') {
+      return <Albums />
+    } else {
+      return <ActivityDetail activity={activity!} />
+    }
+  }
 
   public render(): React.ReactNode {
     return (
@@ -71,7 +93,7 @@ export class ActivityPage extends React.Component<
         <TabView
           style={styles.container}
           navigationState={this.state}
-          renderScene={this.renderScene}
+          renderScene={this.renderScreen}
           onIndexChange={this.handleIndexChange}
           renderTabBar={this.renderTabBar}
         />
