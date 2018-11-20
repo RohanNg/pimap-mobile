@@ -30,9 +30,9 @@ import {
 
 import * as firebase from 'firebase'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import Item from '../components/Item'
-import Topic from '../components/Topic'
-import PopularItem from '../components/PopularItem'
+import Item from '../components/card/Item'
+import Topic from '../components/card/Topic'
+import PopularItem from '../components/card/PopularItem'
 
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>

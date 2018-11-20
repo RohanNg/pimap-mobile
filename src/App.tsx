@@ -6,7 +6,12 @@ import { RootNavigator } from './navigation/RootNavigator'
 import { AuthStateProvider } from './services/AuthService'
 
 import { theme } from './theme'
+import { YellowBox } from 'react-native'
 
+YellowBox.ignoreWarnings([
+  // Warning from react-native-paper Card component
+  'You are setting the style `{ elevation: ... }` as a prop',
+])
 interface AppState {
   text: string
 }

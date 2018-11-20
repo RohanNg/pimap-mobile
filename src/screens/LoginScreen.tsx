@@ -54,7 +54,7 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
             <Text style={{ marginTop: 20, fontWeight: '600' }}>
               Login using Social Media
             </Text>
-            <View style={{ flex: 1, flexDirection: 'row', marginTop: 10 }}>
+            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
               <TouchableOpacity onPress={this.loginWithFacebook}>
                 <Image
                   source={require('../resources/facebook.png')}
@@ -83,7 +83,7 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
                 </Image>
               </TouchableOpacity>
             </View>
-            <View style={{ marginTop: 20 }}>
+            <View style={{ marginTop: 10 }}>
               <Text style={{ marginTop: 10 }}>Email address</Text>
               <TextInput
                 mode="outlined"
@@ -108,13 +108,7 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
                 disabled={!this.validateInput()}
                 onPress={this.loginWithEmailPassword}
                 mode="contained"
-                style={{
-                  marginTop: 20,
-                  height: 40,
-                  width: 140,
-                  alignSelf: 'center',
-                  justifyContent: 'center',
-                }}
+                style={styles.buttonlogin}
               >
                 <Text style={{ color: 'white', fontSize: 14 }}>Log in</Text>
               </Button>
@@ -193,7 +187,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 46,
-    textAlign: 'justify',
   },
   error: {
     textAlign: 'center',
@@ -205,6 +198,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
     fontSize: 14,
+  },
+  buttonlogin: {
+    marginTop: 20,
+    height: 40,
+    width: 140,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
 })
 

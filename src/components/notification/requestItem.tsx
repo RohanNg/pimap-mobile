@@ -1,24 +1,19 @@
 import * as React from 'react'
 import { Card, Paragraph, Title } from 'react-native-paper'
-import { Button, Image, View, Text, TouchableOpacity } from 'react-native'
+import {
+  Button,
+  Image,
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native'
 
 export default class RequestItem extends React.Component {
   public render() {
     return (
-      <Card
-        style={{
-          backgroundColor: '#E5E5E5',
-          height: 160,
-          width: 280,
-          marginTop: 30,
-        }}
-      >
-        <Card.Content
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-          }}
-        >
+      <Card style={styles.card}>
+        <Card.Content style={styles.content}>
           <Image
             style={{
               width: 30,
@@ -28,17 +23,7 @@ export default class RequestItem extends React.Component {
             }}
             source={require('../componentresources/nooke.jpg')}
           />
-          <Paragraph
-            style={{
-              marginLeft: 10,
-              marginTop: 1,
-              fontSize: 14,
-              color: '#A2A2A2',
-              fontWeight: '300',
-            }}
-          >
-            Nooke Parviainen
-          </Paragraph>
+          <Paragraph style={styles.name}>Nooke Parviainen</Paragraph>
         </Card.Content>
         <View style={{ marginBottom: 5, paddingHorizontal: 25 }}>
           <Text style={{ fontSize: 12, color: 'black', marginTop: 5 }}>
@@ -50,20 +35,7 @@ export default class RequestItem extends React.Component {
           <Text style={{ fontSize: 10, color: 'grey', marginTop: 5 }}>
             Kilo train station - 14:00
           </Text>
-          <TouchableOpacity
-            style={{
-              marginTop: 10,
-              marginLeft: 170,
-              height: 40,
-              width: 80,
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: '#fff',
-              backgroundColor: '#F27979',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
+          <TouchableOpacity style={styles.button}>
             <Text
               style={{
                 fontSize: 12,
@@ -78,3 +50,35 @@ export default class RequestItem extends React.Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: '#E5E5E5',
+    height: 160,
+    width: 280,
+    marginTop: 30,
+  },
+  content: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  name: {
+    marginLeft: 10,
+    marginTop: 1,
+    fontSize: 14,
+    color: '#A2A2A2',
+    fontWeight: '300',
+  },
+  button: {
+    marginTop: 10,
+    marginLeft: 170,
+    height: 40,
+    width: 80,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#fff',
+    backgroundColor: '#F27979',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+})

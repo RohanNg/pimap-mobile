@@ -20,7 +20,7 @@ export default class Item extends React.Component {
       >
         <View style={{ flex: 2 }}>
           <Image
-            source={require('../resources/aurora.jpg')}
+            source={require('../componentresources/aurora.jpg')}
             style={{ flex: 1, height: 130, width: 130, resizeMode: 'cover' }}
           />
         </View>
@@ -28,20 +28,7 @@ export default class Item extends React.Component {
           <Text style={{ fontSize: 14, fontWeight: '600' }}>
             Aurora Watcher
           </Text>
-          <TouchableOpacity
-            style={{
-              marginBottom: 15,
-              paddingTop: 8,
-              paddingBottom: 8,
-              marginLeft: 70,
-              marginRight: 0,
-              borderRadius: 5,
-              borderWidth: 1,
-              borderColor: '#fff',
-              backgroundColor: '#F27979',
-              padding: 10,
-            }}
-          >
+          <TouchableOpacity style={styles.button}>
             <Text style={{ fontSize: 7, color: 'white', alignItems: 'center' }}>
               Private
             </Text>
@@ -51,3 +38,18 @@ export default class Item extends React.Component {
     )
   }
 }
+
+const styles = StyleSheet.create({
+  button: {
+    marginBottom: 15,
+    paddingTop: 8,
+    paddingBottom: 8,
+    marginLeft: 70,
+    marginRight: 0,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: '#fff',
+    backgroundColor: '#F27979',
+    padding: 10,
+  },
+})
