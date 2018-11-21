@@ -19,7 +19,7 @@ export default class ProfilePic extends React.Component {
             source={require('../resources/profile.jpg')}
           />
         </View>
-        <Text style={styles.name}>Anh Nguyen Le</Text>
+        <Text style={styles.nameuser}>Anh Nguyen Le</Text>
       </View>
     )
   }
@@ -42,9 +42,9 @@ const styles = StyleSheet.create({
     borderWidth: 4,
   },
 
-  name: {
-    textAlign: 'center',
+  nameuser: {
     marginTop: 20,
+    textAlign: 'center',
     fontSize: 20,
     color: 'black',
     fontWeight: '300',
