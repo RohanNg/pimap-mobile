@@ -61,12 +61,12 @@ export class NotificationScreen extends React.Component<
                   </ScrollView>
                 </View>
               </View>
-              <View style={{ marginTop: 15, paddingHorizontal: 17 }}>
+              <View style={{ marginTop: 8, paddingHorizontal: 17 }}>
                 <Text style={{ fontSize: 20, fontWeight: '700' }}>
                   Activities
                 </Text>
 
-                <View style={{ height: 120, marginTop: 10 }}>
+                <View style={{ height: 110, marginTop: 5 }}>
                   <ReviewItem />
                 </View>
                 <View style={{ height: 120, marginTop: 5, marginBottom: 100 }}>

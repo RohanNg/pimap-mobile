@@ -25,7 +25,7 @@ export default class RequestItem extends React.Component {
           />
           <Paragraph style={styles.name}>Nooke Parviainen</Paragraph>
         </Card.Content>
-        <View style={{ marginBottom: 5, paddingHorizontal: 25 }}>
+        <View style={{ marginTop: 5, marginBottom: 5, paddingHorizontal: 25 }}>
           <Text style={{ fontSize: 12, color: 'black', marginTop: 5 }}>
             Sent you an invitation to event
           </Text>

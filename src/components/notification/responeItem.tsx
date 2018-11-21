@@ -18,7 +18,7 @@ export default class ResponeItem extends React.Component {
           style={{
             height: 80,
             width: 80,
-            borderRadius: 10,
+            borderRadius: 7,
           }}
           source={require('../componentresources/unocard.jpg')}
         />
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E5E5E5',
     height: 80,
     width: 200,
-    borderRadius: 10,
+    borderRadius: 7,
   },
   content: {
     flex: 1,
