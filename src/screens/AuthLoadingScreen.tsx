@@ -29,6 +29,7 @@ export class AuthLoadingScreen extends React.Component<AuthLoadingScreenProps> {
       await Font.loadAsync({
         // This font family is needed when using react-native-papter Button component
         'Material Icons': require('@expo/vector-icons/fonts/MaterialIcons.ttf'),
+        shrikhand: require('../assets/font/Shrikhand-Regular.ttf'),
       })
 
       this.props.navigation.navigate(user ? 'App' : 'Auth')

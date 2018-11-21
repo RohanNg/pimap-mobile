@@ -4,11 +4,11 @@ import {
   Alert,
   Button,
   Platform,
-  Text,
-  View,
   SafeAreaView,
   ScrollView,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native'
 import {
   createStackNavigator,

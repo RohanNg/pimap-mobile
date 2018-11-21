@@ -3,13 +3,13 @@ import * as React from 'react'
 import {
   Alert,
   Button,
+  Dimensions,
   Platform,
-  Text,
-  View,
   SafeAreaView,
   ScrollView,
-  Dimensions,
   StyleSheet,
+  Text,
+  View,
 } from 'react-native'
 import {
   createStackNavigator,

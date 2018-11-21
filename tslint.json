@@ -17,13 +17,7 @@
     "object-literal-sort-keys": [false, "match-declaration-order"],
     "prettier": true,
     "switch-default": true,
-    "typedef": [
-      true,
-      "call-signature",
-      "parameter",
-      "property-declaration",
-      "member-variable-declaration"
-    ]
+    "typedef": [true, "call-signature", "parameter", "property-declaration"]
   },
   "linterOptions": {
     "exclude": ["node_modules/**/*", "src/generated/*"]

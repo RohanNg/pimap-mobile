@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { Card, Paragraph, Title } from 'react-native-paper'
 import {
   Button,
   Image,
-  View,
   Text,
   TouchableOpacity,
+  View,
   StyleSheet,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 
 export default class RequestItem extends React.Component {
   public render() {
