@@ -6,7 +6,6 @@
     "jsx-no-multiline-js": false,
     "member-ordering": [
       true,
-      "public-before-private",
       "static-before-instance",
       "variables-before-functions"
     ],
