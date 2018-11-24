@@ -15,7 +15,7 @@ export const Topic: React.SFC<{
 }> = ({ title }) => {
   return (
     <ImageBackground
-      source={require('../componentresources/soccer.jpg')}
+      source={require('../../assets/activity_image/soccer.jpg')}
       style={styles.background}
       imageStyle={styles.backgroundImageStyle}
     >
@@ -36,8 +36,7 @@ const styles = StyleSheet.create({
   },
   backgroundImageStyle: {
     borderRadius: theme.roundness,
+    opacity: 0.6,
   },
-  title: {
-    color: 'white',
-  },
+  title: {},
 })

@@ -20,7 +20,7 @@ export default class ResponeItem extends React.Component {
             width: 80,
             borderRadius: 7,
           }}
-          source={require('../componentresources/unocard.jpg')}
+          source={require('../../assets/activity_image/unocard.jpg')}
         />
         <View style={styles.card}>
           <Text style={styles.text}>

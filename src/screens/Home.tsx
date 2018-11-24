@@ -30,8 +30,7 @@ import {
 } from 'react-native-paper'
 
 import * as firebase from 'firebase'
-import Item from '../components/card/Item'
-import PopularItem from '../components/card/PopularItem'
+import { ActivityCard } from '../components/card/ActivityCard'
 import { Topic } from '../components/card/Topic'
 import { Header } from '../components/header'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
@@ -65,15 +64,49 @@ export class Home extends React.Component<HomeScreenProps> {
           </HorizontallyScrollableSection>
 
           <HorizontallyScrollableSection title={'Trendings'}>
-            <Item />
-            <Item />
-            <Item />
+            <ActivityCard
+              activity={{
+                organizer: 'Nooke',
+                title: 'Aurora Watcher',
+                privacy: 'private',
+                image: require('../assets/activity_image/aurora.jpg'),
+              }}
+            />
+            <ActivityCard
+              activity={{
+                organizer: 'Nooke',
+                title: 'Aurora Watcher',
+                privacy: 'public',
+                image: require('../assets/activity_image/aurora.jpg'),
+              }}
+            />
           </HorizontallyScrollableSection>
 
           <HorizontallyScrollableSection title={'Popular, right now'}>
-            <PopularItem />
-            <PopularItem />
-            <PopularItem />
+            <ActivityCard
+              activity={{
+                organizer: 'Dang Nguyen',
+                title: 'Chaimpion League final',
+                privacy: 'private',
+                image: require('../assets/activity_image/C1.jpg'),
+              }}
+            />
+            <ActivityCard
+              activity={{
+                organizer: 'Dang Nguyen',
+                title: 'Chaimpion League final',
+                privacy: 'public',
+                image: require('../assets/activity_image/C1.jpg'),
+              }}
+            />
+            <ActivityCard
+              activity={{
+                organizer: 'Dang Nguyen',
+                title: 'Chaimpion League final',
+                privacy: 'public',
+                image: require('../assets/activity_image/C1.jpg'),
+              }}
+            />
           </HorizontallyScrollableSection>
           <View style={{ height: 18 }} />
         </ScrollView>
@@ -89,7 +122,9 @@ const HorizontallyScrollableSection: React.SFC<{
   return (
     <View style={[styles.section, style]}>
       <Headline>{title}</Headline>
-      <ScrollView horizontal={true}>{children}</ScrollView>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        {children}
+      </ScrollView>
     </View>
   )
 }
