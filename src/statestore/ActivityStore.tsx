@@ -6,6 +6,7 @@ export interface Activity {
   userID: string
   title: string
   description: string
+  tags: string[]
   privary: 'public' | 'private'
   mode: 'onetime' | 'recurring'
   location?: {
@@ -60,6 +61,17 @@ export class ActivityStore {
   @action
   public addActivity(activity: Activity): void {
     this.activities[activity.id] = activity
+  }
+
+  // Use @action for performant and optimized mutation
+  // This method should be invoked directly on store instance.
+  // .e.g. activityStore.addActivity(...)
+  @action
+  public setActivityTItle(activityID: string, title: string): void {
+    const ac = this.activities[activityID]
+    if (ac) {
+      ac.title = title
+    }
   }
 
   @action.bound

@@ -12,10 +12,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { Chip } from 'react-native-paper'
 
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { tags } from '../data/tags'
+import { tabBarIcon } from '../../components/navigation/tabBarIcon'
+import { tags } from '../../data/tags'
+import { theme } from '../../theme'
+import { TagList } from './TagList'
+import { TopicTags } from './TopicTags'
 
 /** All tags are in lowercase for simplicity */
 const tagsLowerCase = tags.map(v => v.toLocaleLowerCase())
@@ -29,6 +31,7 @@ interface TaggingComponenState {
 const CREATE_TAG_PREFIX = 'Create tag'
 
 interface ActivityTaggingInputProps {
+  tagSetChanged: (tags: Immutable.Set<string>) => void
   style?: {}
 }
 
@@ -58,7 +61,7 @@ export class ActivityTaggingInput extends React.Component<
     return (
       <View style={[styles.taggingComponentContainer, this.props.style]}>
         <View style={styles.selectionContainer}>
-          <ChipList
+          <TagList
             values={this.state.taggedValues.toArray()}
             onClose={this.removeTag}
           />
@@ -77,7 +80,7 @@ export class ActivityTaggingInput extends React.Component<
         </View>
         {data.length && (
           <View style={styles.suggestionContainer}>
-            <ChipList values={data} onPress={this.addTag} />
+            <TagList values={data} onPress={this.addTag} />
           </View>
         )}
       </View>
@@ -85,22 +88,28 @@ export class ActivityTaggingInput extends React.Component<
   }
 
   private addTag(tagValue: string): void {
-    const { query, taggedValues } = this.state
+    const { query, taggedValues: oldTaggedValues } = this.state
     let newTag: string
     if (tagValue.startsWith(`${CREATE_TAG_PREFIX} '`)) {
       newTag = this.state.query.toLocaleLowerCase()
     } else {
       newTag = tagValue
     }
+
+    const taggedValues = oldTaggedValues.add(newTag)
+    this.props.tagSetChanged(taggedValues)
     this.setState({
-      taggedValues: taggedValues.add(newTag),
+      taggedValues,
     })
   }
 
   private removeTag(tagValue: string): void {
-    this.setState(({ taggedValues }) => ({
-      taggedValues: taggedValues.remove(tagValue),
-    }))
+    const { taggedValues: oldTaggedValues } = this.state
+    const taggedValues = oldTaggedValues.remove(tagValue)
+    this.props.tagSetChanged(taggedValues)
+    this.setState({
+      taggedValues,
+    })
   }
 
   private onInputFieldFocused(): void {
@@ -117,7 +126,8 @@ export class ActivityTaggingInput extends React.Component<
   ): string[] {
     const qryLowercase = query.toLocaleLowerCase().trim()
     if (!qryLowercase) {
-      return []
+      // User give no query, so we suggest topic tags
+      return TopicTags.filter(t => !existingValues.contains(t!)).toArray()
     }
 
     let suggestion = []
@@ -144,31 +154,6 @@ export class ActivityTaggingInput extends React.Component<
 
     return suggestion
   }
-}
-
-interface ChipSetting {
-  values: string[]
-  onPress?: (chipValue: string) => any
-  onClose?: (chipValue: string) => any
-}
-
-const ChipList: React.SFC<ChipSetting> = ({ onClose, onPress, values }) => {
-  return (
-    <React.Fragment>
-      {values.map(v => {
-        return (
-          <Chip
-            key={v}
-            style={styles.chip}
-            onPress={onPress && (() => onPress(v))}
-            onClose={onClose && (() => onClose(v))}
-          >
-            {v}
-          </Chip>
-        )
-      })}
-    </React.Fragment>
-  )
 }
 
 const BORDER_WITH = 1
@@ -207,10 +192,6 @@ const styles = StyleSheet.create({
     borderColor: '#b9b9b9',
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  chip: {
-    marginLeft: 4,
-    marginTop: 4,
   },
   inputField: {
     flex: 1,

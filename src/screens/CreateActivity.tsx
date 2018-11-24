@@ -1,5 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Facebook } from 'expo'
+import * as Immutable from 'immutable'
+import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import * as React from 'react'
 import {
@@ -29,12 +31,11 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import { inject, observer } from 'mobx-react'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityTaggingInput } from './ActivityTaggingInput'
+import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
-import { ActivityStore } from '../statestore/ActivityStore'
+import { Activity, ActivityStore } from '../statestore/ActivityStore'
 
 import { AppStateStore } from '../statestore'
 
@@ -44,6 +45,7 @@ interface CreateActivityState {
   privateActivity: boolean
   recurrningActivity: boolean
   isDateTimePickerVisible: boolean
+  tags: Immutable.Set<string>
   date?: Date
   coordinate?: {
     longitude: number
@@ -76,6 +78,15 @@ export class CreateActivity extends React.Component<
     tabBarIcon: tabBarIcon('list'),
   }
 
+  public state: CreateActivityState = {
+    privateActivity: true,
+    recurrningActivity: false,
+    isDateTimePickerVisible: false,
+    tags: Immutable.Set(),
+    title: '',
+    description: '',
+  }
+
   public static getDerivedStateFromProps(
     props: CreateActivityProps,
     state: CreateActivityState,
@@ -89,27 +100,6 @@ export class CreateActivity extends React.Component<
     }
 
     return null
-  }
-
-  constructor(props: CreateActivityProps) {
-    super(props)
-    this.state = {
-      privateActivity: true,
-      recurrningActivity: false,
-      isDateTimePickerVisible: false,
-      title: '',
-      description: '',
-    }
-
-    this.togglePrivateActivity = this.togglePrivateActivity.bind(this)
-    this.toggleRecurringActivity = this.toggleRecurringActivity.bind(this)
-    this.navigateToLocationSelectionView = this.navigateToLocationSelectionView.bind(
-      this,
-    )
-
-    this.hideDateTimePicker = this.hideDateTimePicker.bind(this)
-    this.showDateTimePicker = this.showDateTimePicker.bind(this)
-    this.handleDatePicked = this.handleDatePicked.bind(this)
   }
 
   public render(): React.ReactNode {
@@ -177,7 +167,10 @@ export class CreateActivity extends React.Component<
               mode={'datetime'}
             />
           </View>
-          <ActivityTaggingInput style={{ marginHorizontal: 8 }} />
+          <ActivityTaggingInput
+            style={{ marginHorizontal: 8 }}
+            tagSetChanged={this.tagSetChanged}
+          />
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
@@ -223,6 +216,7 @@ export class CreateActivity extends React.Component<
               mode="contained"
               style={styles.submitButton}
               onPress={this.createActivity}
+              disabled={!this.isInputValid()}
             >
               <Text>Create</Text>
             </Button>
@@ -230,6 +224,10 @@ export class CreateActivity extends React.Component<
         </ScrollView>
       </View>
     )
+  }
+
+  private tagSetChanged = (newTagSet: Immutable.Set<string>) => {
+    this.setState({ tags: newTagSet })
   }
 
   private activityTitleChanged = (title: string) => {
@@ -240,7 +238,7 @@ export class CreateActivity extends React.Component<
     this.setState({ description: desc })
   }
 
-  private createActivity = () => {
+  private isInputValid = () => {
     const {
       title,
       description,
@@ -249,43 +247,66 @@ export class CreateActivity extends React.Component<
       privateActivity,
       recurrningActivity,
     } = this.state
-    this.props.activityStore.addActivity({
+
+    return (
+      coordinate &&
+      date &&
+      title.trim().length !== 0 &&
+      description.trim().length !== 0
+    )
+  }
+
+  private createActivity = () => {
+    const {
+      title,
+      description,
+      coordinate,
+      date,
+      tags,
+      privateActivity,
+      recurrningActivity,
+    } = this.state
+
+    const activity: Activity = {
       description,
       title,
       time: date!,
       id: 'activity-id',
       images: [],
+      tags: tags.toArray(),
       location: coordinate,
       mode: recurrningActivity ? 'recurring' : 'onetime',
       privary: privateActivity ? 'private' : 'public',
       userID: 'dangnguyen',
-    })
+    }
+
+    this.props.activityStore.addActivity(activity)
 
     this.props.navigation.navigate('ActivityPage', {
       activityID: 'activity-id',
     })
   }
 
-  private navigateToLocationSelectionView(): void {
+  private navigateToLocationSelectionView = () => {
     this.props.navigation.navigate('LocationSelection')
   }
 
-  private showDateTimePicker(): void {
+  private showDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: true })
   }
 
-  private hideDateTimePicker(): void {
+  private hideDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: false })
   }
 
-  private handleDatePicked(date: Date): void {
+  private handleDatePicked = (date: Date) => {
     this.setState({
       isDateTimePickerVisible: false,
       date,
     })
   }
 
-  private togglePrivateActivity(): void {
+  private togglePrivateActivity = () => {
     this.setState(({ privateActivity }) => {
       return {
         privateActivity: !privateActivity,
@@ -293,7 +314,7 @@ export class CreateActivity extends React.Component<
     })
   }
 
-  private toggleRecurringActivity(): void {
+  private toggleRecurringActivity = () => {
     this.setState(({ recurrningActivity }) => {
       return {
         recurrningActivity: !recurrningActivity,
@@ -340,5 +361,5 @@ const styles = StyleSheet.create({
     marginTop: 24,
     alignItems: 'center',
   },
-  submitButton: { backgroundColor: '#F27979', width: 120 },
+  submitButton: { width: 120 },
 })

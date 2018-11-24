@@ -28,8 +28,8 @@ interface MeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
-import { Chat } from '../components/chat/Chat'
 import { ActivityCard } from '../components/card/ActivityCard'
+import { Chat } from '../components/chat/Chat'
 
 export class MeScreen extends React.Component<MeScreenProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions = {

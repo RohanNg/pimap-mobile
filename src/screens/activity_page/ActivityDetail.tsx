@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import { Ionicons } from '@expo/vector-icons'
-
+import { observer } from 'mobx-react'
 import {
   Appbar,
   Button,
@@ -28,6 +28,7 @@ import {
 } from 'react-native-paper'
 
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
+import { TagList } from '../../components/tags'
 import { Activity } from '../../statestore'
 import { theme } from '../../theme'
 
@@ -38,7 +39,7 @@ interface ActivityDetailProps {
 
 export class ActivityDetail extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
-    const { title, description } = this.props.activity
+    const { title, description, tags } = this.props.activity
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
@@ -47,15 +48,21 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>{description}</Paragraph>
+        <ScrollView
+          style={styles.tagListContainer}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <TagList values={tags} />
+        </ScrollView>
         <View style={styles.buttonContainer}>
           <Button
             mode="contained"
             onPress={() => console.info('cool')}
             icon={flightIcon}
             style={styles.backButton}
-            color={'black'}
           >
-            Accept Invitation
+            <Text style={styles.acceptButtom}>Accept Invitation</Text>
           </Button>
         </View>
         <PeopleList people={peopleData} caption={'Interested'} />
@@ -138,15 +145,14 @@ const styles = StyleSheet.create({
   },
   placeTimeInfo: {
     fontStyle: 'italic',
+    fontSize: 14,
   },
   activityDescription: {
-    marginTop: SECTION_SPACING,
     fontSize: 16,
   },
   buttonContainer: {
     marginTop: SECTION_SPACING,
-    backgroundColor: 'black',
-    zIndex: 10000,
+    alignItems: 'center',
   },
   peopleListContainer: {
     marginTop: SECTION_SPACING,
@@ -161,6 +167,13 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   backButton: {
-    backgroundColor: 'black',
+    width: 240,
+  },
+  tagListContainer: {
+    marginLeft: -4,
+    flexDirection: 'row',
+  },
+  acceptButtom: {
+    color: 'white',
   },
 })
