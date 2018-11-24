@@ -30,10 +30,12 @@ import {
 } from 'react-native-paper'
 
 import * as firebase from 'firebase'
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import Item from '../components/card/Item'
-import Topic from '../components/card/Topic'
 import PopularItem from '../components/card/PopularItem'
+import Topic from '../components/card/Topic'
+import { Header } from '../components/header'
+import { tabBarIcon } from '../components/navigation/tabBarIcon'
+import { theme } from '../theme'
 
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -49,81 +51,60 @@ export class Home extends React.Component<HomeScreenProps> {
 
   public render(): React.ReactNode {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <Appbar.Header>
-          <Appbar.BackAction
-            onPress={async () => {
-              await firebase.auth().signOut()
-              this.props.navigation.navigate('Login')
-            }}
-          />
-          <Appbar.Content title="Actify" />
-        </Appbar.Header>
-        <View style={{ flex: 1 }}>
-          <ScrollView scrollEventThrottle={16}>
-            <View
-              style={{
-                flex: 1,
-                backgroundColor: 'white',
-                paddingTop: 20,
-                paddingHorizontal: 17,
-              }}
-            >
-              <View>
-                <Text style={{ fontSize: 24, fontWeight: '700' }}>Topics</Text>
-                <Text style={{ fontWeight: '100', marginTop: 10 }}>
-                  See interesting event grouped by topic
-                </Text>
-              </View>
+      <View style={styles.container}>
+        <Header
+          title="Home"
+          goBack={async () => {
+            await firebase.auth().signOut()
+            this.props.navigation.navigate('Login')
+          }}
+        />
+        <ScrollView style={styles.bodyContainer}>
+          <HorizontallyScrollableSection title={'Topics'}>
+            <Topic children="Football" />
+            <Topic children="Football" />
+            <Topic children="Football" />
+          </HorizontallyScrollableSection>
 
-              <View style={{ height: 130, marginTop: 20 }}>
-                <ScrollView
-                  horizontal={true}
-                  showsHorizontalScrollIndicator={false}
-                >
-                  <Topic children="Football" />
-                  <Topic children="Football" />
-                  <Topic children="Football" />
-                </ScrollView>
-              </View>
-              <View style={{ marginTop: 20 }}>
-                <Text style={{ fontSize: 24, fontWeight: '700' }}>
-                  Trending
-                </Text>
+          <HorizontallyScrollableSection title={'Trendings'}>
+            <Item />
+            <Item />
+            <Item />
+          </HorizontallyScrollableSection>
 
-                <View style={{ height: 170, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    <Item />
-                    <Item />
-                    <Item />
-                  </ScrollView>
-                </View>
-              </View>
-              <View style={{}}>
-                <Text style={{ fontSize: 24, fontWeight: '700' }}>
-                  Popular, right now
-                </Text>
-
-                <View style={{ height: 200, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    <PopularItem />
-                    <PopularItem />
-                    <PopularItem />
-                  </ScrollView>
-                </View>
-              </View>
-            </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
+          <HorizontallyScrollableSection title={'Popular, right now'}>
+            <PopularItem />
+            <PopularItem />
+            <PopularItem />
+          </HorizontallyScrollableSection>
+          <View style={{ height: 18 }} />
+        </ScrollView>
+      </View>
     )
   }
 }
 
-const styles = StyleSheet.create({})
+const HorizontallyScrollableSection: React.SFC<{
+  title: string
+  style?: {}
+}> = ({ title, children, style }) => {
+  return (
+    <View style={[styles.section, style]}>
+      <Headline>{title}</Headline>
+      <ScrollView horizontal={true}>{children}</ScrollView>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  bodyContainer: {
+    backgroundColor: theme.colors!.background,
+    paddingHorizontal: 8,
+  },
+  section: {
+    marginTop: 20,
+  },
+})

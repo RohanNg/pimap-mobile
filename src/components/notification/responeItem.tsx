@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { Card, Paragraph, Title } from 'react-native-paper'
 import {
   Button,
+  Dimensions,
   Image,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
+  View,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 
 export default class ResponeItem extends React.Component {
   public render() {

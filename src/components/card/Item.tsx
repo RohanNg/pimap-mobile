@@ -1,15 +1,15 @@
 import * as React from 'react'
-import { Card, Title, Paragraph } from 'react-native-paper'
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
   Button,
+  Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 export default class Item extends React.Component {
-  render() {
+  public render() {
     return (
       <View
         style={{

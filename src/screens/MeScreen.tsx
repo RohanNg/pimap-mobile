@@ -19,9 +19,8 @@ import {
   NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
-import ProfilePic from '../components/ProfilePic'
 import Item from '../components/card/Item'
-
+import ProfilePic from '../components/ProfilePic'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 

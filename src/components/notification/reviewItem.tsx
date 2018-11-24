@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { Card, Paragraph, Title } from 'react-native-paper'
 import {
   Button,
   Image,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 
 export default class ReviewItem extends React.Component {
   public render() {

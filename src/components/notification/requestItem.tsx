@@ -2,10 +2,10 @@ import * as React from 'react'
 import {
   Button,
   Image,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
 
