@@ -2,22 +2,22 @@ import { Facebook, Google } from 'expo'
 import * as firebase from 'firebase'
 import React, { Component } from 'react'
 import {
-  Image,
   Alert,
+  Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  SafeAreaView,
   TouchableOpacity,
+  View,
 } from 'react-native'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
 
+import { Appbar, Button, TextInput, Title } from 'react-native-paper'
 import { SignUpScreen } from './SignUpScreen'
-import { Appbar, TextInput, Title, Button } from 'react-native-paper'
 
 interface LoginScreenProps {
   navigation: NavigationScreenProp<{}, {}>

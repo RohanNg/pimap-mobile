@@ -1,14 +1,14 @@
 import * as React from 'react'
-import { Card, Paragraph, Title } from 'react-native-paper'
 import {
   Button,
+  Dimensions,
   Image,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
+  View,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 
 export default class ResponeItem extends React.Component {
   public render() {
@@ -20,7 +20,7 @@ export default class ResponeItem extends React.Component {
             width: 80,
             borderRadius: 7,
           }}
-          source={require('../componentresources/unocard.jpg')}
+          source={require('../../assets/activity_image/unocard.jpg')}
         />
         <View style={styles.card}>
           <Text style={styles.text}>

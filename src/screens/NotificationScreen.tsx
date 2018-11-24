@@ -18,11 +18,11 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
+import { Appbar } from 'react-native-paper'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import RequestItem from '../components/notification/requestItem'
-import { Appbar } from 'react-native-paper'
-import ReviewItem from '../components/notification/reviewItem'
 import ResponeItem from '../components/notification/responeItem'
+import ReviewItem from '../components/notification/reviewItem'
 
 interface NotificationScreenProps {
   navigation: NavigationScreenProp<{}, {}>

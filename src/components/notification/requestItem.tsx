@@ -2,10 +2,10 @@ import * as React from 'react'
 import {
   Button,
   Image,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
 
@@ -21,7 +21,7 @@ export default class RequestItem extends React.Component {
               borderRadius: 15,
               marginLeft: 1,
             }}
-            source={require('../componentresources/nooke.jpg')}
+            source={require('../../assets/activity_image/nooke.jpg')}
           />
           <Paragraph style={styles.name}>Nooke Parviainen</Paragraph>
         </Card.Content>

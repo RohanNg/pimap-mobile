@@ -28,8 +28,8 @@ import {
 } from 'react-native-paper'
 
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
-import { theme } from '../../theme'
 import { Activity } from '../../statestore'
+import { theme } from '../../theme'
 
 interface ActivityDetailProps {
   activity: Activity

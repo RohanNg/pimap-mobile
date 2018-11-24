@@ -1,13 +1,13 @@
 import * as React from 'react'
-import { Card, Paragraph, Title } from 'react-native-paper'
 import {
   Button,
   Image,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
+  View,
 } from 'react-native'
+import { Card, Paragraph, Title } from 'react-native-paper'
 
 export default class ReviewItem extends React.Component {
   public render() {
@@ -21,7 +21,7 @@ export default class ReviewItem extends React.Component {
               borderRadius: 15,
               marginLeft: 1,
             }}
-            source={require('../componentresources/nooke.jpg')}
+            source={require('../../assets/activity_image/nooke.jpg')}
           />
           <Paragraph style={styles.name}>Nooke Parviainen</Paragraph>
         </Card.Content>
