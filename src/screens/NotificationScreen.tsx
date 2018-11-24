@@ -6,6 +6,7 @@ import {
   Platform,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
   View,
 } from 'react-native'
@@ -17,9 +18,11 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import { Appbar } from 'react-native-paper'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import RequestItem from '../components/notification/requestItem'
+import { Appbar } from 'react-native-paper'
+import ReviewItem from '../components/notification/reviewItem'
+import ResponeItem from '../components/notification/responeItem'
 
 interface NotificationScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -43,14 +46,12 @@ export class NotificationScreen extends React.Component<
         </Appbar.Header>
         <View>
           <ScrollView scrollEventThrottle={16}>
-            <View style={{ backgroundColor: 'white', paddingTop: 20 }}>
+            <View style={styles.importantContent}>
               <View style={{ paddingHorizontal: 17 }}>
-                <Text style={{ fontSize: 20, fontWeight: '700' }}>
-                  Important
-                </Text>
+                <Text style={styles.importantText}>Important</Text>
 
                 <View
-                  style={{ height: 220, marginTop: 20, alignItems: 'center' }}
+                  style={{ height: 220, marginTop: 5, alignItems: 'center' }}
                 >
                   <ScrollView
                     horizontal={true}
@@ -60,28 +61,16 @@ export class NotificationScreen extends React.Component<
                   </ScrollView>
                 </View>
               </View>
-              <View style={{ marginTop: 20, paddingHorizontal: 17 }}>
+              <View style={{ marginTop: 8, paddingHorizontal: 17 }}>
                 <Text style={{ fontSize: 20, fontWeight: '700' }}>
                   Activities
                 </Text>
 
-                <View style={{ height: 200, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  />
+                <View style={{ height: 110, marginTop: 5 }}>
+                  <ReviewItem />
                 </View>
-              </View>
-              <View style={{ marginTop: -10, paddingHorizontal: 17 }}>
-                <Text style={{ fontSize: 24, fontWeight: '700' }}>
-                  Popular, right now
-                </Text>
-
-                <View style={{ height: 200, marginTop: 20 }}>
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  />
+                <View style={{ height: 120, marginTop: 5, marginBottom: 100 }}>
+                  <ResponeItem />
                 </View>
               </View>
             </View>
@@ -91,3 +80,14 @@ export class NotificationScreen extends React.Component<
     )
   }
 }
+
+const styles = StyleSheet.create({
+  importantContent: {
+    backgroundColor: 'white',
+    paddingTop: 20,
+  },
+  importantText: {
+    fontSize: 20,
+    fontWeight: '700',
+  },
+})

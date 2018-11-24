@@ -19,8 +19,9 @@ import {
   NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
-import Item from '../components/Item'
 import ProfilePic from '../components/ProfilePic'
+import Item from '../components/card/Item'
+
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
@@ -72,56 +73,22 @@ export class MeScreen extends React.Component<MeScreenProps> {
                 }}
                 source={require('../resources/nooke.jpg')}
               />
-              <Paragraph
-                style={{
-                  marginLeft: 10,
-                  fontSize: 16,
-                  color: '#A8A8A8',
-                  fontWeight: '300',
-                }}
-              >
-                Nooke Parviainen
-              </Paragraph>
+              <Paragraph style={styles.reviewer}>Nooke Parviainen</Paragraph>
             </Card.Content>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                justifyContent: 'center',
-                marginBottom: 25,
-                marginTop: 3,
-              }}
-            >
+            <View style={styles.review}>
               <IconButton color="#F27979" size={20} icon="star" />
               <IconButton color="#F27979" size={20} icon="star" />
               <IconButton color="#F27979" size={20} icon="star" />
               <IconButton color="#F27979" size={20} icon="star" />
               <IconButton color="#F27979" size={20} icon="star" />
             </View>
-            <Text
-              style={{
-                marginBottom: 30,
-                paddingHorizontal: 10,
-                textAlign: 'center',
-              }}
-            >
+            <Text style={styles.reviewcomment}>
               Nam Anh hosted a variety of really cool cultural event around the
               Kilo region, which really spices my evening up. Thanks bro.
             </Text>
           </Card>
         </View>
-        <Text
-          style={{
-            textAlign: 'right',
-            marginTop: 10,
-            marginBottom: 20,
-            marginRight: 17,
-            color: '#F27979',
-            textDecorationLine: 'underline',
-          }}
-        >
-          See all reviews
-        </Text>
+        <Text style={styles.fullreview}>See all reviews</Text>
         <View style={{ marginTop: 20, paddingHorizontal: 17 }}>
           <Text style={{ fontSize: 24, fontWeight: '700' }}>
             Event he hosted
@@ -154,6 +121,32 @@ const styles = StyleSheet.create({
   textdetail: {
     fontSize: 14,
     color: 'grey',
+    fontWeight: '300',
+  },
+  review: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 25,
+    marginTop: 3,
+  },
+  reviewcomment: {
+    marginBottom: 30,
+    paddingHorizontal: 10,
+    textAlign: 'center',
+  },
+  fullreview: {
+    textAlign: 'right',
+    marginTop: 10,
+    marginBottom: 20,
+    marginRight: 17,
+    color: '#F27979',
+    textDecorationLine: 'underline',
+  },
+  reviewer: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#A8A8A8',
     fontWeight: '300',
   },
 })

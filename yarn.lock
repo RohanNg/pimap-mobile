@@ -5381,12 +5381,11 @@ mkdirp@*, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
-mobx-react@^5.4.0:
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.4.0.tgz#25540c57a92b078d0955d08166fcc39c88b0f89e"
+mobx-react@^5.4.2:
+  version "5.4.2"
+  resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.4.2.tgz#53db594dbb44752c15b53c355babaa94a6af5934"
   dependencies:
     hoist-non-react-statics "^3.0.0"
-    react-is "^16.3.2"
     react-lifecycles-compat "^3.0.2"
 
 mobx-utils@^5.1.0:

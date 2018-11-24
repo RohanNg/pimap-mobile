@@ -8,6 +8,7 @@ import { AuthStateProvider } from './services/AuthService'
 
 import { theme } from './theme'
 
+
 import { Provider as MobxProvider } from 'mobx-react'
 import { ActivityStore, appStateStore, AppStateStore } from './statestore'
 
