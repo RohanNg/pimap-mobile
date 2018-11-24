@@ -62,6 +62,17 @@ export class ActivityStore {
     this.activities[activity.id] = activity
   }
 
+  // Use @action for performant and optimized mutation
+  // This method should be invoked directly on store instance.
+  // .e.g. activityStore.addActivity(...)
+  @action
+  public setActivityTItle(activityID: string, title: string): void {
+    const ac = this.activities[activityID]
+    if (ac) {
+      ac.title = title
+    }
+  }
+
   @action.bound
   // With bound, this method can be passed around as a function
   // .e.g

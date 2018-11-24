@@ -12,7 +12,7 @@ import {
 } from 'react-native'
 
 import { Ionicons } from '@expo/vector-icons'
-
+import { observer } from 'mobx-react'
 import {
   Appbar,
   Button,

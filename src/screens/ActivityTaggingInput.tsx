@@ -16,6 +16,7 @@ import { Chip } from 'react-native-paper'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { tags } from '../data/tags'
+import { theme } from '../theme'
 
 /** All tags are in lowercase for simplicity */
 const tagsLowerCase = tags.map(v => v.toLocaleLowerCase())
@@ -26,9 +27,19 @@ interface TaggingComponenState {
   taggedValues: Immutable.OrderedSet<string>
 }
 
+const TopicTags: Immutable.Set<string> = Immutable.OrderedSet([
+  'nature',
+  'sport',
+  'music',
+  'animal',
+  'science',
+  'technology',
+])
+
 const CREATE_TAG_PREFIX = 'Create tag'
 
 interface ActivityTaggingInputProps {
+  tagSetChanged: (tags: Immutable.Set<string>) => void
   style?: {}
 }
 
@@ -85,22 +96,28 @@ export class ActivityTaggingInput extends React.Component<
   }
 
   private addTag(tagValue: string): void {
-    const { query, taggedValues } = this.state
+    const { query, taggedValues: oldTaggedValues } = this.state
     let newTag: string
     if (tagValue.startsWith(`${CREATE_TAG_PREFIX} '`)) {
       newTag = this.state.query.toLocaleLowerCase()
     } else {
       newTag = tagValue
     }
+
+    const taggedValues = oldTaggedValues.add(newTag)
+    this.props.tagSetChanged(taggedValues)
     this.setState({
-      taggedValues: taggedValues.add(newTag),
+      taggedValues,
     })
   }
 
   private removeTag(tagValue: string): void {
-    this.setState(({ taggedValues }) => ({
-      taggedValues: taggedValues.remove(tagValue),
-    }))
+    const { taggedValues: oldTaggedValues } = this.state
+    const taggedValues = oldTaggedValues.remove(tagValue)
+    this.props.tagSetChanged(taggedValues)
+    this.setState({
+      taggedValues,
+    })
   }
 
   private onInputFieldFocused(): void {
@@ -117,7 +134,8 @@ export class ActivityTaggingInput extends React.Component<
   ): string[] {
     const qryLowercase = query.toLocaleLowerCase().trim()
     if (!qryLowercase) {
-      return []
+      // User give no query, so we suggest topic tags
+      return TopicTags.filter(t => !existingValues.contains(t!)).toArray()
     }
 
     let suggestion = []
@@ -156,10 +174,14 @@ const ChipList: React.SFC<ChipSetting> = ({ onClose, onPress, values }) => {
   return (
     <React.Fragment>
       {values.map(v => {
+        const style = [styles.chip]
+        if (TopicTags.contains(v)) {
+          style.push(styles.topicChip)
+        }
         return (
           <Chip
             key={v}
-            style={styles.chip}
+            style={style}
             onPress={onPress && (() => onPress(v))}
             onClose={onClose && (() => onClose(v))}
           >
@@ -211,6 +233,10 @@ const styles = StyleSheet.create({
   chip: {
     marginLeft: 4,
     marginTop: 4,
+  },
+  topicChip: {
+    borderWidth: 1,
+    borderColor: theme.colors!.primary,
   },
   inputField: {
     flex: 1,

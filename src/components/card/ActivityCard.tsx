@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, ImageSourcePropType } from 'react-native'
+import { ImageSourcePropType, StyleSheet } from 'react-native'
 import { Button, Caption, Card, Paragraph, Text } from 'react-native-paper'
 import { theme } from '../../theme'
 
