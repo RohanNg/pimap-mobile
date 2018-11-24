@@ -12,11 +12,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { Chip } from 'react-native-paper'
 
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { tags } from '../data/tags'
-import { theme } from '../theme'
+import { tabBarIcon } from '../../components/navigation/tabBarIcon'
+import { tags } from '../../data/tags'
+import { theme } from '../../theme'
+import { TagList } from './TagList'
+import { TopicTags } from './TopicTags'
 
 /** All tags are in lowercase for simplicity */
 const tagsLowerCase = tags.map(v => v.toLocaleLowerCase())
@@ -26,15 +27,6 @@ interface TaggingComponenState {
   inputFieldFocused: boolean
   taggedValues: Immutable.OrderedSet<string>
 }
-
-const TopicTags: Immutable.Set<string> = Immutable.OrderedSet([
-  'nature',
-  'sport',
-  'music',
-  'animal',
-  'science',
-  'technology',
-])
 
 const CREATE_TAG_PREFIX = 'Create tag'
 
@@ -69,7 +61,7 @@ export class ActivityTaggingInput extends React.Component<
     return (
       <View style={[styles.taggingComponentContainer, this.props.style]}>
         <View style={styles.selectionContainer}>
-          <ChipList
+          <TagList
             values={this.state.taggedValues.toArray()}
             onClose={this.removeTag}
           />
@@ -88,7 +80,7 @@ export class ActivityTaggingInput extends React.Component<
         </View>
         {data.length && (
           <View style={styles.suggestionContainer}>
-            <ChipList values={data} onPress={this.addTag} />
+            <TagList values={data} onPress={this.addTag} />
           </View>
         )}
       </View>
@@ -164,35 +156,6 @@ export class ActivityTaggingInput extends React.Component<
   }
 }
 
-interface ChipSetting {
-  values: string[]
-  onPress?: (chipValue: string) => any
-  onClose?: (chipValue: string) => any
-}
-
-const ChipList: React.SFC<ChipSetting> = ({ onClose, onPress, values }) => {
-  return (
-    <React.Fragment>
-      {values.map(v => {
-        const style = [styles.chip]
-        if (TopicTags.contains(v)) {
-          style.push(styles.topicChip)
-        }
-        return (
-          <Chip
-            key={v}
-            style={style}
-            onPress={onPress && (() => onPress(v))}
-            onClose={onClose && (() => onClose(v))}
-          >
-            {v}
-          </Chip>
-        )
-      })}
-    </React.Fragment>
-  )
-}
-
 const BORDER_WITH = 1
 
 const border = {
@@ -229,14 +192,6 @@ const styles = StyleSheet.create({
     borderColor: '#b9b9b9',
     paddingTop: 4,
     paddingBottom: 8,
-  },
-  chip: {
-    marginLeft: 4,
-    marginTop: 4,
-  },
-  topicChip: {
-    borderWidth: 1,
-    borderColor: theme.colors!.primary,
   },
   inputField: {
     flex: 1,

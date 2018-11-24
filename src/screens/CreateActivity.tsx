@@ -1,5 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Facebook } from 'expo'
+import * as Immutable from 'immutable'
+import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import * as React from 'react'
 import {
@@ -28,14 +30,12 @@ import {
   NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
-import { inject, observer } from 'mobx-react'
-import * as Immutable from 'immutable'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityTaggingInput } from './ActivityTaggingInput'
+import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
-import { ActivityStore, Activity } from '../statestore/ActivityStore'
+import { Activity, ActivityStore } from '../statestore/ActivityStore'
 
 import { AppStateStore } from '../statestore'
 

@@ -6,6 +6,7 @@ export interface Activity {
   userID: string
   title: string
   description: string
+  tags: string[]
   privary: 'public' | 'private'
   mode: 'onetime' | 'recurring'
   location?: {
