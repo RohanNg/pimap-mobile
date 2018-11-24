@@ -8,21 +8,20 @@ import {
   View,
 } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
+import { theme } from '../../theme'
 
-export default class Topic extends React.Component {
-  public render(): React.ReactNode {
-    return (
-      <ImageBackground
-        source={require('../componentresources/soccer.jpg')}
-        style={styles.background}
-        imageStyle={{ borderRadius: 7 }}
-      >
-        <View style={styles.textpostion}>
-          <Text style={styles.text}>Football</Text>
-        </View>
-      </ImageBackground>
-    )
-  }
+export const Topic: React.SFC<{
+  title: string
+}> = ({ title }) => {
+  return (
+    <ImageBackground
+      source={require('../componentresources/soccer.jpg')}
+      style={styles.background}
+      imageStyle={styles.backgroundImageStyle}
+    >
+      <Title style={styles.title}>{title}</Title>
+    </ImageBackground>
+  )
 }
 
 const styles = StyleSheet.create({
@@ -35,13 +34,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 50,
   },
-  textpostion: {
-    justifyContent: 'center',
-    alignItems: 'center',
+  backgroundImageStyle: {
+    borderRadius: theme.roundness,
   },
-  text: {
-    fontSize: 14,
-    fontWeight: '600',
+  title: {
     color: 'white',
   },
 })

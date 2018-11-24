@@ -32,7 +32,7 @@ import {
 import * as firebase from 'firebase'
 import Item from '../components/card/Item'
 import PopularItem from '../components/card/PopularItem'
-import Topic from '../components/card/Topic'
+import { Topic } from '../components/card/Topic'
 import { Header } from '../components/header'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { theme } from '../theme'
@@ -40,8 +40,6 @@ import { theme } from '../theme'
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
-
-const { height, width } = Dimensions.get('window')
 
 export class Home extends React.Component<HomeScreenProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
@@ -61,9 +59,9 @@ export class Home extends React.Component<HomeScreenProps> {
         />
         <ScrollView style={styles.bodyContainer}>
           <HorizontallyScrollableSection title={'Topics'}>
-            <Topic children="Football" />
-            <Topic children="Football" />
-            <Topic children="Football" />
+            <Topic title="Football" />
+            <Topic title="Music" />
+            <Topic title="Boardgame" />
           </HorizontallyScrollableSection>
 
           <HorizontallyScrollableSection title={'Trendings'}>

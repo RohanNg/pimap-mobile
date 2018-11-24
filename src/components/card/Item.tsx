@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
+
 export default class Item extends React.Component {
   public render() {
     return (
