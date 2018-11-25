@@ -20,29 +20,28 @@ export class ActivityStore {
     // Lookup cache
     const savedActivity = this.activities[activityKey]
     if (savedActivity) {
-      console.info('Activity found in cache')
       return Promise.resolve(savedActivity)
     }
 
     // Retrieve && update cache
     const docRef = this.activityCollection.doc(activityKey)
     const activity = await Activity.retrieve(docRef)
-    if (activity) {
-      this.store(activity)
+    if (!activity) {
+      return undefined
     }
-    return activity
+
+    return this.store(activity)
   }
 
   @action
   public async createActivity(value: RawActivityValue): Promise<Activity> {
     const activity = await Activity.create(this.activityCollection.doc(), value)
-    console.info('activity was created')
-    this.store(activity)
-    return activity
+    return this.store(activity)
   }
 
   @action
-  private store(activity: Activity): void {
+  private store(activity: Activity): Activity {
     this.activities[activity.id] = activity
+    return activity
   }
 }

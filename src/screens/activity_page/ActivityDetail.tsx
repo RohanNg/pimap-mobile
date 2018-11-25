@@ -37,6 +37,7 @@ interface ActivityDetailProps {
   style?: ViewStyle
 }
 
+@observer
 export class ActivityDetail extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
     const { title, description, tags } = this.props.activity.value

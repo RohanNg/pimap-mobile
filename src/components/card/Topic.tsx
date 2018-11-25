@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  ImageRequireSource,
   View,
 } from 'react-native'
 import { Card, Paragraph, Title } from 'react-native-paper'
@@ -12,10 +13,11 @@ import { theme } from '../../theme'
 
 export const Topic: React.SFC<{
   title: string
-}> = ({ title }) => {
+  image: ImageRequireSource
+}> = ({ title, image }) => {
   return (
     <ImageBackground
-      source={require('../../assets/activity_image/soccer.jpg')}
+      source={image}
       style={styles.background}
       imageStyle={styles.backgroundImageStyle}
     >
@@ -36,7 +38,11 @@ const styles = StyleSheet.create({
   },
   backgroundImageStyle: {
     borderRadius: theme.roundness,
-    opacity: 0.6,
+    opacity: 0.7,
   },
-  title: {},
+  title: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
 })

@@ -68,7 +68,6 @@ export class NearbyActivities extends React.Component<
 
   public render(): React.ReactNode {
     const { navigation, user } = this.props
-    console.info(user.uid)
 
     return (
       <View style={styles.wrapper}>

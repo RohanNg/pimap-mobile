@@ -52,7 +52,6 @@ export class Activity {
     docRef: firebase.firestore.DocumentReference,
     value: ActivityValue,
   ): Promise<Activity> {
-    console.info(Activity.toJson(value))
     const result = await docRef.set(Activity.toJson(value))
     return new Activity(docRef, value)
   }
