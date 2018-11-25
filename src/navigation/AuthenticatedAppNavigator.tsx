@@ -15,11 +15,13 @@ import { theme } from '../theme'
 import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
 
+const AuthedNearbyActivities = withAuthenticatedUser(NearbyActivities)
+const AuthedCreateActivity = withAuthenticatedUser(CreateActivity)
 export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
   {
     Home,
-    NearbyActivities: withAuthenticatedUser(NearbyActivities),
-    CreateActivity,
+    NearbyActivities: AuthedNearbyActivities,
+    CreateActivity: AuthedCreateActivity,
     NotificationScreen,
     MeScreen,
   },
