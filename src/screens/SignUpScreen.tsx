@@ -25,7 +25,8 @@ interface SignUpScreenProps {
 interface SignUpScreenState {
   email: string
   password: string
-  name: string
+  firstname: string
+  lastname: string
   error?: string
 }
 
@@ -33,9 +34,7 @@ export class SignUpScreen extends Component<
   SignUpScreenProps,
   SignUpScreenState
 > {
-  public static navigationOptions: NavigationStackScreenOptions = {
-    title: 'Sign Up',
-  }
+  public static navigationOptions: NavigationStackScreenOptions = {}
 
   public static readonly EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   // Spec:
@@ -49,7 +48,8 @@ export class SignUpScreen extends Component<
     this.state = {
       email: '',
       password: '',
-      name: '',
+      firstname: '',
+      lastname: '',
     }
 
     this.signUpWithEmailPassword = this.signUpWithEmailPassword.bind(this)
@@ -59,97 +59,78 @@ export class SignUpScreen extends Component<
 
   public render(): React.ReactNode {
     return (
-      <SafeAreaView>
-        <ScrollView scrollEventThrottle={16}>
-          <View style={styles.container}>
-            <Title style={{ fontSize: 24 }}>Sign Up</Title>
-            <Text style={{ marginTop: 10 }}>Step 1 / 2</Text>
-            <Text
-              style={{
-                marginTop: 5,
-                color: '#F27979',
-                fontWeight: '600',
-                fontSize: 18,
-              }}
-            >
-              Basic Information
-            </Text>
-            <Text style={styles.texttitle}>Profile Name</Text>
-
+      <ScrollView>
+        <View style={styles.container}>
+          <Title style={{ fontSize: 24 }}>Sign Up</Title>
+          <Text style={{ marginTop: 10 }}>Step 1 / 2</Text>
+          <Text style={styles.textLabel}>Basic Information</Text>
+          <Text style={styles.texttitle}>Profile Name</Text>
+          <View style={styles.inputNameView}>
             <TextInput
               style={styles.nameInput}
               mode="outlined"
               autoCorrect={false}
-              onChangeText={name => this.setState({ name })}
-              placeholder="John Doe"
+              onChangeText={firstname => this.setState({ firstname })}
+              placeholder="Firstname"
             />
-            <Text style={styles.texttitle}>Email Address</Text>
-
             <TextInput
-              autoCapitalize="none"
+              style={[styles.nameInput, { marginLeft: 20 }]}
               mode="outlined"
               autoCorrect={false}
-              style={styles.textInput}
-              onChangeText={email => this.setState({ email })}
-              placeholder="john.doe@gmail.com"
+              onChangeText={lastname => this.setState({ lastname })}
+              placeholder="Lastname"
             />
-            <Text style={styles.texttitle}>Password</Text>
-            <TextInput
-              style={styles.textInput}
-              mode="outlined"
-              secureTextEntry={true}
-              autoCapitalize="none"
-              autoCorrect={false}
-              onChangeText={password => this.setState({ password })}
-              placeholder="*******"
-            />
-            <Text style={{ marginTop: 10, fontWeight: '600' }}>
-              Signup using Social Media
-            </Text>
-            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
-              <TouchableOpacity onPress={this.signUpWithFacebook}>
-                <Image
-                  source={require('../resources/facebook.png')}
-                  fadeDuration={0}
-                  style={{ width: 30, height: 30, marginTop: 10 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.signUpWithGoogle}>
-                <Image
-                  source={require('../resources/google.png')}
-                  fadeDuration={0}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    marginTop: 10,
-                    marginLeft: 10,
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.error}> {this.state.error}</Text>
-            {/*<Button
-              onPress={this.signUpWithGoogle}
-              title="Sign up with Google"
-            />
-            <Button
-              onPress={this.signUpWithFacebook}
-              title="Sign up with Facebook"
-            />
-
-            <Text style={styles.error}> {this.state.error}</Text>*/}
-
-            <Button
-              disabled={!this.validateInput()}
-              onPress={this.signUpWithEmailPassword}
-              mode="contained"
-              style={styles.buttonsignup}
-            >
-              <Text style={{ color: 'white', fontSize: 14 }}>Next</Text>
-            </Button>
           </View>
-        </ScrollView>
-      </SafeAreaView>
+
+          <Text style={styles.texttitle}>Email Address</Text>
+
+          <TextInput
+            autoCapitalize="none"
+            mode="outlined"
+            autoCorrect={false}
+            style={styles.textInput}
+            onChangeText={email => this.setState({ email })}
+            placeholder="john.doe@gmail.com"
+          />
+          <Text style={styles.texttitle}>Password</Text>
+          <TextInput
+            style={styles.textInput}
+            mode="outlined"
+            secureTextEntry={true}
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={password => this.setState({ password })}
+            placeholder="*******"
+          />
+          <Text style={styles.socialTitle}>Signup using Social Media</Text>
+          <View style={styles.socialImageView}>
+            <TouchableOpacity onPress={this.signUpWithFacebook}>
+              <Image
+                source={require('../resources/facebook.png')}
+                fadeDuration={0}
+                style={styles.fbImage}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.signUpWithGoogle}>
+              <Image
+                source={require('../resources/google.png')}
+                fadeDuration={0}
+                style={styles.googleImage}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.error}> {this.state.error}</Text>
+
+          <Button
+            disabled={!this.validateInput()}
+            onPress={this.signUpWithEmailPassword}
+            mode="contained"
+            style={styles.buttonsignup}
+          >
+            <Text style={styles.btnText}>Next</Text>
+          </Button>
+        </View>
+      </ScrollView>
     )
   }
 
@@ -157,7 +138,8 @@ export class SignUpScreen extends Component<
     return (
       SignUpScreen.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
       SignUpScreen.PASSWORD_REGEX.test(this.state.password) &&
-      SignUpScreen.NAME_REGEX.test(this.state.name)
+      SignUpScreen.NAME_REGEX.test(this.state.firstname) &&
+      SignUpScreen.NAME_REGEX.test(this.state.lastname)
     )
   }
 
@@ -204,6 +186,12 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
   },
+  textLabel: {
+    marginTop: 5,
+    color: '#F27979',
+    fontWeight: '600',
+    fontSize: 18,
+  },
   texttitle: {
     marginTop: 16,
   },
@@ -217,6 +205,7 @@ const styles = StyleSheet.create({
   nameInput: {
     height: 46,
     marginTop: 1,
+    width: 130,
   },
   nameInputRow: {
     flex: 1,
@@ -228,5 +217,33 @@ const styles = StyleSheet.create({
     width: 140,
     alignSelf: 'center',
     justifyContent: 'center',
+  },
+  btnText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  inputNameView: {
+    flexDirection: 'row',
+    paddingRight: 17,
+  },
+  googleImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  fbImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+  },
+  socialTitle: {
+    marginTop: 10,
+    fontWeight: '600',
+  },
+  socialImageView: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 5,
   },
 })

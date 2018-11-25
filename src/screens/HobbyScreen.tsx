@@ -19,60 +19,56 @@ interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
+const hobbyList = [
+  'Gaming',
+  'Art',
+  'Music',
+  'Political movement',
+  'TV Show',
+  'Adult',
+  'Tech',
+  'Science',
+  'Sport',
+  'Cultural',
+  'Pet',
+  'Nature',
+  'Outdoor',
+]
+
 export class HobbyScreen extends React.Component<HobbyScreenProps> {
   constructor(props: HobbyScreenProps) {
     super(props)
   }
 
   public render(): React.ReactNode {
-    const hobbyList = [
-      'Gaming',
-      'Art',
-      'Music',
-      'Political movement',
-      'TV Show',
-      'Adult',
-      'Tech',
-      'Science',
-      'Sport',
-      'Cultural',
-      'Pet',
-      'Nature',
-      'Outdoor',
-    ]
     return (
-      <SafeAreaView>
-        <View style={styles.container}>
-          <Title style={{ fontSize: 24 }}>Sign Up</Title>
-          <Text style={{ marginTop: 10 }}>Step 2 / 2</Text>
-          <Text style={styles.textHeader}>Tell us your interest</Text>
-          <View style={styles.chip}>
-            {hobbyList.map(item => {
-              return (
-                <Chip
-                  mode="outlined"
-                  style={styles.chipitem}
-                  theme={theme}
-                  onPress={() => {
-                    console.log(item)
-                  }}
-                  key={item}
-                >
-                  {item}
-                </Chip>
-              )
-            })}
-          </View>
-
-          <Button
-            mode="contained"
-            style={styles.buttonsignup}
-            onPress={() => this.props.navigation.navigate('App')}
-          >
-            <Text style={{ color: 'white', fontSize: 14 }}>I'M DONE!</Text>
-          </Button>
+      <View style={styles.container}>
+        <Title style={{ fontSize: 24 }}>Sign Up</Title>
+        <Text style={{ marginTop: 10 }}>Step 2 / 2</Text>
+        <Text style={styles.textHeader}>Tell us your interest</Text>
+        <View style={styles.chip}>
+          {hobbyList.map(item => {
+            return (
+              <Chip
+                mode="outlined"
+                style={styles.chipitem}
+                onPress={() => {}}
+                key={item}
+              >
+                {item}
+              </Chip>
+            )
+          })}
         </View>
-      </SafeAreaView>
+
+        <Button
+          mode="contained"
+          style={styles.buttonsignup}
+          onPress={() => this.props.navigation.navigate('App')}
+        >
+          <Text style={styles.btnText}>I'M DONE!</Text>
+        </Button>
+      </View>
     )
   }
 }
@@ -113,5 +109,9 @@ const styles = StyleSheet.create({
   chipitem: {
     margin: 3,
     alignContent: 'center',
+  },
+  btnText: {
+    color: 'white',
+    fontSize: 14,
   },
 })
