@@ -90,18 +90,21 @@ export class LocationSelection extends React.Component<
             >
               <Marker coordinate={this.state.coordinate} />
             </MapView>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate('CreateActivity', {
-                    coordinate: this.state.coordinate,
-                  })
-                }
-                style={styles.bubble}
-              >
-                <Text>Back</Text>
-              </TouchableOpacity>
-            </View>
+            {this.state.coordinate && (
+              <View style={styles.buttonContainer}>
+                <TouchableOpacity
+                  onPress={() => {
+                    const { latitude, longitude } = this.state.coordinate!
+                    this.props.navigation.navigate('CreateActivity', {
+                      coordinate: { lat: latitude, lon: longitude },
+                    })
+                  }}
+                  style={styles.bubble}
+                >
+                  <Text>Back</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </React.Fragment>
         )}
       </View>

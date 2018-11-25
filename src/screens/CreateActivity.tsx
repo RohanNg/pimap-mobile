@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import * as React from 'react'
 import {
+  ActivityIndicator,
   Alert,
   ScrollView,
   StyleSheet,
@@ -35,9 +36,9 @@ import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
-import { Activity, ActivityStore } from '../statestore/ActivityStore'
 
-import { AppStateStore } from '../statestore'
+import { Activity, ActivityStore, ActivityValue } from '../datastore'
+import { AppStateStore } from '../datastore'
 
 interface CreateActivityState {
   title: string
@@ -48,9 +49,10 @@ interface CreateActivityState {
   tags: Immutable.Set<string>
   date?: Date
   coordinate?: {
-    longitude: number
-    latitude: number
+    lon: number
+    lat: number
   }
+  creatingInprogress: boolean
 }
 
 interface CreateActivityProps {
@@ -58,11 +60,12 @@ interface CreateActivityProps {
     {},
     {
       coordinate: {
-        latitude: number
-        longitude: number
+        lat: number
+        lon: number
       }
     }
   >
+  user: firebase.User
   activityStore: ActivityStore
 }
 
@@ -76,15 +79,6 @@ export class CreateActivity extends React.Component<
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Activities',
     tabBarIcon: tabBarIcon('list'),
-  }
-
-  public state: CreateActivityState = {
-    privateActivity: true,
-    recurrningActivity: false,
-    isDateTimePickerVisible: false,
-    tags: Immutable.Set(),
-    title: '',
-    description: '',
   }
 
   public static getDerivedStateFromProps(
@@ -102,8 +96,30 @@ export class CreateActivity extends React.Component<
     return null
   }
 
+  public state: CreateActivityState = {
+    privateActivity: true,
+    recurrningActivity: false,
+    isDateTimePickerVisible: false,
+    tags: Immutable.Set(),
+    title: '',
+    description: '',
+    creatingInprogress: false,
+  }
+
   public render(): React.ReactNode {
-    const { date } = this.state
+    const { date, creatingInprogress } = this.state
+
+    if (creatingInprogress) {
+      return (
+        <View style={styles.wrapper}>
+          <View
+            style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}
+          >
+            <ActivityIndicator />
+          </View>
+        </View>
+      )
+    }
 
     return (
       <View style={styles.wrapper}>
@@ -140,9 +156,9 @@ export class CreateActivity extends React.Component<
             >
               <Text>
                 {this.state.coordinate
-                  ? `${this.state.coordinate.latitude.toFixed(
+                  ? `${this.state.coordinate.lat.toFixed(
                       4,
-                    )},${this.state.coordinate.longitude.toFixed(4)}`
+                    )},${this.state.coordinate.lon.toFixed(4)}`
                   : 'Set'}
               </Text>
             </Button>
@@ -256,7 +272,9 @@ export class CreateActivity extends React.Component<
     )
   }
 
-  private createActivity = () => {
+  private createActivity = async () => {
+    this.setState({ creatingInprogress: true })
+    const { user } = this.props
     const {
       title,
       description,
@@ -267,23 +285,22 @@ export class CreateActivity extends React.Component<
       recurrningActivity,
     } = this.state
 
-    const activity: Activity = {
+    const activity: ActivityValue = {
       description,
       title,
       time: date!,
-      id: 'activity-id',
       images: [],
       tags: tags.toArray(),
-      location: coordinate,
+      coordinate: coordinate!,
       mode: recurrningActivity ? 'recurring' : 'onetime',
-      privary: privateActivity ? 'private' : 'public',
-      userID: 'dangnguyen',
+      privacy: privateActivity ? 'private' : 'public',
+      creatorID: user.uid,
     }
 
-    this.props.activityStore.addActivity(activity)
+    const { id } = await this.props.activityStore.createActivity(activity)
 
     this.props.navigation.navigate('ActivityPage', {
-      activityID: 'activity-id',
+      activityID: id,
     })
   }
 

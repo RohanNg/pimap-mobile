@@ -9,12 +9,13 @@ import { AuthStateProvider } from './services/AuthService'
 import { theme } from './theme'
 
 import { Provider as MobxProvider } from 'mobx-react'
-import { ActivityStore, appStateStore, AppStateStore } from './statestore'
+import { buildAppDataStore } from './datastore'
+import { db } from './services/FireBase'
 
 init()
 
 export class App extends React.Component<{}, {}> {
-  private activityStore = new ActivityStore()
+  private dataStore = buildAppDataStore({ db })
   constructor(props: {}) {
     super(props)
   }
@@ -22,7 +23,7 @@ export class App extends React.Component<{}, {}> {
   public render(): React.ReactElement<{}> {
     return (
       <PaperProvider theme={theme}>
-        <MobxProvider {...appStateStore}>
+        <MobxProvider {...this.dataStore}>
           <AuthStateProvider>
             <RootNavigator />
           </AuthStateProvider>

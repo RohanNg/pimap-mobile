@@ -4,11 +4,7 @@
   "rules": {
     "interface-name": [true, "never-prefix"],
     "jsx-no-multiline-js": false,
-    "member-ordering": [
-      true,
-      "static-before-instance",
-      "variables-before-functions"
-    ],
+    "member-ordering": [true, "static-before-instance"],
     "no-any": true,
     "no-console": [true, "log", "debug", "time", "timeEnd", "trace"],
     "no-namespace": [true, "allow-declarations"],

@@ -29,7 +29,7 @@ import {
 
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { TagList } from '../../components/tags'
-import { Activity } from '../../statestore'
+import { Activity } from '../../datastore'
 import { theme } from '../../theme'
 
 interface ActivityDetailProps {
@@ -39,7 +39,7 @@ interface ActivityDetailProps {
 
 export class ActivityDetail extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
-    const { title, description, tags } = this.props.activity
+    const { title, description, tags } = this.props.activity.value
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
