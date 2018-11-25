@@ -1,28 +1,20 @@
 import * as React from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { YellowBox } from 'react-native'
 import { Provider as PaperProvider } from 'react-native-paper'
 import { RootNavigator } from './navigation/RootNavigator'
 import { AuthStateProvider } from './services/AuthService'
 
-import { YellowBox } from 'react-native'
-YellowBox.ignoreWarnings([
-  // Warning from react-native-paper Card component
-  'You are setting the style `{ elevation: ... }` as a prop',
-])
-
 import { theme } from './theme'
-import { YellowBox } from 'react-native'
 
-YellowBox.ignoreWarnings([
-  // Warning from react-native-paper Card component
-  'You are setting the style `{ elevation: ... }` as a prop',
-])
-interface AppState {
-  text: string
-}
+import { Provider as MobxProvider } from 'mobx-react'
+import { ActivityStore, appStateStore, AppStateStore } from './statestore'
 
-export class App extends React.Component<{}, AppState> {
+init()
+
+export class App extends React.Component<{}, {}> {
+  private activityStore = new ActivityStore()
   constructor(props: {}) {
     super(props)
   }
@@ -30,10 +22,19 @@ export class App extends React.Component<{}, AppState> {
   public render(): React.ReactElement<{}> {
     return (
       <PaperProvider theme={theme}>
-        <AuthStateProvider>
-          <RootNavigator />
-        </AuthStateProvider>
+        <MobxProvider {...appStateStore}>
+          <AuthStateProvider>
+            <RootNavigator />
+          </AuthStateProvider>
+        </MobxProvider>
       </PaperProvider>
     )
   }
+}
+
+function init(): void {
+  YellowBox.ignoreWarnings([
+    // Warning from react-native-paper Card component
+    'You are setting the style `{ elevation: ... }` as a prop',
+  ])
 }

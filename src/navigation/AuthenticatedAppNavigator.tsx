@@ -24,7 +24,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'CreateActivity',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',

@@ -69,7 +69,7 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
             style={styles.buttonsignup}
             onPress={() => this.props.navigation.navigate('App')}
           >
-            <Text style={{ color: 'white', fontSize: 14 }}>Next</Text>
+            <Text style={{ color: 'white', fontSize: 14 }}>I'M DONE!</Text>
           </Button>
         </View>
       </SafeAreaView>

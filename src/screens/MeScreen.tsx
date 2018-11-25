@@ -19,8 +19,8 @@ import {
   NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
+
 import ProfilePic from '../components/ProfilePic'
-import Item from '../components/card/Item'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
@@ -28,6 +28,7 @@ interface MeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
+import { ActivityCard } from '../components/card/ActivityCard'
 import { Chat } from '../components/chat/Chat'
 
 export class MeScreen extends React.Component<MeScreenProps> {
@@ -93,16 +94,20 @@ export class MeScreen extends React.Component<MeScreenProps> {
             Event he hosted
           </Text>
 
-          <View style={{ height: 200, marginTop: 20 }}>
-            <ScrollView
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            >
-              <Item />
-              <Item />
-              <Item />
-            </ScrollView>
-          </View>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            style={{ height: 200, marginTop: 20 }}
+          >
+            <ActivityCard
+              activity={{
+                organizer: 'Nooke',
+                title: 'Aurora Watcher',
+                privacy: 'public',
+                image: require('../assets/activity_image/aurora.jpg'),
+              }}
+            />
+          </ScrollView>
         </View>
       </ScrollView>
     )

@@ -1,5 +1,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { Facebook } from 'expo'
+import * as Immutable from 'immutable'
+import { inject, observer } from 'mobx-react'
 import moment from 'moment'
 import * as React from 'react'
 import {
@@ -30,14 +32,20 @@ import {
 } from 'react-navigation'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityTaggingInput } from './ActivityTaggingInput'
+import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
+import { Activity, ActivityStore } from '../statestore/ActivityStore'
+
+import { AppStateStore } from '../statestore'
 
 interface CreateActivityState {
+  title: string
+  description: string
   privateActivity: boolean
   recurrningActivity: boolean
   isDateTimePickerVisible: boolean
+  tags: Immutable.Set<string>
   date?: Date
   coordinate?: {
     longitude: number
@@ -55,8 +63,12 @@ interface CreateActivityProps {
       }
     }
   >
+  activityStore: ActivityStore
 }
 
+@inject<AppStateStore, CreateActivityProps>(allStores => ({
+  activityStore: allStores.activityStore,
+}))
 export class CreateActivity extends React.Component<
   CreateActivityProps,
   CreateActivityState
@@ -64,6 +76,15 @@ export class CreateActivity extends React.Component<
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Activities',
     tabBarIcon: tabBarIcon('list'),
+  }
+
+  public state: CreateActivityState = {
+    privateActivity: true,
+    recurrningActivity: false,
+    isDateTimePickerVisible: false,
+    tags: Immutable.Set(),
+    title: '',
+    description: '',
   }
 
   public static getDerivedStateFromProps(
@@ -81,27 +102,9 @@ export class CreateActivity extends React.Component<
     return null
   }
 
-  constructor(props: CreateActivityProps) {
-    super(props)
-    this.state = {
-      privateActivity: true,
-      recurrningActivity: false,
-      isDateTimePickerVisible: false,
-    }
-
-    this.togglePrivateActivity = this.togglePrivateActivity.bind(this)
-    this.toggleRecurringActivity = this.toggleRecurringActivity.bind(this)
-    this.navigateToLocationSelectionView = this.navigateToLocationSelectionView.bind(
-      this,
-    )
-
-    this.hideDateTimePicker = this.hideDateTimePicker.bind(this)
-    this.showDateTimePicker = this.showDateTimePicker.bind(this)
-    this.handleDatePicked = this.handleDatePicked.bind(this)
-  }
-
   public render(): React.ReactNode {
     const { date } = this.state
+
     return (
       <View style={styles.wrapper}>
         <Header title="Create Activity" />
@@ -116,6 +119,7 @@ export class CreateActivity extends React.Component<
             style={styles.inputContainerStyle}
             placeholder="Short name of your activities"
             value={undefined}
+            onChangeText={this.activityTitleChanged}
           />
           <TextInput
             mode="outlined"
@@ -124,6 +128,7 @@ export class CreateActivity extends React.Component<
             placeholder="Please describe your activities"
             value={undefined}
             multiline={true}
+            onChangeText={this.activityDescChanged}
           />
           <View style={[styles.inputContainerStyle, styles.row]}>
             <Subheading>Location</Subheading>
@@ -162,7 +167,10 @@ export class CreateActivity extends React.Component<
               mode={'datetime'}
             />
           </View>
-          <ActivityTaggingInput style={{ marginHorizontal: 8 }} />
+          <ActivityTaggingInput
+            style={{ marginHorizontal: 8 }}
+            tagSetChanged={this.tagSetChanged}
+          />
           <View style={styles.inputContainerStyle}>
             <View style={styles.row}>
               <Subheading>
@@ -207,7 +215,8 @@ export class CreateActivity extends React.Component<
             <Button
               mode="contained"
               style={styles.submitButton}
-              onPress={() => this.props.navigation.navigate('ActivityPage')}
+              onPress={this.createActivity}
+              disabled={!this.isInputValid()}
             >
               <Text>Create</Text>
             </Button>
@@ -217,26 +226,87 @@ export class CreateActivity extends React.Component<
     )
   }
 
-  private navigateToLocationSelectionView(): void {
+  private tagSetChanged = (newTagSet: Immutable.Set<string>) => {
+    this.setState({ tags: newTagSet })
+  }
+
+  private activityTitleChanged = (title: string) => {
+    this.setState({ title })
+  }
+
+  private activityDescChanged = (desc: string) => {
+    this.setState({ description: desc })
+  }
+
+  private isInputValid = () => {
+    const {
+      title,
+      description,
+      coordinate,
+      date,
+      privateActivity,
+      recurrningActivity,
+    } = this.state
+
+    return (
+      coordinate &&
+      date &&
+      title.trim().length !== 0 &&
+      description.trim().length !== 0
+    )
+  }
+
+  private createActivity = () => {
+    const {
+      title,
+      description,
+      coordinate,
+      date,
+      tags,
+      privateActivity,
+      recurrningActivity,
+    } = this.state
+
+    const activity: Activity = {
+      description,
+      title,
+      time: date!,
+      id: 'activity-id',
+      images: [],
+      tags: tags.toArray(),
+      location: coordinate,
+      mode: recurrningActivity ? 'recurring' : 'onetime',
+      privary: privateActivity ? 'private' : 'public',
+      userID: 'dangnguyen',
+    }
+
+    this.props.activityStore.addActivity(activity)
+
+    this.props.navigation.navigate('ActivityPage', {
+      activityID: 'activity-id',
+    })
+  }
+
+  private navigateToLocationSelectionView = () => {
     this.props.navigation.navigate('LocationSelection')
   }
 
-  private showDateTimePicker(): void {
+  private showDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: true })
   }
 
-  private hideDateTimePicker(): void {
+  private hideDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: false })
   }
 
-  private handleDatePicked(date: Date): void {
+  private handleDatePicked = (date: Date) => {
     this.setState({
       isDateTimePickerVisible: false,
       date,
     })
   }
 
-  private togglePrivateActivity(): void {
+  private togglePrivateActivity = () => {
     this.setState(({ privateActivity }) => {
       return {
         privateActivity: !privateActivity,
@@ -244,7 +314,7 @@ export class CreateActivity extends React.Component<
     })
   }
 
-  private toggleRecurringActivity(): void {
+  private toggleRecurringActivity = () => {
     this.setState(({ recurrningActivity }) => {
       return {
         recurrningActivity: !recurrningActivity,
@@ -291,5 +361,5 @@ const styles = StyleSheet.create({
     marginTop: 24,
     alignItems: 'center',
   },
-  submitButton: { backgroundColor: '#F27979', width: 120 },
+  submitButton: { width: 120 },
 })

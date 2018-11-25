@@ -10,14 +10,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import {
-  NavigationBottomTabScreenOptions,
-  NavigationScreenProp,
-  SafeAreaView,
-} from 'react-navigation'
 
 import { Ionicons } from '@expo/vector-icons'
-
+import { observer } from 'mobx-react'
 import {
   Appbar,
   Button,
@@ -33,47 +28,41 @@ import {
 } from 'react-native-paper'
 
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
+import { TagList } from '../../components/tags'
+import { Activity } from '../../statestore'
 import { theme } from '../../theme'
 
 interface ActivityDetailProps {
-  navigation: NavigationScreenProp<{}, {}>
+  activity: Activity
   style?: ViewStyle
 }
 
 export class ActivityDetail extends React.Component<ActivityDetailProps> {
-  public static navigationOptions: NavigationBottomTabScreenOptions = {
-    title: 'Home',
-    tabBarIcon: tabBarIcon('home'),
-  }
-
   public render(): React.ReactNode {
+    const { title, description, tags } = this.props.activity
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Title style={styles.headLine}>Aurora watcher Helsinki</Title>
+        <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
-        <Paragraph style={styles.activityDescription}>
-          Aurora activity tonight in the Helsinki region.
-          {'\n'}
-          If you haven’t known, Finland is blessed with Northern light. Because
-          we have such long summer its quite hard to see the thing. According to
-          the Finnish meteorological institute at Helsinki we can have 1/20
-          chance a month to see this spectacular phenomenon, but due to the
-          light and the fact that winter is quite cloudy and crappy here, this
-          is a golden gem. So don’t miss!
-          {'\n'}I can pick you up by car if you happen to be nearby.
-        </Paragraph>
+        <Paragraph style={styles.activityDescription}>{description}</Paragraph>
+        <ScrollView
+          style={styles.tagListContainer}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
+          <TagList values={tags} />
+        </ScrollView>
         <View style={styles.buttonContainer}>
           <Button
             mode="contained"
             onPress={() => console.info('cool')}
             icon={flightIcon}
             style={styles.backButton}
-            color={'black'}
           >
-            Accept Invitation
+            <Text style={styles.acceptButtom}>Accept Invitation</Text>
           </Button>
         </View>
         <PeopleList people={peopleData} caption={'Interested'} />
@@ -156,15 +145,14 @@ const styles = StyleSheet.create({
   },
   placeTimeInfo: {
     fontStyle: 'italic',
+    fontSize: 14,
   },
   activityDescription: {
-    marginTop: SECTION_SPACING,
     fontSize: 16,
   },
   buttonContainer: {
     marginTop: SECTION_SPACING,
-    backgroundColor: 'black',
-    zIndex: 10000,
+    alignItems: 'center',
   },
   peopleListContainer: {
     marginTop: SECTION_SPACING,
@@ -179,6 +167,13 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   backButton: {
-    backgroundColor: 'black',
+    width: 240,
+  },
+  tagListContainer: {
+    marginLeft: -4,
+    flexDirection: 'row',
+  },
+  acceptButtom: {
+    color: 'white',
   },
 })

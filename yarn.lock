@@ -5384,15 +5384,28 @@ mkdirp@*, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
 mobx-react@^5.4.2:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/mobx-react/-/mobx-react-5.4.2.tgz#53db594dbb44752c15b53c355babaa94a6af5934"
+<<<<<<< HEAD
   integrity sha512-alSN0KDAAOb1OkYujfoJjjk0JWxWRKO4sLGB4hN2CuvaJMrlj7bhGQe7CBMJvEFNjtJRbhJcquYVjQ3rrH2zQQ==
+=======
+>>>>>>> 10eff9ed101223255b433e05206d0214f9c51fbd
   dependencies:
     hoist-non-react-statics "^3.0.0"
     react-lifecycles-compat "^3.0.2"
 
+<<<<<<< HEAD
 mobx@^5.6.0:
   version "5.6.0"
   resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.6.0.tgz#e381c357e0ed7685a99a896455ecc66ff5ab84ee"
   integrity sha512-xrA0tBnSMANXCDjS2W/6YTasesA8mkg9o+v/Bw/OcbXaRVE6/soVwDMWIh7A6TwMDY4tYQprQJZ5WQN1TRSb3A==
+=======
+mobx-utils@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/mobx-utils/-/mobx-utils-5.1.0.tgz#3a08f3bb004ca5f4331083763c07c7275e5989a5"
+
+mobx@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-5.6.0.tgz#e381c357e0ed7685a99a896455ecc66ff5ab84ee"
+>>>>>>> 10eff9ed101223255b433e05206d0214f9c51fbd
 
 moment@*, moment@2.x.x, moment@^2.10.6, moment@^2.19.0, moment@^2.22.2:
   version "2.22.2"
@@ -7659,6 +7672,10 @@ type-is@~1.6.16:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+
+typelevel-ts@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/typelevel-ts/-/typelevel-ts-0.3.2.tgz#af03275e232278f6d5f6216d0f7f302a8ed924fa"
 
 typescript@^2.8.3:
   version "2.9.2"
