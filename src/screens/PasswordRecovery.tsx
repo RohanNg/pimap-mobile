@@ -1,5 +1,4 @@
 import * as firebase from 'firebase'
-import gql from 'graphql-tag'
 import React, { Component } from 'react'
 import {
   Alert,

@@ -3,18 +3,20 @@ import * as firebase from 'firebase'
 import React, { Component } from 'react'
 import {
   Alert,
-  Button,
+  TouchableOpacity,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
+  SafeAreaView,
 } from 'react-native'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
 import { signInWithFacebook, signInWithGoogle } from './LoginScreen'
+import { Title, TextInput, Button } from 'react-native-paper'
 
 interface SignUpScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -23,8 +25,7 @@ interface SignUpScreenProps {
 interface SignUpScreenState {
   email: string
   password: string
-  firstName: string
-  lastName: string
+  name: string
   error?: string
 }
 
@@ -41,15 +42,14 @@ export class SignUpScreen extends Component<
   //   Length > 6
   //   Valid char: "a-z" "0-9" "A-Z" plus special chars in https://www.owasp.org/index.php/Password_special_characters
   public static readonly PASSWORD_REGEX: RegExp = /^[a-z0-9A-Z !"#$%&'()*+,.\/:;<=>?@[\]\\^_`{|}~-]{6,}$/
-  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z]{1,40}$/
+  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z ]{1,40}$/
 
   constructor(props: SignUpScreenProps) {
     super(props)
     this.state = {
       email: '',
       password: '',
-      firstName: '',
-      lastName: '',
+      name: '',
     }
 
     this.signUpWithEmailPassword = this.signUpWithEmailPassword.bind(this)
@@ -59,49 +59,97 @@ export class SignUpScreen extends Component<
 
   public render(): React.ReactNode {
     return (
-      <View style={styles.container}>
-        <Button onPress={this.signUpWithGoogle} title="Sign up with Google" />
-        <Button
-          onPress={this.signUpWithFacebook}
-          title="Sign up with Facebook"
-        />
+      <SafeAreaView>
+        <ScrollView scrollEventThrottle={16}>
+          <View style={styles.container}>
+            <Title style={{ fontSize: 24 }}>Sign Up</Title>
+            <Text style={{ marginTop: 10 }}>Step 1 / 2</Text>
+            <Text
+              style={{
+                marginTop: 5,
+                color: '#F27979',
+                fontWeight: '600',
+                fontSize: 18,
+              }}
+            >
+              Basic Information
+            </Text>
+            <Text style={styles.texttitle}>Profile Name</Text>
 
-        <Text style={styles.error}> {this.state.error}</Text>
-        <View style={styles.nameInputRow}>
-          <TextInput
-            style={styles.nameInput}
-            autoCorrect={false}
-            onChangeText={firstName => this.setState({ firstName })}
-            placeholder="First Name"
-          />
-          <TextInput
-            style={styles.nameInput}
-            autoCorrect={false}
-            onChangeText={lastName => this.setState({ lastName })}
-            placeholder="Last Name"
-          />
-        </View>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          style={styles.textInput}
-          onChangeText={email => this.setState({ email })}
-          placeholder="Email"
-        />
-        <TextInput
-          style={styles.textInput}
-          secureTextEntry={true}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={password => this.setState({ password })}
-          placeholder="Password"
-        />
-        <Button
-          disabled={!this.validateInput()}
-          onPress={this.signUpWithEmailPassword}
-          title="Log in here"
-        />
-      </View>
+            <TextInput
+              style={styles.nameInput}
+              mode="outlined"
+              autoCorrect={false}
+              onChangeText={name => this.setState({ name })}
+              placeholder="John Doe"
+            />
+            <Text style={styles.texttitle}>Email Address</Text>
+
+            <TextInput
+              autoCapitalize="none"
+              mode="outlined"
+              autoCorrect={false}
+              style={styles.textInput}
+              onChangeText={email => this.setState({ email })}
+              placeholder="john.doe@gmail.com"
+            />
+            <Text style={styles.texttitle}>Password</Text>
+            <TextInput
+              style={styles.textInput}
+              mode="outlined"
+              secureTextEntry={true}
+              autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={password => this.setState({ password })}
+              placeholder="*******"
+            />
+            <Text style={{ marginTop: 10, fontWeight: '600' }}>
+              Signup using Social Media
+            </Text>
+            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
+              <TouchableOpacity onPress={this.signUpWithFacebook}>
+                <Image
+                  source={require('../resources/facebook.png')}
+                  fadeDuration={0}
+                  style={{ width: 30, height: 30, marginTop: 10 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={this.signUpWithGoogle}>
+                <Image
+                  source={require('../resources/google.png')}
+                  fadeDuration={0}
+                  style={{
+                    width: 30,
+                    height: 30,
+                    marginTop: 10,
+                    marginLeft: 10,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.error}> {this.state.error}</Text>
+            {/*<Button
+              onPress={this.signUpWithGoogle}
+              title="Sign up with Google"
+            />
+            <Button
+              onPress={this.signUpWithFacebook}
+              title="Sign up with Facebook"
+            />
+
+            <Text style={styles.error}> {this.state.error}</Text>*/}
+
+            <Button
+              disabled={!this.validateInput()}
+              onPress={this.signUpWithEmailPassword}
+              mode="contained"
+              style={styles.buttonsignup}
+            >
+              <Text style={{ color: 'white', fontSize: 14 }}>Next</Text>
+            </Button>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     )
   }
 
@@ -109,20 +157,19 @@ export class SignUpScreen extends Component<
     return (
       SignUpScreen.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
       SignUpScreen.PASSWORD_REGEX.test(this.state.password) &&
-      SignUpScreen.NAME_REGEX.test(this.state.firstName) &&
-      SignUpScreen.NAME_REGEX.test(this.state.lastName)
+      SignUpScreen.NAME_REGEX.test(this.state.name)
     )
   }
 
   private async signUpWithFacebook(): Promise<void> {
     await signInWithFacebook(this.setState, () =>
-      this.props.navigation.navigate('App'),
+      this.props.navigation.navigate('Hobby'),
     )
   }
 
   private async signUpWithGoogle(): Promise<void> {
     await signInWithGoogle(this.setState, () =>
-      this.props.navigation.navigate('App'),
+      this.props.navigation.navigate('Hobby'),
     )
   }
 
@@ -133,7 +180,7 @@ export class SignUpScreen extends Component<
       const authCred = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-      this.props.navigation.navigate('App')
+      this.props.navigation.navigate('Hobby')
     } catch (error) {
       const errorCode = error.code
       let errorInfo
@@ -153,22 +200,33 @@ export class SignUpScreen extends Component<
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 17,
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  texttitle: {
+    marginTop: 16,
   },
   textInput: {
-    margin: 10,
-    paddingLeft: 20,
+    marginTop: 1,
+    height: 46,
   },
   error: {
     textAlign: 'center',
   },
   nameInput: {
-    flex: 1,
+    height: 46,
+    marginTop: 1,
   },
   nameInputRow: {
+    flex: 1,
     flexDirection: 'row',
-    margin: 10,
-    paddingLeft: 20,
+  },
+  buttonsignup: {
+    marginTop: 20,
+    height: 40,
+    width: 140,
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
 })
