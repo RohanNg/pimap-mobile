@@ -15,11 +15,16 @@ import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
+import { inject, observer } from 'mobx-react'
+
 import { signInWithFacebook, signInWithGoogle } from './LoginScreen'
 import { Title, TextInput, Button } from 'react-native-paper'
+import { UserValue, User, UserStore } from '../datastore'
+import { AppStateStore } from '../datastore'
 
 interface SignUpScreenProps {
   navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
 }
 
 interface SignUpScreenState {
@@ -30,7 +35,10 @@ interface SignUpScreenState {
   error?: string
 }
 
-export class SignUpScreen extends Component<
+@inject<AppStateStore, SignUpScreenProps>(allStores => ({
+  userStore: allStores.userStore,
+}))
+export class SignUpScreen extends React.Component<
   SignUpScreenProps,
   SignUpScreenState
 > {
@@ -162,7 +170,7 @@ export class SignUpScreen extends Component<
       const authCred = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-      this.props.navigation.navigate('Hobby')
+      this.createUser()
     } catch (error) {
       const errorCode = error.code
       let errorInfo
@@ -177,6 +185,23 @@ export class SignUpScreen extends Component<
       }
       this.setState({ error: errorInfo })
     }
+  }
+
+  private createUser = async () => {
+    const { firstname, lastname, password, email } = this.state
+
+    const user: UserValue = {
+      firstname,
+      lastname,
+      password,
+      email,
+      hobby: [],
+    }
+
+    const { id } = await this.props.userStore.createUser(user)
+    console.log(user)
+
+    this.props.navigation.navigate('Hobby', { userId: id })
   }
 }
 
