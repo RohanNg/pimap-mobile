@@ -14,6 +14,7 @@ import { theme } from '../theme'
 
 import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
+import { HobbyScreen } from '../screens/HobbyScreen'
 
 const AuthedNearbyActivities = withAuthenticatedUser(NearbyActivities)
 const AuthedCreateActivity = withAuthenticatedUser(CreateActivity)
@@ -48,6 +49,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     authenticatedApp: MainTabNavigator,
     LocationSelection,
     ActivityPage,
+    Hobby: HobbyScreen,
   },
   {
     headerMode: 'none',
