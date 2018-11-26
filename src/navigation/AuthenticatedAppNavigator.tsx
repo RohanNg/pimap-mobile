@@ -15,6 +15,8 @@ import { theme } from '../theme'
 import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
 
+import { LoadingActivityList } from '../screens/activity_list/LoadingActivitiList'
+
 const AuthedNearbyActivities = withAuthenticatedUser(NearbyActivities)
 const AuthedCreateActivity = withAuthenticatedUser(CreateActivity)
 export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
@@ -48,6 +50,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     authenticatedApp: MainTabNavigator,
     LocationSelection,
     ActivityPage,
+    LoadingActivityList,
   },
   {
     headerMode: 'none',

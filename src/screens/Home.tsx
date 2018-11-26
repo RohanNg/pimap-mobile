@@ -61,7 +61,12 @@ export class Home extends React.Component<HomeScreenProps> {
         <ScrollView style={styles.bodyContainer}>
           <HorizontallyScrollableSection title={'Topics'}>
             {topicTags.map(({ name, image }) => (
-              <Topic key={name} title={name} image={image} />
+              <Topic
+                key={name}
+                title={name}
+                image={image}
+                onPress={this.navigateToActivitiesPageForTopic(name)}
+              />
             ))}
           </HorizontallyScrollableSection>
 
@@ -115,6 +120,19 @@ export class Home extends React.Component<HomeScreenProps> {
       </View>
     )
   }
+
+  private navigateToActivitiesPageForTopic = (topic: string) => () => {
+    const { navigation } = this.props
+    const query: (
+      c: firebase.firestore.CollectionReference,
+    ) => firebase.firestore.Query = c =>
+      c.where('tags', 'array-contains', topic.toLocaleLowerCase())
+    console.info('navigating to LoadingActivityList')
+    navigation.navigate('LoadingActivityList', {
+      activityCollectionQuery: query,
+      title: `Discover ${topic} activities`,
+    })
+  }
 }
 
 const HorizontallyScrollableSection: React.SFC<{
@@ -123,8 +141,12 @@ const HorizontallyScrollableSection: React.SFC<{
 }> = ({ title, children, style }) => {
   return (
     <View style={[styles.section, style]}>
-      <Headline>{title}</Headline>
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <Headline style={styles.sectionPadding}>{title}</Headline>
+      <ScrollView
+        style={styles.sectionPadding}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+      >
         {children}
       </ScrollView>
     </View>
@@ -137,9 +159,11 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     backgroundColor: theme.colors!.background,
-    paddingHorizontal: 8,
   },
   section: {
     marginTop: 20,
+  },
+  sectionPadding: {
+    paddingLeft: 16,
   },
 })
