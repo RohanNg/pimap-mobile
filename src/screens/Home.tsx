@@ -58,7 +58,7 @@ export class Home extends React.Component<HomeScreenProps> {
             this.props.navigation.navigate('Login')
           }}
         />
-        <ScrollView style={styles.bodyContainer}>
+        <ScrollView contentContainerStyle={styles.bodyContainer}>
           <HorizontallyScrollableSection title={'Topics'}>
             {topicTags.map(({ name, image }) => (
               <Topic
@@ -115,7 +115,6 @@ export class Home extends React.Component<HomeScreenProps> {
               }}
             />
           </HorizontallyScrollableSection>
-          <View style={{ height: 18 }} />
         </ScrollView>
       </View>
     )
@@ -143,7 +142,7 @@ const HorizontallyScrollableSection: React.SFC<{
     <View style={[styles.section, style]}>
       <Headline style={styles.sectionPadding}>{title}</Headline>
       <ScrollView
-        style={styles.sectionPadding}
+        contentContainerStyle={[styles.sectionPadding, styles.sectionContainer]}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       >
@@ -159,11 +158,15 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     backgroundColor: theme.colors!.background,
+    paddingBottom: 24,
   },
   section: {
     marginTop: 20,
   },
   sectionPadding: {
     paddingLeft: 16,
+  },
+  sectionContainer: {
+    paddingRight: 16,
   },
 })
