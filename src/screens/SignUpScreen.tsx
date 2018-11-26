@@ -199,9 +199,8 @@ export class SignUpScreen extends React.Component<
     }
 
     const { id } = await this.props.userStore.createUser(user)
-    console.log(user)
 
-    this.props.navigation.navigate('Hobby', { userId: id })
+    await this.props.navigation.navigate('Hobby', { userId: id })
   }
 }
 

@@ -36,10 +36,6 @@ const hobbyList = [
 ]
 
 export class HobbyScreen extends React.Component<HobbyScreenProps> {
-  constructor(props: HobbyScreenProps) {
-    super(props)
-  }
-
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
