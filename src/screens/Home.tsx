@@ -36,6 +36,8 @@ import { Header } from '../components/header'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { theme } from '../theme'
 
+import { topicTags } from '../data/topicTags'
+
 interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
@@ -58,9 +60,9 @@ export class Home extends React.Component<HomeScreenProps> {
         />
         <ScrollView style={styles.bodyContainer}>
           <HorizontallyScrollableSection title={'Topics'}>
-            <Topic title="Football" />
-            <Topic title="Music" />
-            <Topic title="Boardgame" />
+            {topicTags.map(({ name, image }) => (
+              <Topic key={name} title={name} image={image} />
+            ))}
           </HorizontallyScrollableSection>
 
           <HorizontallyScrollableSection title={'Trendings'}>

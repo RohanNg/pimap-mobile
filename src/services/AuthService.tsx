@@ -1,36 +1,26 @@
-import * as firebase from 'firebase'
+import { Unsubscribe, User } from 'firebase'
 import hoistNonReactStatics from 'hoist-non-react-statics'
 import * as React from 'react'
 import { AsyncStorage, Button, Text, View } from 'react-native'
 import { NavigationInjectedProps, withNavigation } from 'react-navigation'
 
-const { Consumer, Provider } = React.createContext<null | firebase.User>(null)
+import { app } from './FireBase'
 
-firebase.initializeApp({
-  apiKey: 'AIzaSyCPnkPbheg7YBhL91hHQzQ74Rhx8ZURhbY',
-  authDomain: 'pimap-mobile.firebaseapp.com',
-  databaseURL: 'https://pimap-mobile.firebaseio.com',
-  projectId: 'pimap-mobile',
-  storageBucket: 'pimap-mobile.appspot.com',
-  messagingSenderId: '322720395519',
-})
+const { Consumer, Provider } = React.createContext<null | User>(null)
 
 interface AuthStateState {
-  user: firebase.User | null
+  user: User | null
 }
 
 export class AuthStateProvider extends React.Component<{}, AuthStateState> {
-  private unsubscribed?: firebase.Unsubscribe
+  private unsubscribed?: Unsubscribe
 
-  constructor(props: {}) {
-    super(props)
-    this.state = {
-      user: null,
-    }
+  public state: AuthStateState = {
+    user: null,
   }
 
   public componentDidMount(): void {
-    this.unsubscribed = firebase
+    this.unsubscribed = app
       .auth()
       .onAuthStateChanged(user => this.setState({ user }))
   }
@@ -47,7 +37,7 @@ export class AuthStateProvider extends React.Component<{}, AuthStateState> {
 }
 
 export function withAuthenticatedUser<P>(
-  Component: React.ComponentType<P & { user: firebase.User }>,
+  Component: React.ComponentType<P & { user: User }>,
 ): React.ComponentType<P> {
   const Inner: React.SFC<NavigationInjectedProps & P> = props => {
     return (

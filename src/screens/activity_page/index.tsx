@@ -22,7 +22,7 @@ import { NavigationScreenProp } from 'react-navigation'
 import { Ionicons } from '@expo/vector-icons'
 import { Chat } from '../../components/chat/Chat'
 import { Header } from '../../components/header'
-import { ActivityStore, AppStateStore } from '../../statestore'
+import { ActivityStore, AppStateStore, Activity } from '../../datastore'
 import { theme } from '../../theme'
 import { ActivityDetail } from './ActivityDetail'
 import { Albums } from './Album'
@@ -42,7 +42,9 @@ type RouteProps = Route<{
   icon: string
 }>
 
-type ActivityPageState = NavigationState<RouteProps>
+type ActivityPageState = NavigationState<RouteProps> & {
+  activity: Activity | 'not-exist' | 'loading' | 'loading-failed'
+}
 
 @inject<AppStateStore, ActivityPageProps>(allStores => ({
   activityStore: allStores.activityStore,
@@ -59,15 +61,29 @@ export class ActivityPage extends React.Component<
       { key: 'chat', icon: 'md-chatbubbles' },
       { key: 'images', icon: 'md-photos' },
     ],
+    activity: 'loading',
   }
 
-  private renderScreen: (props: { route: RouteProps }) => React.ReactNode = ({
+  public async componentDidMount(): Promise<void> {
+    try {
+      const activity = await this.props.activityStore.getActivity(
+        this.props.navigation.getParam('activityID')!,
+      )
+      if (!activity) {
+        this.setState({ activity: 'not-exist' })
+      } else {
+        this.setState({ activity })
+      }
+    } catch (err) {
+      this.setState({ activity: 'loading-failed' })
+    }
+  }
+
+  private renderScreen: (
+    activity: Activity,
+  ) => (props: { route: RouteProps }) => React.ReactNode = activity => ({
     route: { key },
   }) => {
-    const activity = this.props.activityStore.getActivity(
-      this.props.navigation.getParam('activityID')!,
-    )
-
     if (key === 'chat') {
       return <Chat />
     } else if (key === 'images') {
@@ -78,25 +94,42 @@ export class ActivityPage extends React.Component<
   }
 
   public render(): React.ReactNode {
+    const { activity } = this.state
+
+    if (!(activity instanceof Activity)) {
+      let message = 'Loading...'
+      if (activity === 'loading-failed') {
+        message = 'Loading failed!'
+      } else if (activity === 'not-exist') {
+        message = 'Activity not exist'
+      }
+      return (
+        <View style={styles.container}>
+          <Text>{message}</Text>
+        </View>
+      )
+    }
+
     return (
       <View style={styles.container}>
-        <Header
-          title={'Activity page'}
-          goBack={() => this.props.navigation.goBack()}
-        />
-        <Image
-          source={require('../../resources/aurora.jpg')}
-          style={styles.coverImage}
-          resizeMode="cover"
-        />
-
-        <TabView
-          style={styles.container}
-          navigationState={this.state}
-          renderScene={this.renderScreen}
-          onIndexChange={this.handleIndexChange}
-          renderTabBar={this.renderTabBar}
-        />
+        <React.Fragment>
+          <Header
+            title={'Activity page'}
+            goBack={() => this.props.navigation.goBack()}
+          />
+          <Image
+            source={require('../../resources/aurora.jpg')}
+            style={styles.coverImage}
+            resizeMode="cover"
+          />
+          <TabView
+            style={styles.container}
+            navigationState={this.state}
+            renderScene={this.renderScreen(activity)}
+            onIndexChange={this.handleIndexChange}
+            renderTabBar={this.renderTabBar}
+          />
+        </React.Fragment>
       </View>
     )
   }
