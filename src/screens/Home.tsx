@@ -140,9 +140,9 @@ const HorizontallyScrollableSection: React.SFC<{
 }> = ({ title, children, style }) => {
   return (
     <View style={[styles.section, style]}>
-      <Headline style={styles.sectionPadding}>{title}</Headline>
+      <Headline style={styles.sectionTitle}>{title}</Headline>
       <ScrollView
-        contentContainerStyle={[styles.sectionPadding, styles.sectionContainer]}
+        contentContainerStyle={styles.sectionContainer}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       >
@@ -163,10 +163,11 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 20,
   },
-  sectionPadding: {
+  sectionTitle: {
     paddingLeft: 16,
   },
   sectionContainer: {
-    paddingRight: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
   },
 })

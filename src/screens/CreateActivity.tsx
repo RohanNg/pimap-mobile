@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Permissions, ImagePicker } from 'expo'
+import { ImagePicker, Permissions } from 'expo'
 import * as Immutable from 'immutable'
 import { inject, observer } from 'mobx-react'
 import moment from 'moment'
