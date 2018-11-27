@@ -1,4 +1,5 @@
 import { action, autorun, computed, observable } from 'mobx'
+import { __await } from 'tslib'
 
 export interface UserValue {
   uid: string
@@ -19,6 +20,18 @@ export interface RawUserValue {
 }
 
 export class User {
+  public static async retrieve(
+    docRef: firebase.firestore.DocumentReference,
+  ): Promise<User | undefined> {
+    const data = await docRef.get()
+    if (!data.exists) {
+      return undefined
+    }
+
+    const { ...rest } = data.data() as RawUserValue
+    return new User({ ...rest })
+  }
+
   public static async createUser(
     docRef: firebase.firestore.DocumentReference,
     value: UserValue,

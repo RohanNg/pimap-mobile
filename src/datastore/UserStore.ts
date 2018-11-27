@@ -17,6 +17,24 @@ export class UserStore {
   }
 
   @action
+  public async getUser(userId: string): Promise<User | undefined> {
+    // Lookup cache
+    const savedUser = this.users[userId]
+    if (savedUser) {
+      return Promise.resolve(savedUser)
+    }
+
+    // Retrieve && update cache
+    const docRef = this.userCollection.doc(userId)
+    const user = await User.retrieve(docRef)
+    if (!user) {
+      return undefined
+    }
+
+    return this.store(user, userId)
+  }
+
+  @action
   public async createUser(value: RawUserValue, uid: string): Promise<User> {
     const user = await User.createUser(this.userCollection.doc(uid), value)
     return this.store(user, uid)
