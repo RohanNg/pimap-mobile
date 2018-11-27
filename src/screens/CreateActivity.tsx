@@ -40,6 +40,7 @@ import { Header } from '../components/header'
 
 import { Activity, ActivityStore, ActivityValue } from '../datastore'
 import { AppStateStore } from '../datastore'
+import { uploadImage } from '../services/FireBase'
 import { theme } from '../theme'
 
 interface CreateActivityState {
@@ -258,6 +259,7 @@ class CreateActivityComp extends React.Component<
   }
 
   private pickImage = async () => {
+    // Example https://github.com/expo/firebase-storage-upload-example/blob/master/App.js
     const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
 
     if (status !== 'granted') {
@@ -270,8 +272,6 @@ class CreateActivityComp extends React.Component<
       allowsEditing: true,
       aspect: [4, 3],
     })
-
-    console.info(result)
 
     if (!result.cancelled) {
       this.setState({ coverImage: result.uri })
@@ -298,11 +298,13 @@ class CreateActivityComp extends React.Component<
       date,
       privateActivity,
       recurrningActivity,
+      coverImage,
     } = this.state
 
     return (
       coordinate &&
       date &&
+      coverImage &&
       title.trim().length !== 0 &&
       description.trim().length !== 0
     )
@@ -319,7 +321,16 @@ class CreateActivityComp extends React.Component<
       tags,
       privateActivity,
       recurrningActivity,
+      coverImage,
     } = this.state
+
+    try {
+      const imageURL = await uploadImage(coverImage)
+      console.info(imageURL)
+    } catch (err) {
+      Alert.alert('Uploading image failed.')
+      return
+    }
 
     const activity: ActivityValue = {
       description,
@@ -331,6 +342,7 @@ class CreateActivityComp extends React.Component<
       mode: recurrningActivity ? 'recurring' : 'onetime',
       privacy: privateActivity ? 'private' : 'public',
       creatorID: user.uid,
+      coverImage,
     }
 
     const { id } = await this.props.activityStore.createActivity(activity)
