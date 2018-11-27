@@ -1,7 +1,7 @@
 import { action, autorun, computed, observable, runInAction } from 'mobx'
 import { createTransformer } from 'mobx-utils'
 
-import { User, RawUserValue } from './User'
+import { User, UserValue } from './User'
 
 export class UserStore {
   private static DB_COLLECTION: string = 'users'
@@ -34,7 +34,7 @@ export class UserStore {
   }
 
   @action
-  public async createUser(value: RawUserValue, uid: string): Promise<User> {
+  public async createUser(value: UserValue, uid: string): Promise<User> {
     const user = await User.createUser(this.userCollection.doc(uid), value)
     return this.store(user, uid)
   }

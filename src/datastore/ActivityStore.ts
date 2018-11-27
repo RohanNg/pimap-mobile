@@ -1,7 +1,7 @@
 import { action, autorun, computed, observable, runInAction } from 'mobx'
 import { createTransformer } from 'mobx-utils'
 
-import { Activity, RawActivityValue } from './Activity'
+import { Activity, ActivityValue } from './Activity'
 
 export class ActivityStore {
   private static DB_COLLECTION: string = 'activities'
@@ -34,7 +34,7 @@ export class ActivityStore {
   }
 
   @action
-  public async createActivity(value: RawActivityValue): Promise<Activity> {
+  public async createActivity(value: ActivityValue): Promise<Activity> {
     const activity = await Activity.create(this.activityCollection.doc(), value)
     return this.store(activity)
   }

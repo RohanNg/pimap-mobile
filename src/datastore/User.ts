@@ -8,7 +8,7 @@ export interface UserValue {
   password: string
 }
 
-export interface RawUserValue {
+interface RawUserValue {
   firstname: string
   lastname: string
   email: string

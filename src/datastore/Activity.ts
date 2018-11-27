@@ -15,7 +15,7 @@ export interface ActivityValue {
   images: string[]
 }
 
-export interface RawActivityValue {
+interface RawActivityValue {
   creatorID: string
   title: string
   description: string

@@ -153,7 +153,6 @@ export class SignUpScreen extends React.Component<
 
   private async signUpWithFacebook(): Promise<void> {
     await signInWithFacebook(this.setState, () => {
-      var user = firebase.auth().currentUser
       this.props.navigation.navigate('Hobby')
     })
   }
