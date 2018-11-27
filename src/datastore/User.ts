@@ -1,5 +1,4 @@
 import { action, autorun, computed, observable } from 'mobx'
-import { __await } from 'tslib'
 
 export interface UserValue {
   uid: string
