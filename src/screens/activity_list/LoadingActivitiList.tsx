@@ -70,11 +70,16 @@ export class LoadingActivityList extends React.Component<
         title={title}
         activitities={activities}
         goBack={this.goBack}
+        onActivityPressed={this.onActivityPressed}
       />
     )
   }
 
   private goBack = () => {
     this.props.navigation.goBack()
+  }
+
+  private onActivityPressed = (id: string) => {
+    this.props.navigation.navigate('ActivityPage', { activityID: id })
   }
 }

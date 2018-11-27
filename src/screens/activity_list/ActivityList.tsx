@@ -12,6 +12,7 @@ interface ActivityListProps {
   title: string
   activitities: Activity[]
   goBack: () => void
+  onActivityPressed: (activityID: string) => void
 }
 
 const image = (() => {
@@ -22,6 +23,7 @@ export const ActivityList: React.SFC<ActivityListProps> = ({
   activitities,
   title,
   goBack,
+  onActivityPressed,
 }) => {
   return (
     <View style={styles.container}>
@@ -44,6 +46,7 @@ export const ActivityList: React.SFC<ActivityListProps> = ({
                   privacy,
                   title: activityTitle,
                 }}
+                onPress={() => onActivityPressed(id)}
               />
             )
           },
