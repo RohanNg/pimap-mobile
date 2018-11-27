@@ -25,7 +25,7 @@ export class ActivityStore {
 
     // Retrieve && update cache
     const docRef = this.activityCollection.doc(activityKey)
-    const activity = await Activity.retrieve(docRef)
+    const activity = await Activity.retrieveFromDocRef(docRef)
     if (!activity) {
       return undefined
     }
@@ -37,6 +37,24 @@ export class ActivityStore {
   public async createActivity(value: RawActivityValue): Promise<Activity> {
     const activity = await Activity.create(this.activityCollection.doc(), value)
     return this.store(activity)
+  }
+
+  public async query(
+    f: (
+      collectionRef: firebase.firestore.CollectionReference,
+    ) => firebase.firestore.Query,
+  ): Promise<Activity[]> {
+    const query = f(this.activityCollection)
+    const result = await query.get()
+
+    const activities = runInAction(() => {
+      return result.docs.map(doc => {
+        const activity = Activity.retrieveFromQueryDocumentSnapShot(doc)
+        return this.store(activity)
+      })
+    })
+
+    return activities
   }
 
   @action
