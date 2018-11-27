@@ -26,7 +26,7 @@ export class User {
     }
 
     const { ...rest } = data.data() as RawUserValue
-    return new User({ ...rest })
+    return new User({ ...rest }, docRef.id)
   }
 
   public static async createUser(
@@ -34,7 +34,8 @@ export class User {
     value: UserValue,
   ): Promise<User> {
     const result = await docRef.set(User.toJson(value))
-    return new User(value)
+    //console.log(docRef.id)
+    return new User(value, docRef.id)
   }
 
   private static toJson({ ...rest }: UserValue): RawUserValue {
@@ -43,8 +44,10 @@ export class User {
 
   @observable
   public value: UserValue
+  public readonly id: string
 
-  public constructor(value: UserValue) {
+  public constructor(value: UserValue, id: string) {
+    this.id = id
     this.value = value
   }
 }
