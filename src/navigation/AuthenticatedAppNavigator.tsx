@@ -14,6 +14,7 @@ import { theme } from '../theme'
 
 import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
+import { HobbyScreen } from '../screens/HobbyScreen'
 
 import { LoadingActivityList } from '../screens/activity_list/LoadingActivitiList'
 
@@ -28,7 +29,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen,
   },
   {
-    initialRouteName: 'CreateActivity',
+    initialRouteName: 'Home',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',
@@ -50,6 +51,9 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     authenticatedApp: MainTabNavigator,
     LocationSelection,
     ActivityPage,
+
+    Hobby: HobbyScreen,
+
     LoadingActivityList,
   },
   {

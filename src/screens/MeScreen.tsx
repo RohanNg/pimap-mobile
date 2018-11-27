@@ -49,7 +49,7 @@ export class MeScreen extends React.Component<MeScreenProps> {
             style={{
               flex: 1,
               flexDirection: 'row',
-              marginTop: 20,
+              marginTop: 10,
               justifyContent: 'center',
             }}
           >
@@ -61,7 +61,7 @@ export class MeScreen extends React.Component<MeScreenProps> {
               backgroundColor: '#DCDCDC',
               height: 180,
               width: 300,
-              marginTop: 30,
+              marginTop: 15,
             }}
           >
             <Card.Content style={{ flex: 1, flexDirection: 'row' }}>

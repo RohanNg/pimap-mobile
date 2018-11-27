@@ -3,53 +3,61 @@ import * as firebase from 'firebase'
 import React, { Component } from 'react'
 import {
   Alert,
-  Button,
+  TouchableOpacity,
+  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
+  SafeAreaView,
 } from 'react-native'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
+import { inject, observer } from 'mobx-react'
+
 import { signInWithFacebook, signInWithGoogle } from './LoginScreen'
+import { Title, TextInput, Button } from 'react-native-paper'
+import { UserValue, User, UserStore } from '../datastore'
+import { AppStateStore } from '../datastore'
 
 interface SignUpScreenProps {
   navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
 }
 
 interface SignUpScreenState {
   email: string
   password: string
-  firstName: string
-  lastName: string
+  firstname: string
+  lastname: string
   error?: string
 }
 
-export class SignUpScreen extends Component<
+@inject<AppStateStore, SignUpScreenProps>(allStores => ({
+  userStore: allStores.userStore,
+}))
+export class SignUpScreen extends React.Component<
   SignUpScreenProps,
   SignUpScreenState
 > {
-  public static navigationOptions: NavigationStackScreenOptions = {
-    title: 'Sign Up',
-  }
+  public static navigationOptions: NavigationStackScreenOptions = {}
 
   public static readonly EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   // Spec:
   //   Length > 6
   //   Valid char: "a-z" "0-9" "A-Z" plus special chars in https://www.owasp.org/index.php/Password_special_characters
   public static readonly PASSWORD_REGEX: RegExp = /^[a-z0-9A-Z !"#$%&'()*+,.\/:;<=>?@[\]\\^_`{|}~-]{6,}$/
-  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z]{1,40}$/
+  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z ]{1,40}$/
 
   constructor(props: SignUpScreenProps) {
     super(props)
     this.state = {
       email: '',
       password: '',
-      firstName: '',
-      lastName: '',
+      firstname: '',
+      lastname: '',
     }
 
     this.signUpWithEmailPassword = this.signUpWithEmailPassword.bind(this)
@@ -59,49 +67,78 @@ export class SignUpScreen extends Component<
 
   public render(): React.ReactNode {
     return (
-      <View style={styles.container}>
-        <Button onPress={this.signUpWithGoogle} title="Sign up with Google" />
-        <Button
-          onPress={this.signUpWithFacebook}
-          title="Sign up with Facebook"
-        />
+      <ScrollView>
+        <View style={styles.container}>
+          <Title style={{ fontSize: 24 }}>Sign Up</Title>
+          <Text style={{ marginTop: 10 }}>Step 1 / 2</Text>
+          <Text style={styles.textLabel}>Basic Information</Text>
+          <Text style={styles.texttitle}>Profile Name</Text>
+          <View style={styles.inputNameView}>
+            <TextInput
+              style={styles.nameInput}
+              mode="outlined"
+              autoCorrect={false}
+              onChangeText={firstname => this.setState({ firstname })}
+              placeholder="Firstname"
+            />
+            <TextInput
+              style={[styles.nameInput, { marginLeft: 20 }]}
+              mode="outlined"
+              autoCorrect={false}
+              onChangeText={lastname => this.setState({ lastname })}
+              placeholder="Lastname"
+            />
+          </View>
 
-        <Text style={styles.error}> {this.state.error}</Text>
-        <View style={styles.nameInputRow}>
+          <Text style={styles.texttitle}>Email Address</Text>
+
           <TextInput
-            style={styles.nameInput}
+            autoCapitalize="none"
+            mode="outlined"
             autoCorrect={false}
-            onChangeText={firstName => this.setState({ firstName })}
-            placeholder="First Name"
+            style={styles.textInput}
+            onChangeText={email => this.setState({ email })}
+            placeholder="john.doe@gmail.com"
           />
+          <Text style={styles.texttitle}>Password</Text>
           <TextInput
-            style={styles.nameInput}
+            style={styles.textInput}
+            mode="outlined"
+            secureTextEntry={true}
+            autoCapitalize="none"
             autoCorrect={false}
-            onChangeText={lastName => this.setState({ lastName })}
-            placeholder="Last Name"
+            onChangeText={password => this.setState({ password })}
+            placeholder="*******"
           />
+          <Text style={styles.socialTitle}>Signup using Social Media</Text>
+          <View style={styles.socialImageView}>
+            <TouchableOpacity onPress={this.signUpWithFacebook}>
+              <Image
+                source={require('../resources/facebook.png')}
+                fadeDuration={0}
+                style={styles.fbImage}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.signUpWithGoogle}>
+              <Image
+                source={require('../resources/google.png')}
+                fadeDuration={0}
+                style={styles.googleImage}
+              />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.error}> {this.state.error}</Text>
+
+          <Button
+            disabled={!this.validateInput()}
+            onPress={this.signUpWithEmailPassword}
+            mode="contained"
+            style={styles.buttonsignup}
+          >
+            <Text style={styles.btnText}>Next</Text>
+          </Button>
         </View>
-        <TextInput
-          autoCapitalize="none"
-          autoCorrect={false}
-          style={styles.textInput}
-          onChangeText={email => this.setState({ email })}
-          placeholder="Email"
-        />
-        <TextInput
-          style={styles.textInput}
-          secureTextEntry={true}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={password => this.setState({ password })}
-          placeholder="Password"
-        />
-        <Button
-          disabled={!this.validateInput()}
-          onPress={this.signUpWithEmailPassword}
-          title="Log in here"
-        />
-      </View>
+      </ScrollView>
     )
   }
 
@@ -109,20 +146,20 @@ export class SignUpScreen extends Component<
     return (
       SignUpScreen.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
       SignUpScreen.PASSWORD_REGEX.test(this.state.password) &&
-      SignUpScreen.NAME_REGEX.test(this.state.firstName) &&
-      SignUpScreen.NAME_REGEX.test(this.state.lastName)
+      SignUpScreen.NAME_REGEX.test(this.state.firstname) &&
+      SignUpScreen.NAME_REGEX.test(this.state.lastname)
     )
   }
 
   private async signUpWithFacebook(): Promise<void> {
-    await signInWithFacebook(this.setState, () =>
-      this.props.navigation.navigate('App'),
-    )
+    await signInWithFacebook(this.setState, () => {
+      this.props.navigation.navigate('Hobby')
+    })
   }
 
   private async signUpWithGoogle(): Promise<void> {
     await signInWithGoogle(this.setState, () =>
-      this.props.navigation.navigate('App'),
+      this.props.navigation.navigate('Hobby'),
     )
   }
 
@@ -133,7 +170,8 @@ export class SignUpScreen extends Component<
       const authCred = await firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
-      this.props.navigation.navigate('App')
+      const uid = authCred.user!.uid
+      this.createUser(uid)
     } catch (error) {
       const errorCode = error.code
       let errorInfo
@@ -149,26 +187,89 @@ export class SignUpScreen extends Component<
       this.setState({ error: errorInfo })
     }
   }
+
+  private createUser = async (uid: string) => {
+    const { firstname, lastname, password, email } = this.state
+
+    const user: UserValue = {
+      firstname,
+      lastname,
+      password,
+      email,
+      hobby: [],
+    }
+
+    const id = uid
+    await this.props.userStore.createUser(user, uid)
+
+    await this.props.navigation.navigate('Hobby', { userId: id })
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    paddingHorizontal: 17,
+    marginTop: 30,
+    marginBottom: 20,
+  },
+  textLabel: {
+    marginTop: 5,
+    color: '#F27979',
+    fontWeight: '600',
+    fontSize: 18,
+  },
+  texttitle: {
+    marginTop: 16,
   },
   textInput: {
-    margin: 10,
-    paddingLeft: 20,
+    marginTop: 1,
+    height: 46,
   },
   error: {
     textAlign: 'center',
   },
   nameInput: {
-    flex: 1,
+    height: 46,
+    marginTop: 1,
+    width: 130,
   },
   nameInputRow: {
+    flex: 1,
     flexDirection: 'row',
-    margin: 10,
-    paddingLeft: 20,
+  },
+  buttonsignup: {
+    marginTop: 20,
+    height: 40,
+    width: 140,
+    alignSelf: 'center',
+    justifyContent: 'center',
+  },
+  btnText: {
+    color: 'white',
+    fontSize: 14,
+  },
+  inputNameView: {
+    flexDirection: 'row',
+    paddingRight: 17,
+  },
+  googleImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+    marginLeft: 10,
+  },
+  fbImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+  },
+  socialTitle: {
+    marginTop: 10,
+    fontWeight: '600',
+  },
+  socialImageView: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 5,
   },
 })
