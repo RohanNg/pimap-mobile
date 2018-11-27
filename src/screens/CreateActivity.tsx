@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { Facebook } from 'expo'
+import { Permissions, ImagePicker } from 'expo'
 import * as Immutable from 'immutable'
 import { inject, observer } from 'mobx-react'
 import moment from 'moment'
@@ -7,6 +7,7 @@ import * as React from 'react'
 import {
   ActivityIndicator,
   Alert,
+  Image,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -39,6 +40,7 @@ import { Header } from '../components/header'
 
 import { Activity, ActivityStore, ActivityValue } from '../datastore'
 import { AppStateStore } from '../datastore'
+import { theme } from '../theme'
 
 interface CreateActivityState {
   title: string
@@ -53,6 +55,7 @@ interface CreateActivityState {
     lat: number
   }
   creatingInprogress: boolean
+  coverImage: string
 }
 
 interface CreateActivityProps {
@@ -69,10 +72,7 @@ interface CreateActivityProps {
   activityStore: ActivityStore
 }
 
-@inject<AppStateStore, CreateActivityProps>(allStores => ({
-  activityStore: allStores.activityStore,
-}))
-export class CreateActivity extends React.Component<
+class CreateActivityComp extends React.Component<
   CreateActivityProps,
   CreateActivityState
 > {
@@ -104,10 +104,11 @@ export class CreateActivity extends React.Component<
     title: '',
     description: '',
     creatingInprogress: false,
+    coverImage: '',
   }
 
   public render(): React.ReactNode {
-    const { date, creatingInprogress } = this.state
+    const { date, creatingInprogress, coverImage } = this.state
 
     if (creatingInprogress) {
       return (
@@ -123,12 +124,26 @@ export class CreateActivity extends React.Component<
 
     return (
       <View style={styles.wrapper}>
-        <Header title="Create Activity" />
+        <Header title="Create Activity">
+          <Appbar.Action icon="add-a-photo" onPress={this.pickImage} />
+        </Header>
         <ScrollView
           style={styles.container}
           removeClippedSubviews={false}
           keyboardShouldPersistTaps={'always'}
         >
+          {coverImage && (
+            <View style={styles.coverImageContainer}>
+              <Image
+                source={{
+                  uri: coverImage,
+                }}
+                style={styles.coverImage}
+                resizeMode={'cover'}
+              />
+            </View>
+          )}
+
           <TextInput
             mode="outlined"
             label="Activity Name"
@@ -240,6 +255,27 @@ export class CreateActivity extends React.Component<
         </ScrollView>
       </View>
     )
+  }
+
+  private pickImage = async () => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+
+    if (status !== 'granted') {
+      alert(
+        'Hey! You might want to enable camera roll access for my app, they are good.',
+      )
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+    })
+
+    console.info(result)
+
+    if (!result.cancelled) {
+      this.setState({ coverImage: result.uri })
+    }
   }
 
   private tagSetChanged = (newTagSet: Immutable.Set<string>) => {
@@ -379,4 +415,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   submitButton: { width: 120 },
+  coverImageContainer: {
+    margin: 8,
+  },
+  coverImage: {
+    height: 200,
+    borderRadius: theme.roundness,
+  },
 })
+
+export const CreateActivity = inject<AppStateStore, CreateActivityProps>(
+  allStores => ({
+    activityStore: allStores.activityStore,
+  }),
+)(CreateActivityComp)
