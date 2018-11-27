@@ -5,7 +5,6 @@ import { User, RawUserValue } from './User'
 
 export class UserStore {
   private static DB_COLLECTION: string = 'users'
-  private static DB_DOCUMENT: string
 
   @observable
   public users: { [id: string]: User } = {}

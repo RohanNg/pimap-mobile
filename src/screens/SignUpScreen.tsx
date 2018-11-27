@@ -154,12 +154,6 @@ export class SignUpScreen extends React.Component<
   private async signUpWithFacebook(): Promise<void> {
     await signInWithFacebook(this.setState, () => {
       var user = firebase.auth().currentUser
-      if (user != null) {
-        const firstname = user.displayName
-        const email = user.email
-        console.log(firstname)
-        console.log(email)
-      }
       this.props.navigation.navigate('Hobby')
     })
   }
@@ -178,7 +172,6 @@ export class SignUpScreen extends React.Component<
         .auth()
         .createUserWithEmailAndPassword(email, password)
       const uid = authCred.user!.uid
-      console.log(uid)
       this.createUser(uid)
     } catch (error) {
       const errorCode = error.code
@@ -200,7 +193,6 @@ export class SignUpScreen extends React.Component<
     const { firstname, lastname, password, email } = this.state
 
     const user: UserValue = {
-      uid,
       firstname,
       lastname,
       password,

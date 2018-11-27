@@ -1,7 +1,6 @@
 import { action, autorun, computed, observable } from 'mobx'
 
 export interface UserValue {
-  uid: string
   firstname: string
   lastname: string
   email: string
@@ -10,7 +9,6 @@ export interface UserValue {
 }
 
 export interface RawUserValue {
-  uid: string
   firstname: string
   lastname: string
   email: string
