@@ -16,6 +16,8 @@ import { ActivityPage } from '../screens/activity_page'
 import { LocationSelection } from '../screens/LocationSelection'
 import { HobbyScreen } from '../screens/HobbyScreen'
 
+import { LoadingActivityList } from '../screens/activity_list/LoadingActivitiList'
+
 const AuthedNearbyActivities = withAuthenticatedUser(NearbyActivities)
 const AuthedCreateActivity = withAuthenticatedUser(CreateActivity)
 export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavigator(
@@ -49,7 +51,10 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     authenticatedApp: MainTabNavigator,
     LocationSelection,
     ActivityPage,
+
     Hobby: HobbyScreen,
+
+    LoadingActivityList,
   },
   {
     headerMode: 'none',

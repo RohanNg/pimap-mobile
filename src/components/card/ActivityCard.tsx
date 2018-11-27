@@ -10,13 +10,15 @@ interface ActivityCardProps {
     privacy: 'public' | 'private'
     image: ImageSourcePropType
   }
+  onPress?: () => void
 }
 
 export const ActivityCard: React.SFC<ActivityCardProps> = ({
   activity: { title, organizer, privacy, image },
+  onPress,
 }) => {
   return (
-    <Card style={styles.card} elevation={5}>
+    <Card style={styles.card} elevation={5} onPress={onPress}>
       <Card.Cover style={styles.coverImage} source={image} />
       <Card.Content style={styles.cardContent}>
         {privacy === 'private' && (

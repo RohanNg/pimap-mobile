@@ -33,19 +33,32 @@ interface RawActivityValue {
 export class Activity {
   // Retrieve Activity from given document reference
   // Returned undefined if the referen refer to an unknown object
-  public static async retrieve(
+  public static async retrieveFromDocRef(
     docRef: firebase.firestore.DocumentReference,
   ): Promise<Activity | undefined> {
-    const data = await docRef.get()
-    if (!data.exists) {
+    const docSnapShot = await docRef.get()
+    return this.retrieveFromDocSnapShot(docSnapShot)
+  }
+
+  public static retrieveFromDocSnapShot(
+    docSnapShot: firebase.firestore.DocumentSnapshot,
+  ): Activity | undefined {
+    if (!docSnapShot.exists) {
       return undefined
     }
 
-    const { timestampms, ...rest } = data.data() as RawActivityValue
-    return new Activity(docRef, {
+    const { timestampms, ...rest } = docSnapShot.data() as RawActivityValue
+    return new Activity(docSnapShot.ref, {
       ...rest,
       time: new Date(timestampms * 1000),
     })
+  }
+
+  public static retrieveFromQueryDocumentSnapShot(
+    queryDocSnapShot: firebase.firestore.QueryDocumentSnapshot,
+  ): Activity {
+    // queryDocSnapShot is guaranteed to have data
+    return this.retrieveFromDocSnapShot(queryDocSnapShot)!
   }
 
   public static async create(
