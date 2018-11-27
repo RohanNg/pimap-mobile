@@ -11,7 +11,6 @@ export const RootNavigator = createSwitchNavigator(
     AuthLoading: AuthLoadingScreen,
     App: AuthenticatedAppNavigator,
     Auth: AuthenticationNavigator,
-    Hobby: HobbyScreen,
   },
   {
     initialRouteName: 'AuthLoading',

@@ -60,7 +60,7 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={() => this.props.navigation.navigate('App')}
+          onPress={() => this.props.navigation.navigate('authenticatedApp')}
         >
           <Text style={styles.btnText}>I'M DONE!</Text>
         </Button>
