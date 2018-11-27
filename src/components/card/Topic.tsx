@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { Card, Paragraph, Title } from 'react-native-paper'
+import { Card, Paragraph, Surface, Title } from 'react-native-paper'
 import { theme } from '../../theme'
 
 export const Topic: React.SFC<{
@@ -17,27 +17,33 @@ export const Topic: React.SFC<{
   onPress: () => void
 }> = ({ title, image, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
-      <ImageBackground
-        source={image}
-        style={styles.background}
-        imageStyle={styles.backgroundImageStyle}
-      >
-        <Title style={styles.title}>{title}</Title>
-      </ImageBackground>
-    </TouchableOpacity>
+    <Surface style={styles.surface}>
+      <TouchableOpacity onPress={onPress}>
+        <ImageBackground
+          source={image}
+          style={styles.background}
+          imageStyle={styles.backgroundImageStyle}
+        >
+          <Title style={styles.title}>{title}</Title>
+        </ImageBackground>
+      </TouchableOpacity>
+    </Surface>
   )
 }
 
 const styles = StyleSheet.create({
-  background: {
+  surface: {
     flex: 1,
-    height: 120,
-    width: 160,
-    margin: 4,
+    marginRight: 10,
+    elevation: 3,
+    marginBottom: 8,
+    borderRadius: theme.roundness,
+  },
+  background: {
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 50,
+    height: 120,
+    width: 160,
   },
   backgroundImageStyle: {
     borderRadius: theme.roundness,

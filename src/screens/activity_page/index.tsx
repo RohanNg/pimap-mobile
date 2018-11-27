@@ -118,7 +118,7 @@ export class ActivityPage extends React.Component<
             goBack={() => this.props.navigation.goBack()}
           />
           <Image
-            source={require('../../resources/aurora.jpg')}
+            source={{ uri: activity.value.coverImage }}
             style={styles.coverImage}
             resizeMode="cover"
           />
