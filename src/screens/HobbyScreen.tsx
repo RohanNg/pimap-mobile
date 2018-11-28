@@ -12,11 +12,21 @@ import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
+
+import { inject, observer } from 'mobx-react'
+
 import { Title, TextInput, Chip, Button } from 'react-native-paper'
 import { theme } from '../theme'
+import { UserValue, User, UserStore } from '../datastore'
+import { AppStateStore } from '../datastore'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
+}
+
+interface HobbyScreenState {
+  hobby: string[]
 }
 
 const hobbyList = [
@@ -35,7 +45,20 @@ const hobbyList = [
   'Outdoor',
 ]
 
-export class HobbyScreen extends React.Component<HobbyScreenProps> {
+@inject<AppStateStore, HobbyScreenProps>(allStores => ({
+  userStore: allStores.userStore,
+}))
+export class HobbyScreen extends React.Component<
+  HobbyScreenProps,
+  HobbyScreenState
+> {
+  constructor(props: HobbyScreenProps) {
+    super(props)
+    this.state = {
+      hobby: [],
+    }
+  }
+
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
@@ -48,7 +71,9 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
               <Chip
                 mode="outlined"
                 style={styles.chipitem}
-                onPress={() => {}}
+                onPress={() => {
+                  this.state.hobby.push(item)
+                }}
                 key={item}
               >
                 {item}
@@ -67,6 +92,16 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
       </View>
     )
   }
+
+  /*private addHobby = async() => {
+    const hobby = this.state
+    const user = await firebase.auth().currentUser
+    if (user != null) {
+      const uid = user.uid
+      await this.props.userStore.updateUserHobby(uid, hobby)
+    }
+  }
+  */
 }
 
 const styles = StyleSheet.create({

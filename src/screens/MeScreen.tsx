@@ -23,18 +23,52 @@ import {
 import { ProfilePic } from '../components/ProfilePic'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-
-interface MeScreenProps {
-  navigation: NavigationScreenProp<{}, {}>
-}
+import { UserValue, User, UserStore } from '../datastore'
+import { AppStateStore } from '../datastore'
+import * as firebase from 'firebase'
+import { inject, observer } from 'mobx-react'
 
 import { ActivityCard } from '../components/card/ActivityCard'
 import { Chat } from '../components/chat/Chat'
 
+interface MeScreenProps {
+  navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
+  user: User
+}
+
+interface UserInformation {
+  firstname: string
+  lastname: string
+  photoUrl?: string
+}
+
+@inject<AppStateStore, MeScreenProps>(allStores => ({
+  userStore: allStores.userStore,
+}))
+@observer
 export class MeScreen extends React.Component<MeScreenProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Me',
     tabBarIcon: tabBarIcon('person'),
+  }
+
+  constructor(props: MeScreenProps) {
+    super(props)
+    this.state = {
+      firstname: '',
+      lastname: '',
+      photoUrl: '',
+    }
+  }
+
+  componentDidMount() {
+    const user = firebase.auth().currentUser
+    if (user != null) {
+      const uid = user.uid
+      const usr = this.props.userStore.getUser(uid)
+      console.log(usr)
+    }
   }
 
   public render(): React.ReactNode {

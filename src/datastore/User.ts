@@ -1,4 +1,5 @@
 import { action, autorun, computed, observable } from 'mobx'
+import * as firebase from 'firebase'
 
 export interface UserValue {
   firstname: string
@@ -27,6 +28,17 @@ export class User {
 
     const { ...rest } = data.data() as RawUserValue
     return new User({ ...rest }, docRef.id)
+  }
+
+  public static async addHobby(
+    docRef: firebase.firestore.DocumentReference,
+    newhobby: string[],
+  ) {
+    const data = await docRef.get()
+    const hobbies = data.data() as RawUserValue
+    const newHobby = await docRef.update({
+      hobby: firebase.firestore.FieldValue.arrayUnion(newhobby),
+    })
   }
 
   public static async createUser(

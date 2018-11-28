@@ -233,15 +233,14 @@ export async function signInWithGoogle(
     return Alert.alert('Cancelled!', 'Login was cancelled!')
   }
 
-  const firstname = res.user.givenName
-  const lastname = res.user.familyName
+  const { email, familyName, givenName, name, photoUrl, id } = res.user
 
   const credential = firebase.auth.GoogleAuthProvider.credential(
     res.idToken,
     res.accessToken,
   )
 
-  await signInWithCredential(credential, res.user.email!, setState, success)
+  await signInWithCredential(credential, email!, setState, success)
 }
 
 export async function signInWithFacebook(
@@ -268,6 +267,8 @@ export async function signInWithFacebook(
     last_name: string
     name: string
     id: string
+    picture: string
+    shore_name: string
   } = await response.json()
   console.info(fbProfile)
   Alert.alert('Logged in!', `Hi ${fbProfile.name}!`)
