@@ -101,19 +101,20 @@ class SignUpScreenComp extends React.Component<
         </Text>
         <View style={styles.inputNameView}>
           <TextInput
-            label="Fistname"
+            label="Fist Name"
             style={[styles.nameInput, styles.firstNameInput]}
             mode="outlined"
             autoCorrect={false}
             onChangeText={firstname => this.setState({ firstname })}
-            placeholder="Your first name"
+            placeholder="Your First Name"
           />
           <TextInput
-            placeholder="Lastname"
+            label="Last Name"
             style={styles.nameInput}
             mode="outlined"
             autoCorrect={false}
             onChangeText={lastname => this.setState({ lastname })}
+            placeholder="Your Last Name"
           />
         </View>
 

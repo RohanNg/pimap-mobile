@@ -45,12 +45,7 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
         <View style={styles.chip}>
           {hobbyList.map(item => {
             return (
-              <Chip
-                mode="outlined"
-                style={styles.chipitem}
-                onPress={() => {}}
-                key={item}
-              >
+              <Chip mode="outlined" style={styles.chipitem} key={item}>
                 {item}
               </Chip>
             )
