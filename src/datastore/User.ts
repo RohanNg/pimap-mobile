@@ -4,16 +4,16 @@ export interface UserValue {
   firstname: string
   lastname: string
   email: string
-  hobby: string[]
-  password: string
+  profilePicture?: string
+  interests: string[]
 }
 
 interface RawUserValue {
   firstname: string
   lastname: string
   email: string
-  hobby: string[]
-  password: string
+  profilePicture?: string
+  interests: string[]
 }
 
 export class User {
@@ -34,7 +34,7 @@ export class User {
     value: UserValue,
   ): Promise<User> {
     const result = await docRef.set(User.toJson(value))
-    //console.log(docRef.id)
+    // console.log(docRef.id)
     return new User(value, docRef.id)
   }
 

@@ -17,8 +17,15 @@ import {
 } from 'react-navigation'
 
 import { Appbar, Button, TextInput, Title } from 'react-native-paper'
+import { theme } from '../../theme'
 import { SignUpScreen } from './SignUpScreen'
-import { theme } from '../theme'
+
+import {
+  loginWithEmailPassword,
+  signInWithFacebook,
+  signInWithGoogle,
+  UserData,
+} from './socialLoginUtils'
 
 interface LoginScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -58,13 +65,13 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
         <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
           <TouchableOpacity onPress={this.loginWithFacebook}>
             <Image
-              source={require('../resources/facebook.png')}
+              source={require('../../resources/facebook.png')}
               style={styles.socialLoginImage}
             />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.loginWithGoogle}>
             <Image
-              source={require('../resources/google.png')}
+              source={require('../../resources/google.png')}
               style={styles.socialLoginImage}
             />
           </TouchableOpacity>
@@ -120,15 +127,21 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
   }
 
   private async loginWithFacebook(): Promise<void> {
-    await signInWithFacebook(this.setState, () =>
-      this.props.navigation.navigate('App'),
-    )
+    try {
+      const { userCredential, userData } = await signInWithFacebook()
+      this.props.navigation.navigate('App')
+    } catch (error) {
+      this.setState({ error: error.message })
+    }
   }
 
   private async loginWithGoogle(): Promise<void> {
-    await signInWithGoogle(this.setState, () =>
-      this.props.navigation.navigate('App'),
-    )
+    try {
+      await signInWithGoogle()
+      this.props.navigation.navigate('App')
+    } catch (error) {
+      this.setState({ error: error.message })
+    }
   }
 
   private validateInput(): boolean {
@@ -141,25 +154,12 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
   private async loginWithEmailPassword(): Promise<void> {
     const { email, password } = this.state
     const { navigation } = this.props
-    // https://firebase.google.com/docs/reference/js/firebase.auth.Auth.html#signInWithEmailAndPassword
     try {
-      const authCred = await firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
+      await loginWithEmailPassword(email, password)
       navigation.navigate('App')
     } catch (error) {
-      const errorCode = error.code
-      const errorMessage = error.message
-      let errorInfo
-      if (errorCode === 'auth/invalid-email') {
-        errorInfo = 'Invalid email provided'
-      } else if (errorCode === 'auth/user-disabled') {
-        errorInfo = 'Given email has been disabled. Please contact us!'
-      } else {
-        errorInfo = 'Non-registered email address or wrong password'
-      }
       this.setState({
-        error: errorInfo,
+        error: error.message,
       })
     }
   }
@@ -210,105 +210,3 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 })
-
-export async function signInWithGoogle(
-  setState: (_: { error: string }) => void,
-  success: (_: firebase.auth.UserCredential) => void,
-): Promise<void> {
-  const res = await Google.logInAsync({
-    // IOS client id from GoogleService-Info.plist in Firebase
-    iosClientId:
-      '322720395519-duuh4hirp37ilde6tqb7a4nmpn6a2v9v.apps.googleusercontent.com',
-    scopes: ['profile', 'email'],
-    behavior: 'web',
-  })
-
-  if (res.type === 'cancel') {
-    return Alert.alert('Cancelled!', 'Login was cancelled!')
-  }
-
-  const { email, familyName, givenName, name, photoUrl, id } = res.user
-
-  const credential = firebase.auth.GoogleAuthProvider.credential(
-    res.idToken,
-    res.accessToken,
-  )
-
-  await signInWithCredential(credential, email!, setState, success)
-}
-
-export async function signInWithFacebook(
-  setState: (_: { error: string }) => void,
-  success: (_: firebase.auth.UserCredential) => void,
-): Promise<void> {
-  const { type, token } = await Facebook.logInWithReadPermissionsAsync(
-    '1051395471700487',
-    {
-      permissions: ['public_profile', 'email'],
-    },
-  )
-
-  if (type !== 'success' || !token) {
-    return Alert.alert('Cancelled!', 'Login was cancelled!')
-  }
-
-  const response = await fetch(
-    `https://graph.facebook.com/me?access_token=${token}&fields=name,email,first_name,last_name`,
-  )
-
-  const fbProfile: {
-    email: string
-    first_name: string
-    last_name: string
-    name: string
-    id: string
-    picture: string
-    short_name: string
-  } = await response.json()
-
-  console.info(fbProfile)
-  Alert.alert('Logged in!', `Hi ${fbProfile.name}!`)
-
-  await signInWithCredential(
-    firebase.auth.FacebookAuthProvider.credential(token),
-    fbProfile.email,
-    setState,
-    success,
-  )
-}
-
-async function signInWithCredential(
-  cred: firebase.auth.AuthCredential,
-  email: string,
-  setState: (_: { error: string }) => void,
-  success: (_: firebase.auth.UserCredential) => void,
-): Promise<void> {
-  // https://firebase.google.com/docs/reference/js/firebase.auth.Auth#signInAndRetrieveDataWithCredential
-  try {
-    const authCredentials = await firebase
-      .auth()
-      .signInAndRetrieveDataWithCredential(cred)
-    success(authCredentials)
-  } catch (error) {
-    const errorCode = error.code
-    const errorMessage = error.message
-    let errorInfo
-    if (errorCode === 'auth/account-exists-with-different-credential') {
-      const otherCredentialProviders = await firebase
-        .auth()
-        .fetchProvidersForEmail(email)
-      errorInfo = `You could not login with Facebook for now. Please login with ${otherCredentialProviders.join(
-        ', or',
-      )}.`
-    } else if (errorCode === 'auth/invalid-credential') {
-      errorInfo = 'Invalid Facebook credentials. Please retry.'
-    } else if (errorCode === 'auth/user-disabled') {
-      errorInfo = 'This account been disabled. Please contact us.'
-    } else {
-      console.info(errorCode, errorMessage)
-      errorInfo = 'Could not log you in. Please retry.'
-    }
-
-    setState({ error: errorInfo })
-  }
-}
