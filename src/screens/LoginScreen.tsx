@@ -176,6 +176,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
+    color: theme.colors!.primary,
   },
   error: {
     textAlign: 'center',
@@ -224,15 +225,14 @@ export async function signInWithGoogle(
     return Alert.alert('Cancelled!', 'Login was cancelled!')
   }
 
-  const firstname = res.user.givenName
-  const lastname = res.user.familyName
+  const { email, familyName, givenName, name, photoUrl, id } = res.user
 
   const credential = firebase.auth.GoogleAuthProvider.credential(
     res.idToken,
     res.accessToken,
   )
 
-  await signInWithCredential(credential, res.user.email!, setState, success)
+  await signInWithCredential(credential, email!, setState, success)
 }
 
 export async function signInWithFacebook(

@@ -3,13 +3,13 @@ import * as firebase from 'firebase'
 import React, { Component } from 'react'
 import {
   Alert,
-  TouchableOpacity,
   Image,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
-  SafeAreaView,
 } from 'react-native'
 import {
   NavigationScreenProp,
@@ -21,6 +21,7 @@ import { signInWithFacebook, signInWithGoogle } from './LoginScreen'
 import { Title, TextInput, Button } from 'react-native-paper'
 import { UserValue, User, UserStore } from '../datastore'
 import { AppStateStore } from '../datastore'
+import { theme } from '../theme'
 
 interface SignUpScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -42,7 +43,9 @@ export class SignUpScreen extends React.Component<
   SignUpScreenProps,
   SignUpScreenState
 > {
-  public static navigationOptions: NavigationStackScreenOptions = {}
+  public static navigationOptions: NavigationStackScreenOptions = {
+    header: null,
+  }
 
   public static readonly EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   // Spec:
@@ -67,77 +70,77 @@ export class SignUpScreen extends React.Component<
 
   public render(): React.ReactNode {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Title style={{ fontSize: 24 }}>Sign Up</Title>
-          <Text style={{ marginTop: 10 }}>Step 1 / 2</Text>
-          <Text style={styles.textLabel}>Basic Information</Text>
-          <Text style={styles.texttitle}>Profile Name</Text>
-          <View style={styles.inputNameView}>
-            <TextInput
-              style={styles.nameInput}
-              mode="outlined"
-              autoCorrect={false}
-              onChangeText={firstname => this.setState({ firstname })}
-              placeholder="Firstname"
+      <ScrollView style={styles.container}>
+        <Title style={styles.title}>Sign Up</Title>
+        <Text style={{ marginTop: 10 }}>Step 1 / 2: Basic Information</Text>
+
+        <Text style={styles.socialTitle}>
+          Sign Up with existing Social Accont
+        </Text>
+        <View style={styles.socialImageView}>
+          <TouchableOpacity onPress={this.signUpWithFacebook}>
+            <Image
+              source={require('../resources/facebook.png')}
+              fadeDuration={0}
+              style={styles.fbImage}
             />
-            <TextInput
-              style={[styles.nameInput, { marginLeft: 20 }]}
-              mode="outlined"
-              autoCorrect={false}
-              onChangeText={lastname => this.setState({ lastname })}
-              placeholder="Lastname"
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.signUpWithGoogle}>
+            <Image
+              source={require('../resources/google.png')}
+              fadeDuration={0}
+              style={styles.googleImage}
             />
-          </View>
-
-          <Text style={styles.texttitle}>Email Address</Text>
-
-          <TextInput
-            autoCapitalize="none"
-            mode="outlined"
-            autoCorrect={false}
-            style={styles.textInput}
-            onChangeText={email => this.setState({ email })}
-            placeholder="john.doe@gmail.com"
-          />
-          <Text style={styles.texttitle}>Password</Text>
-          <TextInput
-            style={styles.textInput}
-            mode="outlined"
-            secureTextEntry={true}
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={password => this.setState({ password })}
-            placeholder="*******"
-          />
-          <Text style={styles.socialTitle}>Signup using Social Media</Text>
-          <View style={styles.socialImageView}>
-            <TouchableOpacity onPress={this.signUpWithFacebook}>
-              <Image
-                source={require('../resources/facebook.png')}
-                fadeDuration={0}
-                style={styles.fbImage}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={this.signUpWithGoogle}>
-              <Image
-                source={require('../resources/google.png')}
-                fadeDuration={0}
-                style={styles.googleImage}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.error}> {this.state.error}</Text>
-
-          <Button
-            disabled={!this.validateInput()}
-            onPress={this.signUpWithEmailPassword}
-            mode="contained"
-            style={styles.buttonsignup}
-          >
-            <Text style={styles.btnText}>Next</Text>
-          </Button>
+          </TouchableOpacity>
         </View>
+
+        <Text style={styles.socialTitle}>
+          Or create new acconnt with your email and password
+        </Text>
+        <View style={styles.inputNameView}>
+          <TextInput
+            label="Fistname"
+            style={[styles.nameInput, styles.firstNameInput]}
+            mode="outlined"
+            autoCorrect={false}
+            onChangeText={firstname => this.setState({ firstname })}
+            placeholder="Your first name"
+          />
+          <TextInput
+            placeholder="Lastname"
+            style={styles.nameInput}
+            mode="outlined"
+            autoCorrect={false}
+            onChangeText={lastname => this.setState({ lastname })}
+          />
+        </View>
+
+        <TextInput
+          label="Email address"
+          autoCapitalize="none"
+          mode="outlined"
+          autoCorrect={false}
+          onChangeText={email => this.setState({ email })}
+          placeholder="Please enter your email address"
+        />
+        <TextInput
+          label="Password"
+          mode="outlined"
+          secureTextEntry={true}
+          autoCapitalize="none"
+          autoCorrect={false}
+          onChangeText={password => this.setState({ password })}
+          placeholder="Please enter your password"
+        />
+        <Text style={styles.error}> {this.state.error}</Text>
+        <Button
+          disabled={!this.validateInput()}
+          onPress={this.signUpWithEmailPassword}
+          mode="contained"
+          style={styles.buttonsignup}
+        >
+          <Text style={styles.btnText}>Next</Text>
+        </Button>
       </ScrollView>
     )
   }
@@ -208,16 +211,12 @@ export class SignUpScreen extends React.Component<
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 17,
-    marginTop: 30,
-    marginBottom: 20,
+    flex: 1,
+    paddingTop: 90,
+    paddingHorizontal: 16,
+    backgroundColor: theme.colors!.background,
   },
-  textLabel: {
-    marginTop: 5,
-    color: '#F27979',
-    fontWeight: '600',
-    fontSize: 18,
-  },
+  title: { fontSize: 32, color: theme.colors!.primary },
   texttitle: {
     marginTop: 16,
   },
@@ -229,9 +228,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   nameInput: {
-    height: 46,
-    marginTop: 1,
-    width: 130,
+    flex: 1,
+  },
+  firstNameInput: {
+    marginRight: 12,
   },
   nameInputRow: {
     flex: 1,
@@ -250,7 +250,6 @@ const styles = StyleSheet.create({
   },
   inputNameView: {
     flexDirection: 'row',
-    paddingRight: 17,
   },
   googleImage: {
     width: 30,
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   socialTitle: {
-    marginTop: 10,
+    marginTop: 32,
     fontWeight: '600',
   },
   socialImageView: {
