@@ -18,6 +18,7 @@ import {
 
 import { Appbar, Button, TextInput, Title } from 'react-native-paper'
 import { SignUpScreen } from './SignUpScreen'
+import { theme } from '../theme'
 
 interface LoginScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -30,7 +31,9 @@ interface LoginScreenState {
 }
 
 export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
-  public static navigationOptions: NavigationStackScreenOptions = {}
+  public static navigationOptions: NavigationStackScreenOptions = {
+    header: null,
+  }
 
   constructor(props: LoginScreenProps) {
     super(props)
@@ -46,90 +49,75 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
 
   public render(): React.ReactNode {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <ScrollView scrollEventThrottle={16}>
-          <View style={styles.container}>
-            <Title style={{ fontSize: 24 }}>Sign in</Title>
+      <ScrollView style={styles.container}>
+        <Title style={styles.title}>Sign in</Title>
+        <Text style={{ marginTop: 20, fontWeight: '600' }}>
+          Login using Social Media
+        </Text>
 
-            <Text style={{ marginTop: 20, fontWeight: '600' }}>
-              Login using Social Media
-            </Text>
-            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
-              <TouchableOpacity onPress={this.loginWithFacebook}>
-                <Image
-                  source={require('../resources/facebook.png')}
-                  fadeDuration={0}
-                  style={{ width: 30, height: 30, marginTop: 10 }}
-                >
-                  {this.state.error && (
-                    <Text style={styles.error}>{this.state.error}</Text>
-                  )}
-                </Image>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.loginWithGoogle}>
-                <Image
-                  source={require('../resources/google.png')}
-                  fadeDuration={0}
-                  style={{
-                    width: 30,
-                    height: 30,
-                    marginTop: 10,
-                    marginLeft: 10,
-                  }}
-                >
-                  {this.state.error && (
-                    <Text style={styles.error}>{this.state.error}</Text>
-                  )}
-                </Image>
-              </TouchableOpacity>
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={{ marginTop: 10 }}>Email address</Text>
-              <TextInput
-                mode="outlined"
-                autoCapitalize="none"
-                autoCorrect={false}
-                style={styles.textInput}
-                onChangeText={email => this.setState({ email })}
-                placeholder="john.doe@gmail.com"
-              />
-              <Text style={{ marginTop: 10 }}>Password</Text>
-
-              <TextInput
-                mode="outlined"
-                style={styles.textInput}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                autoCorrect={false}
-                onChangeText={password => this.setState({ password })}
-                placeholder="*********"
-              />
-              <Button
-                disabled={!this.validateInput()}
-                onPress={this.loginWithEmailPassword}
-                mode="contained"
-                style={styles.buttonlogin}
-              >
-                <Text style={{ color: 'white', fontSize: 14 }}>Log in</Text>
-              </Button>
-              <Text
-                style={[styles.signUpText, styles.signUpMargin]}
-                onPress={() => this.props.navigation.navigate('SignUp')}
-              >
-                Sign up as a new user!
-              </Text>
-              <Text
-                style={styles.signUpText}
-                onPress={() =>
-                  this.props.navigation.navigate('PasswordRecovery')
-                }
-              >
-                Forget password
-              </Text>
-            </View>
-          </View>
-        </ScrollView>
-      </SafeAreaView>
+        <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
+          <TouchableOpacity onPress={this.loginWithFacebook}>
+            <Image
+              source={require('../resources/facebook.png')}
+              fadeDuration={0}
+              style={{ width: 30, height: 30, marginTop: 10 }}
+            >
+              {this.state.error && (
+                <Text style={styles.error}>{this.state.error}</Text>
+              )}
+            </Image>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={this.loginWithGoogle}>
+            <Image
+              source={require('../resources/google.png')}
+              fadeDuration={0}
+              style={styles.socialLoginImage}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginTop: 10 }}>
+          <TextInput
+            label="Email"
+            mode="outlined"
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={email => this.setState({ email })}
+            placeholder={'Please enter your email address'}
+          />
+          <TextInput
+            label="Password"
+            mode="outlined"
+            secureTextEntry={true}
+            autoCapitalize="none"
+            autoCorrect={false}
+            onChangeText={password => this.setState({ password })}
+            placeholder="Please enter your password"
+          />
+          {this.state.error && (
+            <Text style={styles.error}>{this.state.error}</Text>
+          )}
+          <Button
+            disabled={!this.validateInput()}
+            onPress={this.loginWithEmailPassword}
+            mode="contained"
+            style={styles.loginButton}
+          >
+            <Text style={{ color: 'white', fontSize: 14 }}>Log in</Text>
+          </Button>
+          <Text
+            style={[styles.signUpText, styles.signUpMargin]}
+            onPress={() => this.props.navigation.navigate('SignUp')}
+          >
+            Sign up as a new user!
+          </Text>
+          <Text
+            style={styles.forgotPasswordText}
+            onPress={() => this.props.navigation.navigate('PasswordRecovery')}
+          >
+            Forget password
+          </Text>
+        </View>
+      </ScrollView>
     )
   }
 
@@ -181,30 +169,42 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 17,
-    marginTop: 30,
-    marginBottom: 20,
+    flex: 1,
+    paddingTop: 90,
+    paddingHorizontal: 16,
+    backgroundColor: theme.colors!.background,
   },
-  textInput: {
-    height: 46,
+  title: {
+    fontSize: 32,
   },
   error: {
     textAlign: 'center',
   },
   signUpMargin: {
-    marginTop: 20,
+    marginTop: 42,
   },
   signUpText: {
     marginTop: 20,
     textAlign: 'center',
+    fontSize: 16,
+  },
+  forgotPasswordText: {
+    marginTop: 8,
+    textAlign: 'center',
     fontSize: 14,
   },
-  buttonlogin: {
+  loginButton: {
     marginTop: 20,
     height: 40,
     width: 140,
     alignSelf: 'center',
     justifyContent: 'center',
+  },
+  socialLoginImage: {
+    width: 30,
+    height: 30,
+    marginTop: 10,
+    marginLeft: 10,
   },
 })
 
@@ -253,13 +253,17 @@ export async function signInWithFacebook(
   const response = await fetch(
     `https://graph.facebook.com/me?access_token=${token}&fields=name,email,first_name,last_name`,
   )
+
   const fbProfile: {
     email: string
     first_name: string
     last_name: string
     name: string
     id: string
+    picture: string
+    short_name: string
   } = await response.json()
+
   console.info(fbProfile)
   Alert.alert('Logged in!', `Hi ${fbProfile.name}!`)
 
