@@ -50,9 +50,9 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
   public render(): React.ReactNode {
     return (
       <ScrollView style={styles.container}>
-        <Title style={styles.title}>Sign in</Title>
+        <Title style={styles.title}>Sign In</Title>
         <Text style={styles.signinSectionMessage}>
-          Sign In using Social Media
+          Sign in using Social Media
         </Text>
 
         <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
