@@ -1,6 +1,16 @@
 import { Facebook, Google } from 'expo'
 import * as firebase from 'firebase'
 import { Alert } from 'react-native'
+import { User, UserStore, UserValue } from '../../datastore'
+
+export const validation = {
+  EMAIL_REGEX: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+  // Spec:
+  //   Length > 6
+  //   Valid char: "a-z" "0-9" "A-Z" plus special chars in https://www.owasp.org/index.php/Password_special_characters
+  PASSWORD_REGEX: /^[a-z0-9A-Z !"#$%&'()*+,.\/:;<=>?@[\]\\^_`{|}~-]{6,}$/,
+  NAME_REGEX: /^[a-zA-Z ]{1,40}$/,
+}
 
 export interface UserData {
   firstname: string
@@ -70,7 +80,20 @@ export async function signUpWithEmailPassword(
   }
 }
 
-export async function signInWithGoogle(): Promise<SignInData> {
+export function signInWithSocialAccount(
+  account: 'facebook' | 'google',
+): Promise<SignInData> {
+  switch (account) {
+    case 'facebook':
+      return signInWithFacebook()
+    case 'google':
+      return signInWithGoogle()
+    default:
+      throw Error('WTF')
+  }
+}
+
+async function signInWithGoogle(): Promise<SignInData> {
   const res = await Google.logInAsync({
     // IOS client id from GoogleService-Info.plist in Firebase
     iosClientId:
@@ -99,7 +122,7 @@ export async function signInWithGoogle(): Promise<SignInData> {
   })
 }
 
-export async function signInWithFacebook(): Promise<SignInData> {
+async function signInWithFacebook(): Promise<SignInData> {
   const { type, token } = await Facebook.logInWithReadPermissionsAsync(
     '1051395471700487',
     {
@@ -177,4 +200,33 @@ async function signInWithCredential(
 
     throw new Error(errorInfo)
   }
+}
+
+// Return User if new user was created
+export async function createUserIfNeeded(
+  signInData: SignInData,
+  userStore: UserStore,
+): Promise<User | undefined> {
+  const {
+    userCredential,
+    userData: { email, firstname, lastname, profilePicture },
+  } = signInData
+  const uid = userCredential.user!.uid
+
+  if (
+    userCredential.additionalUserInfo &&
+    !userCredential.additionalUserInfo.isNewUser
+  ) {
+    return
+  }
+
+  const userInfo: UserValue = {
+    email,
+    firstname,
+    lastname,
+    profilePicture,
+    interests: [],
+  }
+
+  return await userStore.createUser(userInfo, uid)
 }

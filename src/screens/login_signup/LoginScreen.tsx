@@ -1,5 +1,6 @@
 import { Facebook, Google } from 'expo'
 import * as firebase from 'firebase'
+import { inject } from 'mobx-react'
 import React, { Component } from 'react'
 import {
   Alert,
@@ -11,24 +12,27 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import { Appbar, Button, TextInput, Title } from 'react-native-paper'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
 
-import { Appbar, Button, TextInput, Title } from 'react-native-paper'
 import { theme } from '../../theme'
 import { SignUpScreen } from './SignUpScreen'
 
+import { AppStateStore, UserStore } from '../../datastore'
 import {
+  createUserIfNeeded,
   loginWithEmailPassword,
-  signInWithFacebook,
-  signInWithGoogle,
+  signInWithSocialAccount,
   UserData,
+  validation,
 } from './socialLoginUtils'
 
 interface LoginScreenProps {
   navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
 }
 
 interface LoginScreenState {
@@ -37,7 +41,7 @@ interface LoginScreenState {
   error?: string
 }
 
-export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
+class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
   public static navigationOptions: NavigationStackScreenOptions = {
     header: null,
   }
@@ -50,8 +54,7 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
     }
 
     this.loginWithEmailPassword = this.loginWithEmailPassword.bind(this)
-    this.loginWithFacebook = this.loginWithFacebook.bind(this)
-    this.loginWithGoogle = this.loginWithGoogle.bind(this)
+    this.loginWithSocialAcc = this.loginWithSocialAcc.bind(this)
   }
 
   public render(): React.ReactNode {
@@ -63,13 +66,13 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
         </Text>
 
         <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
-          <TouchableOpacity onPress={this.loginWithFacebook}>
+          <TouchableOpacity onPress={() => this.loginWithSocialAcc('facebook')}>
             <Image
               source={require('../../resources/facebook.png')}
               style={styles.socialLoginImage}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.loginWithGoogle}>
+          <TouchableOpacity onPress={() => this.loginWithSocialAcc('google')}>
             <Image
               source={require('../../resources/google.png')}
               style={styles.socialLoginImage}
@@ -126,19 +129,15 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
     )
   }
 
-  private async loginWithFacebook(): Promise<void> {
+  private async loginWithSocialAcc(acc: 'facebook' | 'google'): Promise<void> {
     try {
-      const { userCredential, userData } = await signInWithFacebook()
-      this.props.navigation.navigate('App')
-    } catch (error) {
-      this.setState({ error: error.message })
-    }
-  }
-
-  private async loginWithGoogle(): Promise<void> {
-    try {
-      await signInWithGoogle()
-      this.props.navigation.navigate('App')
+      const signInData = await signInWithSocialAccount(acc)
+      const user = await createUserIfNeeded(signInData, this.props.userStore)
+      if (user) {
+        this.props.navigation.navigate('HobbyScreen')
+      } else {
+        this.props.navigation.navigate('Home')
+      }
     } catch (error) {
       this.setState({ error: error.message })
     }
@@ -146,8 +145,8 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
 
   private validateInput(): boolean {
     return (
-      SignUpScreen.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
-      SignUpScreen.PASSWORD_REGEX.test(this.state.password)
+      validation.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
+      validation.PASSWORD_REGEX.test(this.state.password)
     )
   }
 
@@ -210,3 +209,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 })
+
+export const LoginScreen = inject<AppStateStore, LoginScreenProps>(
+  allStores => ({
+    userStore: allStores.userStore,
+  }),
+)(LoginScreenComp)

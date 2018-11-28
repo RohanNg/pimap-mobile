@@ -35,10 +35,11 @@ interface SignUpScreenState {
 }
 
 import {
+  createUserIfNeeded,
   SignInData,
-  signInWithFacebook,
-  signInWithGoogle,
+  signInWithSocialAccount,
   signUpWithEmailPassword,
+  validation,
 } from './socialLoginUtils'
 
 class SignUpScreenComp extends React.Component<
@@ -48,13 +49,6 @@ class SignUpScreenComp extends React.Component<
   public static navigationOptions: NavigationStackScreenOptions = {
     header: null,
   }
-
-  public static readonly EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  // Spec:
-  //   Length > 6
-  //   Valid char: "a-z" "0-9" "A-Z" plus special chars in https://www.owasp.org/index.php/Password_special_characters
-  public static readonly PASSWORD_REGEX: RegExp = /^[a-z0-9A-Z !"#$%&'()*+,.\/:;<=>?@[\]\\^_`{|}~-]{6,}$/
-  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z ]{1,40}$/
 
   constructor(props: SignUpScreenProps) {
     super(props)
@@ -66,8 +60,7 @@ class SignUpScreenComp extends React.Component<
     }
 
     this.signUpWithEmailPassword = this.signUpWithEmailPassword.bind(this)
-    this.signUpWithFacebook = this.signUpWithFacebook.bind(this)
-    this.signUpWithGoogle = this.signUpWithGoogle.bind(this)
+    this.signUpWithSocialAcc = this.signUpWithSocialAcc.bind(this)
   }
 
   public render(): React.ReactNode {
@@ -80,14 +73,16 @@ class SignUpScreenComp extends React.Component<
           Sign Up with existing Social Accont
         </Text>
         <View style={styles.socialImageView}>
-          <TouchableOpacity onPress={this.signUpWithFacebook}>
+          <TouchableOpacity
+            onPress={() => this.signUpWithSocialAcc('facebook')}
+          >
             <Image
               source={require('../../resources/facebook.png')}
               fadeDuration={0}
               style={styles.fbImage}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.signUpWithGoogle}>
+          <TouchableOpacity onPress={() => this.signUpWithSocialAcc('google')}>
             <Image
               source={require('../../resources/google.png')}
               fadeDuration={0}
@@ -150,26 +145,16 @@ class SignUpScreenComp extends React.Component<
 
   private validateInput(): boolean {
     return (
-      SignUpScreenComp.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
-      SignUpScreenComp.PASSWORD_REGEX.test(this.state.password) &&
-      SignUpScreenComp.NAME_REGEX.test(this.state.firstname) &&
-      SignUpScreenComp.NAME_REGEX.test(this.state.lastname)
+      validation.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
+      validation.PASSWORD_REGEX.test(this.state.password) &&
+      validation.NAME_REGEX.test(this.state.firstname) &&
+      validation.NAME_REGEX.test(this.state.lastname)
     )
   }
 
-  private async signUpWithFacebook(): Promise<void> {
+  private async signUpWithSocialAcc(acc: 'google' | 'facebook'): Promise<void> {
     try {
-      const signInData = await signInWithFacebook()
-      await this.createUserIfNeeded(signInData)
-      this.props.navigation.navigate('App')
-    } catch (error) {
-      this.setState({ error: error.message })
-    }
-  }
-
-  private async signUpWithGoogle(): Promise<void> {
-    try {
-      const signInData = await signInWithGoogle()
+      const signInData = await signInWithSocialAccount(acc)
       await this.createUserIfNeeded(signInData)
       this.props.navigation.navigate('App')
     } catch (error) {
@@ -195,37 +180,16 @@ class SignUpScreenComp extends React.Component<
     }
   }
 
-  private createUserIfNeeded = async ({
-    userData,
-    userCredential,
-  }: SignInData) => {
-    const uid = userCredential.user!.uid
-
-    if (
-      userCredential.additionalUserInfo &&
-      !userCredential.additionalUserInfo.isNewUser
-    ) {
-      console.info('NOT A NEW USER')
-      // Not a new user: user have signed up with facebook/google previously
+  private createUserIfNeeded = async (signInData: SignInData) => {
+    try {
+      await createUserIfNeeded(signInData, this.props.userStore)
+      const uid = signInData.userCredential.user!.uid
       await this.props.navigation.navigate('HobbyScreen', { userId: uid })
-      return
+    } catch (error) {
+      this.setState({ error: 'Some error occured.' })
     }
-
-    const userInfo: UserValue = {
-      ...userData,
-      interests: [],
-    }
-
-    await this.props.userStore.createUser(userInfo, uid)
-    await this.props.navigation.navigate('HobbyScreen', { userId: uid })
   }
 }
-
-export const SignUpScreen = inject<AppStateStore, SignUpScreenProps>(
-  allStores => ({
-    userStore: allStores.userStore,
-  }),
-)(SignUpScreenComp)
 
 const styles = StyleSheet.create({
   container: {
@@ -290,3 +254,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 })
+
+export const SignUpScreen = inject<AppStateStore, SignUpScreenProps>(
+  allStores => ({
+    userStore: allStores.userStore,
+  }),
+)(SignUpScreenComp)
