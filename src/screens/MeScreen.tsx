@@ -20,7 +20,7 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
-import ProfilePic from '../components/ProfilePic'
+import { ProfilePic } from '../components/ProfilePic'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
@@ -41,7 +41,10 @@ export class MeScreen extends React.Component<MeScreenProps> {
     return (
       <ScrollView scrollEventThrottle={16}>
         <View style={styles.header}>
-          <ProfilePic />
+          <ProfilePic
+            image={require('../resources/namanh.jpg')}
+            name="Anh Nguyen Le"
+          />
           <Text style={styles.textdetail}>Verified user</Text>
           <Text style={styles.textdetail}>Joined since 08/2018</Text>
 

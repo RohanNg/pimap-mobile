@@ -51,10 +51,8 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
           <View style={styles.container}>
             <Title style={{ fontSize: 24 }}>Sign in</Title>
 
-            <Text style={{ marginTop: 20, fontWeight: '600' }}>
-              Login using Social Media
-            </Text>
-            <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
+            <Text style={styles.subTitle}>Login using Social Media</Text>
+            <View style={styles.iconsView}>
               <TouchableOpacity onPress={this.loginWithFacebook}>
                 <Image
                   source={require('../resources/facebook.png')}
@@ -185,6 +183,17 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 20,
   },
+  iconsView: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 5,
+  },
+  subTitle: {
+    marginTop: 20,
+    fontWeight: '600',
+    color: '#F27979',
+  },
+
   textInput: {
     height: 46,
   },

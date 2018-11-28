@@ -7,22 +7,21 @@ import {
   StyleSheet,
   Text,
   View,
+  ImageRequireSource,
 } from 'react-native'
 
-export default class ProfilePic extends React.Component {
-  public render() {
-    return (
-      <View>
-        <View style={styles.profilepicWrap}>
-          <Image
-            style={styles.profilepic}
-            source={require('../resources/profile.jpg')}
-          />
-        </View>
-        <Text style={styles.nameuser}>Anh Nguyen Le</Text>
+export const ProfilePic: React.SFC<{
+  name: string
+  image: ImageRequireSource
+}> = ({ name, image }) => {
+  return (
+    <View>
+      <View style={styles.profilepicWrap}>
+        <Image style={styles.profilepic} source={image} />
       </View>
-    )
-  }
+      <Text style={styles.nameuser}>{name}</Text>
+    </View>
+  )
 }
 
 const styles = StyleSheet.create({
