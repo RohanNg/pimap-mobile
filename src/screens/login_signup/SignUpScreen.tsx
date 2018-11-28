@@ -1,5 +1,6 @@
 import { Facebook } from 'expo'
 import * as firebase from 'firebase'
+import { inject, observer } from 'mobx-react'
 import React, { Component } from 'react'
 import {
   Alert,
@@ -15,13 +16,10 @@ import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
-import { inject, observer } from 'mobx-react'
 
-import { signInWithFacebook, signInWithGoogle } from './LoginScreen'
-import { Title, TextInput, Button } from 'react-native-paper'
-import { UserValue, User, UserStore } from '../datastore'
-import { AppStateStore } from '../datastore'
-import { theme } from '../theme'
+import { Button, TextInput, Title } from 'react-native-paper'
+import { AppStateStore, User, UserStore, UserValue } from '../../datastore'
+import { theme } from '../../theme'
 
 interface SignUpScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -36,23 +34,21 @@ interface SignUpScreenState {
   error?: string
 }
 
-@inject<AppStateStore, SignUpScreenProps>(allStores => ({
-  userStore: allStores.userStore,
-}))
-export class SignUpScreen extends React.Component<
+import {
+  createUserIfNeeded,
+  SignInData,
+  signInWithSocialAccount,
+  signUpWithEmailPassword,
+  validation,
+} from './socialLoginUtils'
+
+class SignUpScreenComp extends React.Component<
   SignUpScreenProps,
   SignUpScreenState
 > {
   public static navigationOptions: NavigationStackScreenOptions = {
     header: null,
   }
-
-  public static readonly EMAIL_REGEX: RegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  // Spec:
-  //   Length > 6
-  //   Valid char: "a-z" "0-9" "A-Z" plus special chars in https://www.owasp.org/index.php/Password_special_characters
-  public static readonly PASSWORD_REGEX: RegExp = /^[a-z0-9A-Z !"#$%&'()*+,.\/:;<=>?@[\]\\^_`{|}~-]{6,}$/
-  public static readonly NAME_REGEX: RegExp = /^[a-zA-Z ]{1,40}$/
 
   constructor(props: SignUpScreenProps) {
     super(props)
@@ -64,8 +60,7 @@ export class SignUpScreen extends React.Component<
     }
 
     this.signUpWithEmailPassword = this.signUpWithEmailPassword.bind(this)
-    this.signUpWithFacebook = this.signUpWithFacebook.bind(this)
-    this.signUpWithGoogle = this.signUpWithGoogle.bind(this)
+    this.signUpWithSocialAcc = this.signUpWithSocialAcc.bind(this)
   }
 
   public render(): React.ReactNode {
@@ -78,16 +73,18 @@ export class SignUpScreen extends React.Component<
           Sign Up with existing Social Accont
         </Text>
         <View style={styles.socialImageView}>
-          <TouchableOpacity onPress={this.signUpWithFacebook}>
+          <TouchableOpacity
+            onPress={() => this.signUpWithSocialAcc('facebook')}
+          >
             <Image
-              source={require('../resources/facebook.png')}
+              source={require('../../resources/facebook.png')}
               fadeDuration={0}
               style={styles.fbImage}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={this.signUpWithGoogle}>
+          <TouchableOpacity onPress={() => this.signUpWithSocialAcc('google')}>
             <Image
-              source={require('../resources/google.png')}
+              source={require('../../resources/google.png')}
               fadeDuration={0}
               style={styles.googleImage}
             />
@@ -99,19 +96,20 @@ export class SignUpScreen extends React.Component<
         </Text>
         <View style={styles.inputNameView}>
           <TextInput
-            label="Fistname"
+            label="Fist Name"
             style={[styles.nameInput, styles.firstNameInput]}
             mode="outlined"
             autoCorrect={false}
             onChangeText={firstname => this.setState({ firstname })}
-            placeholder="Your first name"
+            placeholder="Your First Name"
           />
           <TextInput
-            placeholder="Lastname"
+            label="Last Name"
             style={styles.nameInput}
             mode="outlined"
             autoCorrect={false}
             onChangeText={lastname => this.setState({ lastname })}
+            placeholder="Your Last Name"
           />
         </View>
 
@@ -147,65 +145,49 @@ export class SignUpScreen extends React.Component<
 
   private validateInput(): boolean {
     return (
-      SignUpScreen.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
-      SignUpScreen.PASSWORD_REGEX.test(this.state.password) &&
-      SignUpScreen.NAME_REGEX.test(this.state.firstname) &&
-      SignUpScreen.NAME_REGEX.test(this.state.lastname)
+      validation.EMAIL_REGEX.test(this.state.email.toLowerCase()) &&
+      validation.PASSWORD_REGEX.test(this.state.password) &&
+      validation.NAME_REGEX.test(this.state.firstname) &&
+      validation.NAME_REGEX.test(this.state.lastname)
     )
   }
 
-  private async signUpWithFacebook(): Promise<void> {
-    await signInWithFacebook(this.setState, () => {
-      this.props.navigation.navigate('Hobby')
-    })
-  }
-
-  private async signUpWithGoogle(): Promise<void> {
-    await signInWithGoogle(this.setState, () =>
-      this.props.navigation.navigate('Hobby'),
-    )
+  private async signUpWithSocialAcc(acc: 'google' | 'facebook'): Promise<void> {
+    try {
+      const signInData = await signInWithSocialAccount(acc)
+      await this.createUserIfNeeded(signInData)
+      this.props.navigation.navigate('App')
+    } catch (error) {
+      this.setState({ error: error.message })
+    }
   }
 
   private async signUpWithEmailPassword(): Promise<void> {
-    const { email, password } = this.state
-    // https://firebase.google.com/docs/reference/js/firebase.auth.Auth#createUserWithEmailAndPassword
+    const { email, password, firstname, lastname } = this.state
     try {
-      const authCred = await firebase
-        .auth()
-        .createUserWithEmailAndPassword(email, password)
-      const uid = authCred.user!.uid
-      this.createUser(uid)
+      const signInData = await signUpWithEmailPassword(
+        {
+          email,
+          firstname,
+          lastname,
+        },
+        password,
+      )
+
+      this.createUserIfNeeded(signInData)
     } catch (error) {
-      const errorCode = error.code
-      let errorInfo
-      if (errorCode === 'auth/weak-password') {
-        errorInfo = 'The password is too weak'
-      } else if (errorCode === 'auth/email-already-in-use') {
-        errorInfo = 'Given email already exists'
-      } else if (errorCode === 'auth/invalid-email') {
-        errorInfo = 'Given email is invalid'
-      } else {
-        errorInfo = 'Unknown error! Please contact us'
-      }
-      this.setState({ error: errorInfo })
+      this.setState({ error: error.message })
     }
   }
 
-  private createUser = async (uid: string) => {
-    const { firstname, lastname, password, email } = this.state
-
-    const user: UserValue = {
-      firstname,
-      lastname,
-      password,
-      email,
-      hobby: [],
+  private createUserIfNeeded = async (signInData: SignInData) => {
+    try {
+      await createUserIfNeeded(signInData, this.props.userStore)
+      const uid = signInData.userCredential.user!.uid
+      await this.props.navigation.navigate('HobbyScreen', { userId: uid })
+    } catch (error) {
+      this.setState({ error: 'Some error occured.' })
     }
-
-    const id = uid
-    await this.props.userStore.createUser(user, uid)
-
-    await this.props.navigation.navigate('Hobby', { userId: id })
   }
 }
 
@@ -272,3 +254,9 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 })
+
+export const SignUpScreen = inject<AppStateStore, SignUpScreenProps>(
+  allStores => ({
+    userStore: allStores.userStore,
+  }),
+)(SignUpScreenComp)

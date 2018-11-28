@@ -1,19 +1,19 @@
-import * as React from 'react'
 import * as firebase from 'firebase'
+import * as React from 'react'
 import {
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
 } from 'react-native'
+import { Button, Chip, TextInput, Title } from 'react-native-paper'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
-import { Title, TextInput, Chip, Button } from 'react-native-paper'
-import { theme } from '../theme'
+import { theme } from '../../theme'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -45,12 +45,7 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
         <View style={styles.chip}>
           {hobbyList.map(item => {
             return (
-              <Chip
-                mode="outlined"
-                style={styles.chipitem}
-                onPress={() => {}}
-                key={item}
-              >
+              <Chip mode="outlined" style={styles.chipitem} key={item}>
                 {item}
               </Chip>
             )
@@ -60,7 +55,7 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={() => this.props.navigation.navigate('App')}
+          onPress={() => this.props.navigation.navigate('Home')}
         >
           <Text style={styles.btnText}>I'M DONE!</Text>
         </Button>
