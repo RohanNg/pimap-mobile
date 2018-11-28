@@ -51,30 +51,28 @@ export class LoginScreen extends Component<LoginScreenProps, LoginScreenState> {
     return (
       <ScrollView style={styles.container}>
         <Title style={styles.title}>Sign in</Title>
-        <Text style={{ marginTop: 20, fontWeight: '600' }}>
-          Login using Social Media
+        <Text style={styles.signinSectionMessage}>
+          Sign In using Social Media
         </Text>
 
         <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
           <TouchableOpacity onPress={this.loginWithFacebook}>
             <Image
               source={require('../resources/facebook.png')}
-              fadeDuration={0}
-              style={{ width: 30, height: 30, marginTop: 10 }}
-            >
-              {this.state.error && (
-                <Text style={styles.error}>{this.state.error}</Text>
-              )}
-            </Image>
+              style={styles.socialLoginImage}
+            />
           </TouchableOpacity>
           <TouchableOpacity onPress={this.loginWithGoogle}>
             <Image
               source={require('../resources/google.png')}
-              fadeDuration={0}
               style={styles.socialLoginImage}
             />
           </TouchableOpacity>
         </View>
+
+        <Text style={styles.signinSectionMessage}>
+          Or using your Actify account
+        </Text>
         <View style={{ marginTop: 10 }}>
           <TextInput
             label="Email"
@@ -174,6 +172,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: theme.colors!.background,
   },
+  signinSectionMessage: {
+    marginTop: 32,
+    fontWeight: '600',
+  },
   title: {
     fontSize: 32,
     color: theme.colors!.primary,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginTop: 10,
-    marginLeft: 10,
+    marginRight: 10,
   },
 })
 
