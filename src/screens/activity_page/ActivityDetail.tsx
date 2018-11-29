@@ -29,11 +29,12 @@ import {
 
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { TagList } from '../../components/tags'
-import { Activity } from '../../datastore'
+import { Activity, User } from '../../datastore'
 import { theme } from '../../theme'
 
 interface ActivityDetailProps {
   activity: Activity
+  creator: User
   style?: ViewStyle
 }
 
@@ -41,11 +42,22 @@ interface ActivityDetailProps {
 export class ActivityDetail extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
     const { title, description, tags } = this.props.activity.value
+    const { firstname, lastname, profilePicture } = this.props.creator.value
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
+        <View style={{ flexDirection: 'row', marginTop: 12 }}>
+          <Image
+            source={{ uri: profilePicture }}
+            style={{ width: 28, height: 28, borderRadius: 14 }}
+          />
+          <Subheading style={styles.placeTimeInfo}>
+            {'  '}
+            {firstname} {lastname}
+          </Subheading>
+        </View>
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>{description}</Paragraph>
@@ -126,7 +138,7 @@ const peopleData: Person[] = [
   },
 ]
 
-const SECTION_SPACING = 24
+const SECTION_SPACING = 16
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -138,9 +150,9 @@ const styles = StyleSheet.create({
   },
   headLine: {
     marginTop: SECTION_SPACING,
-    fontSize: 34,
+    fontSize: 26,
     fontFamily: 'shrikhand',
-    lineHeight: 34 * 1.2,
+    lineHeight: 26 * 1.2,
     letterSpacing: 0.25,
     marginBottom: -6,
   },
@@ -149,6 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   activityDescription: {
+    marginTop: SECTION_SPACING,
     fontSize: 16,
   },
   buttonContainer: {
@@ -159,11 +172,11 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
   },
   peopleList_scrollView: {
-    marginTop: 12,
+    marginTop: 8,
   },
   peopleImage: {
-    height: 80,
-    width: 80,
+    height: 60,
+    width: 60,
     borderRadius: theme.roundness,
     marginRight: 12,
   },
@@ -171,6 +184,7 @@ const styles = StyleSheet.create({
     width: 240,
   },
   tagListContainer: {
+    marginTop: SECTION_SPACING,
     marginLeft: -4,
     flexDirection: 'row',
   },
