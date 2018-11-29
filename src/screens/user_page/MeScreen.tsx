@@ -1,8 +1,8 @@
 import * as React from 'react'
 
+import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { withAuthenticatedUser } from '../../services/AuthService'
 import { UserScreen } from './UserScreen'
-import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 
 import {
   NavigationBottomTabScreenOptions,

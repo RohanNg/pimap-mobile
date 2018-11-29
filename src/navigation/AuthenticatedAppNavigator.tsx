@@ -11,7 +11,7 @@ import { Home } from '../screens/Home'
 import { LocationSelection } from '../screens/LocationSelection'
 import { NearbyActivities } from '../screens/NearbyActivities'
 import { NotificationScreen } from '../screens/NotificationScreen'
-import { MeScreen } from '../screens/user_page/MeScreen'
+import { MeScreen, UserScreen } from '../screens/user_page/'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
 
@@ -51,6 +51,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     ActivityPage,
     LoadingActivityList,
     HobbyScreen,
+    UserScreen,
   },
   {
     headerMode: 'none',

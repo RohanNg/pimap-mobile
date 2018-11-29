@@ -2,6 +2,7 @@ import { Constants, Facebook, Location, Permissions } from 'expo'
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Image,
@@ -9,7 +10,6 @@ import {
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
 } from 'react-native'
 import { Card, Colors, IconButton, Paragraph } from 'react-native-paper'
 import {

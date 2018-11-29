@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleProp,
   StyleSheet,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native'
@@ -27,6 +28,7 @@ import {
   withTheme,
 } from 'react-native-paper'
 
+import { NavigationInjectedProps, withNavigation } from 'react-navigation'
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { TagList } from '../../components/tags'
 import { Activity, User } from '../../datastore'
@@ -39,25 +41,16 @@ interface ActivityDetailProps {
 }
 
 @observer
-export class ActivityDetail extends React.Component<ActivityDetailProps> {
+class ActivityDetailComp extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
     const { title, description, tags } = this.props.activity.value
-    const { firstname, lastname, profilePicture } = this.props.creator.value
+
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <View style={{ flexDirection: 'row', marginTop: 12 }}>
-          <Image
-            source={{ uri: profilePicture }}
-            style={{ width: 28, height: 28, borderRadius: 14 }}
-          />
-          <Subheading style={styles.placeTimeInfo}>
-            {'  '}
-            {firstname} {lastname}
-          </Subheading>
-        </View>
+        <CreatorInfo creator={this.props.creator} />
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>{description}</Paragraph>
@@ -84,6 +77,39 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
     )
   }
 }
+
+const CreatorInfoWithNav: React.SFC<
+  {
+    creator: User
+  } & NavigationInjectedProps
+> = ({
+  creator: {
+    id,
+    value: { firstname, lastname, profilePicture },
+  },
+  navigation,
+}) => {
+  return (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('UserScreen', {
+          userID: id,
+        })
+      }
+      style={{ flexDirection: 'row', marginTop: 12 }}
+    >
+      <Image
+        source={{ uri: profilePicture }}
+        style={{ width: 28, height: 28, borderRadius: 14 }}
+      />
+      <Subheading style={styles.placeTimeInfo}>
+        {'  '}
+        {firstname} {lastname}
+      </Subheading>
+    </TouchableOpacity>
+  )
+}
+const CreatorInfo = withNavigation(CreatorInfoWithNav)
 
 const flightIcon = ({ color, size }: { color: string; size: number }) => {
   return <Ionicons size={size} color={color} name={'md-paper-plane'} />
@@ -139,6 +165,8 @@ const peopleData: Person[] = [
 ]
 
 const SECTION_SPACING = 16
+const SUB_SECTION_SPACING = 8
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -172,7 +200,7 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
   },
   peopleList_scrollView: {
-    marginTop: 8,
+    marginTop: SUB_SECTION_SPACING,
   },
   peopleImage: {
     height: 60,
@@ -180,9 +208,7 @@ const styles = StyleSheet.create({
     borderRadius: theme.roundness,
     marginRight: 12,
   },
-  backButton: {
-    width: 240,
-  },
+  backButton: {},
   tagListContainer: {
     marginTop: SECTION_SPACING,
     marginLeft: -4,
@@ -192,3 +218,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 })
+
+export const ActivityDetail: React.ComponentType<
+  ActivityDetailProps
+> = withNavigation(ActivityDetailComp)

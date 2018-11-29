@@ -1,13 +1,13 @@
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  ActivityIndicator,
 } from 'react-native'
 import { Button } from 'react-native-paper'
 import {
