@@ -7,12 +7,14 @@ import { theme } from '../../theme'
 export const Header: React.SFC<{ title: string; goBack?: () => void }> = ({
   title,
   goBack,
+  children,
 }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Appbar>
         {goBack && <Appbar.BackAction onPress={goBack} />}
         <Appbar.Content titleStyle={styles.appBarTitleContent} title={title} />
+        {children}
       </Appbar>
     </SafeAreaView>
   )

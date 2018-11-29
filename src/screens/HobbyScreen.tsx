@@ -1,13 +1,14 @@
-import * as React from 'react'
 import * as firebase from 'firebase'
+import * as React from 'react'
 import {
   Alert,
+  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
 } from 'react-native'
+import { Button, Chip, TextInput, Title } from 'react-native-paper'
 import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
@@ -15,7 +16,6 @@ import {
 
 import { inject, observer } from 'mobx-react'
 
-import { Title, TextInput, Chip, Button } from 'react-native-paper'
 import { theme } from '../theme'
 import { UserValue, User, UserStore } from '../datastore'
 import { AppStateStore } from '../datastore'
@@ -45,9 +45,6 @@ const hobbyList = [
   'Outdoor',
 ]
 
-@inject<AppStateStore, HobbyScreenProps>(allStores => ({
-  userStore: allStores.userStore,
-}))
 export class HobbyScreen extends React.Component<
   HobbyScreenProps,
   HobbyScreenState
@@ -68,14 +65,7 @@ export class HobbyScreen extends React.Component<
         <View style={styles.chip}>
           {hobbyList.map(item => {
             return (
-              <Chip
-                mode="outlined"
-                style={styles.chipitem}
-                onPress={() => {
-                  this.state.hobby.push(item)
-                }}
-                key={item}
-              >
+              <Chip mode="outlined" style={styles.chipitem} key={item}>
                 {item}
               </Chip>
             )
@@ -85,7 +75,7 @@ export class HobbyScreen extends React.Component<
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={() => this.props.navigation.navigate('App')}
+          onPress={() => this.props.navigation.navigate('Home')}
         >
           <Text style={styles.btnText}>I'M DONE!</Text>
         </Button>
@@ -93,15 +83,7 @@ export class HobbyScreen extends React.Component<
     )
   }
 
-  /*private addHobby = async() => {
-    const hobby = this.state
-    const user = await firebase.auth().currentUser
-    if (user != null) {
-      const uid = user.uid
-      await this.props.userStore.updateUserHobby(uid, hobby)
-    }
-  }
-  */
+  
 }
 
 const styles = StyleSheet.create({

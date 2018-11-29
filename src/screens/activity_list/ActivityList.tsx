@@ -15,10 +15,6 @@ interface ActivityListProps {
   onActivityPressed: (activityID: string) => void
 }
 
-const image = (() => {
-  return require('../../assets/activity_image/aurora.jpg')
-})()
-
 export const ActivityList: React.SFC<ActivityListProps> = ({
   activitities,
   title,
@@ -36,12 +32,15 @@ export const ActivityList: React.SFC<ActivityListProps> = ({
         }}
       >
         {activitities.map(
-          ({ value: { creatorID, privacy, title: activityTitle }, id }) => {
+          ({
+            value: { creatorID, privacy, title: activityTitle, coverImage },
+            id,
+          }) => {
             return (
               <ActivityCard
                 key={id}
                 activity={{
-                  image,
+                  image: { uri: coverImage },
                   organizer: 'Dang Nguyen',
                   privacy,
                   title: activityTitle,

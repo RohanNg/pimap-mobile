@@ -12,6 +12,7 @@ export interface ActivityValue {
     lon: number
   }
   time: Date
+  coverImage: string
   images: string[]
 }
 
@@ -27,6 +28,7 @@ interface RawActivityValue {
     lon: number
   }
   timestampms: number
+  coverImage: string
   images: string[]
 }
 
