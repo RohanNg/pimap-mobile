@@ -186,6 +186,7 @@ class SignUpScreenComp extends React.Component<
       const uid = signInData.userCredential.user!.uid
       await this.props.navigation.navigate('HobbyScreen', { userId: uid })
     } catch (error) {
+      console.info(error)
       this.setState({ error: 'Some error occured.' })
     }
   }
