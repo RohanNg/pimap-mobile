@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
+    paddingBottom: 32,
   },
   inputContainerStyle: {
     margin: 8,
