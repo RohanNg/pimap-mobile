@@ -46,61 +46,21 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
     header: null,
   }
 
-  constructor(props: LoginScreenProps) {
-    super(props)
-    this.state = {
-      email: '',
-      password: '',
-    }
-
-    this.loginWithEmailPassword = this.loginWithEmailPassword.bind(this)
-    this.loginWithSocialAcc = this.loginWithSocialAcc.bind(this)
+  public state: LoginScreenState = {
+    email: '',
+    password: '',
   }
 
   public render(): React.ReactNode {
     return (
       <ScrollView style={styles.container}>
         <Title style={styles.title}>Sign In</Title>
-        <Text style={styles.signinSectionMessage}>
-          Sign in using Social Media
-        </Text>
-
-        <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
-          <TouchableOpacity onPress={() => this.loginWithSocialAcc('facebook')}>
-            <Image
-              source={require('../../resources/facebook.png')}
-              style={styles.socialLoginImage}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.loginWithSocialAcc('google')}>
-            <Image
-              source={require('../../resources/google.png')}
-              style={styles.socialLoginImage}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <Text style={styles.signinSectionMessage}>
-          Or using your Actify account
-        </Text>
-        <View style={{ marginTop: 10 }}>
-          <TextInput
-            label="Email"
-            mode="outlined"
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={email => this.setState({ email })}
-            placeholder={'Please enter your email address'}
-          />
-          <TextInput
-            label="Password"
-            mode="outlined"
-            secureTextEntry={true}
-            autoCapitalize="none"
-            autoCorrect={false}
-            onChangeText={password => this.setState({ password })}
-            placeholder="Please enter your password"
-          />
+        <SocialLoginSection loginWithSocialAcc={this.loginWithSocialAcc} />
+        <EmailPasswordLoginSecion
+          onEmailChange={this.onEmailChange}
+          onPasswordChange={this.onPasswordChange}
+        />
+        <View style={styles.section}>
           {this.state.error && (
             <Text style={styles.error}>{this.state.error}</Text>
           )}
@@ -110,10 +70,12 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
             mode="contained"
             style={styles.loginButton}
           >
-            <Text style={{ color: 'white', fontSize: 14 }}>Log in</Text>
+            <Text style={{ color: 'white', fontSize: 14 }}>Log In</Text>
           </Button>
+        </View>
+        <View style={styles.section}>
           <Text
-            style={[styles.signUpText, styles.signUpMargin]}
+            style={styles.signUpText}
             onPress={() => this.props.navigation.navigate('SignUp')}
           >
             Sign up as a new user!
@@ -129,7 +91,10 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
     )
   }
 
-  private async loginWithSocialAcc(acc: 'facebook' | 'google'): Promise<void> {
+  private onEmailChange = (email: string) => this.setState({ email })
+  private onPasswordChange = (password: string) => this.setState({ password })
+
+  private loginWithSocialAcc = async (acc: 'facebook' | 'google') => {
     try {
       const signInData = await signInWithSocialAccount(acc)
       const user = await createUserIfNeeded(signInData, this.props.userStore)
@@ -150,7 +115,7 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
     )
   }
 
-  private async loginWithEmailPassword(): Promise<void> {
+  private loginWithEmailPassword = async () => {
     const { email, password } = this.state
     const { navigation } = this.props
     try {
@@ -164,6 +129,65 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
   }
 }
 
+const SocialLoginSection: React.SFC<{
+  loginWithSocialAcc: (s: 'facebook' | 'google') => void
+}> = ({ loginWithSocialAcc }) => {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.signinSectionMessage}>
+        Sign in using Social Media
+      </Text>
+
+      <View style={{ flex: 1, flexDirection: 'row', marginTop: 5 }}>
+        <TouchableOpacity onPress={() => loginWithSocialAcc('facebook')}>
+          <Image
+            source={require('../../resources/facebook.png')}
+            style={styles.socialLoginImage}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => loginWithSocialAcc('google')}>
+          <Image
+            source={require('../../resources/google.png')}
+            style={styles.socialLoginImage}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+const EmailPasswordLoginSecion: React.SFC<{
+  onEmailChange: (s: string) => void
+  onPasswordChange: (s: string) => void
+}> = ({ onEmailChange, onPasswordChange }) => {
+  return (
+    <View style={styles.section}>
+      <Text style={styles.signinSectionMessage}>
+        Or using your Actify account
+      </Text>
+      <TextInput
+        label="Email"
+        mode="outlined"
+        autoCapitalize="none"
+        autoCorrect={false}
+        style={styles.inputField}
+        onChangeText={onEmailChange}
+        placeholder={'Please enter your email address'}
+      />
+      <TextInput
+        label="Password"
+        mode="outlined"
+        secureTextEntry={true}
+        autoCapitalize="none"
+        autoCorrect={false}
+        style={styles.inputField}
+        onChangeText={onPasswordChange}
+        placeholder="Please enter your password"
+      />
+    </View>
+  )
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,32 +195,32 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     backgroundColor: theme.colors!.background,
   },
+  section: {
+    marginTop: theme.spacing.spacious,
+  },
   signinSectionMessage: {
-    marginTop: 32,
     fontWeight: '600',
   },
   title: {
     fontSize: 32,
     color: theme.colors!.primary,
   },
+  inputField: {
+    marginTop: theme.spacing.tight,
+  },
   error: {
     textAlign: 'center',
   },
-  signUpMargin: {
-    marginTop: 42,
-  },
   signUpText: {
-    marginTop: 20,
     textAlign: 'center',
     fontSize: 16,
   },
   forgotPasswordText: {
-    marginTop: 8,
+    marginTop: theme.spacing.tight,
     textAlign: 'center',
     fontSize: 14,
   },
   loginButton: {
-    marginTop: 20,
     height: 40,
     width: 140,
     alignSelf: 'center',
@@ -205,8 +229,8 @@ const styles = StyleSheet.create({
   socialLoginImage: {
     width: 30,
     height: 30,
-    marginTop: 10,
-    marginRight: 10,
+    marginTop: theme.spacing.tight,
+    marginRight: theme.spacing.tiny,
   },
 })
 

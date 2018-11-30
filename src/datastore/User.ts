@@ -12,7 +12,7 @@ interface RawUserValue {
   firstname: string
   lastname: string
   email: string
-  profilePicture?: string
+  profilePicture: string | null
   interests: string[]
 }
 
@@ -24,9 +24,8 @@ export class User {
     if (!data.exists) {
       return undefined
     }
-
-    const { ...rest } = data.data() as RawUserValue
-    return new User({ ...rest }, docRef.id)
+    const savedData = data.data() as RawUserValue
+    return new User(this.fromRaw(savedData), docRef.id)
   }
 
   public static async createUser(
@@ -38,8 +37,18 @@ export class User {
     return new User(value, docRef.id)
   }
 
-  private static toJson({ ...rest }: UserValue): RawUserValue {
-    return { ...rest }
+  private static toJson({ profilePicture, ...rest }: UserValue): RawUserValue {
+    return {
+      ...rest,
+      profilePicture: profilePicture || null,
+    }
+  }
+
+  private static fromRaw({ profilePicture, ...rest }: RawUserValue): UserValue {
+    return {
+      ...rest,
+      profilePicture: profilePicture || undefined,
+    }
   }
 
   @observable

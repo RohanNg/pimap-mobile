@@ -7,6 +7,7 @@ import {
   ScrollView,
   StyleProp,
   StyleSheet,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native'
@@ -27,25 +28,29 @@ import {
   withTheme,
 } from 'react-native-paper'
 
+import { NavigationInjectedProps, withNavigation } from 'react-navigation'
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { TagList } from '../../components/tags'
-import { Activity } from '../../datastore'
+import { Activity, User } from '../../datastore'
 import { theme } from '../../theme'
 
 interface ActivityDetailProps {
   activity: Activity
+  creator: User
   style?: ViewStyle
 }
 
 @observer
-export class ActivityDetail extends React.Component<ActivityDetailProps> {
+class ActivityDetailComp extends React.Component<ActivityDetailProps> {
   public render(): React.ReactNode {
     const { title, description, tags } = this.props.activity.value
+
     return (
       <ScrollView
         style={[styles.container, this.props.style]}
         contentContainerStyle={styles.contentContainerStyle}
       >
+        <CreatorInfo creator={this.props.creator} />
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
         <Paragraph style={styles.activityDescription}>{description}</Paragraph>
@@ -72,6 +77,39 @@ export class ActivityDetail extends React.Component<ActivityDetailProps> {
     )
   }
 }
+
+const CreatorInfoWithNav: React.SFC<
+  {
+    creator: User
+  } & NavigationInjectedProps
+> = ({
+  creator: {
+    id,
+    value: { firstname, lastname, profilePicture },
+  },
+  navigation,
+}) => {
+  return (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('UserScreen', {
+          userID: id,
+        })
+      }
+      style={{ flexDirection: 'row', marginTop: 12 }}
+    >
+      <Image
+        source={{ uri: profilePicture }}
+        style={{ width: 28, height: 28, borderRadius: 14 }}
+      />
+      <Subheading style={styles.placeTimeInfo}>
+        {'  '}
+        {firstname} {lastname}
+      </Subheading>
+    </TouchableOpacity>
+  )
+}
+const CreatorInfo = withNavigation(CreatorInfoWithNav)
 
 const flightIcon = ({ color, size }: { color: string; size: number }) => {
   return <Ionicons size={size} color={color} name={'md-paper-plane'} />
@@ -126,7 +164,9 @@ const peopleData: Person[] = [
   },
 ]
 
-const SECTION_SPACING = 24
+const SECTION_SPACING = 16
+const SUB_SECTION_SPACING = 8
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -138,9 +178,9 @@ const styles = StyleSheet.create({
   },
   headLine: {
     marginTop: SECTION_SPACING,
-    fontSize: 34,
+    fontSize: 26,
     fontFamily: 'shrikhand',
-    lineHeight: 34 * 1.2,
+    lineHeight: 26 * 1.2,
     letterSpacing: 0.25,
     marginBottom: -6,
   },
@@ -149,6 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   activityDescription: {
+    marginTop: SECTION_SPACING,
     fontSize: 16,
   },
   buttonContainer: {
@@ -159,18 +200,17 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
   },
   peopleList_scrollView: {
-    marginTop: 12,
+    marginTop: SUB_SECTION_SPACING,
   },
   peopleImage: {
-    height: 80,
-    width: 80,
+    height: 60,
+    width: 60,
     borderRadius: theme.roundness,
     marginRight: 12,
   },
-  backButton: {
-    width: 240,
-  },
+  backButton: {},
   tagListContainer: {
+    marginTop: SECTION_SPACING,
     marginLeft: -4,
     flexDirection: 'row',
   },
@@ -178,3 +218,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 })
+
+export const ActivityDetail: React.ComponentType<
+  ActivityDetailProps
+> = withNavigation(ActivityDetailComp)

@@ -324,9 +324,9 @@ class CreateActivityComp extends React.Component<
       coverImage,
     } = this.state
 
+    let imageURL
     try {
-      const imageURL = await uploadImage(coverImage)
-      console.info(imageURL)
+      imageURL = await uploadImage(coverImage)
     } catch (err) {
       Alert.alert('Uploading image failed.')
       return
@@ -342,7 +342,7 @@ class CreateActivityComp extends React.Component<
       mode: recurrningActivity ? 'recurring' : 'onetime',
       privacy: privateActivity ? 'private' : 'public',
       creatorID: user.uid,
-      coverImage,
+      coverImage: imageURL,
     }
 
     const { id } = await this.props.activityStore.createActivity(activity)
@@ -413,6 +413,7 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
+    paddingBottom: 32,
   },
   inputContainerStyle: {
     margin: 8,
