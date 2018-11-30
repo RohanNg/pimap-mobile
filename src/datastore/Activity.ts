@@ -2,6 +2,15 @@ import { action, autorun, computed, observable } from 'mobx'
 
 export interface ActivityValue {
   creatorID: string
+  publicInteractions?: {
+    goingUserIDs: string[]
+    interestedUserIDs: string
+  }
+  privateInteractions?: {
+    members: string[]
+    invitedUserIDs: string[]
+    requestedUserID: string[]
+  }
   title: string
   description: string
   tags: string[]
@@ -21,6 +30,15 @@ interface RawActivityValue {
   title: string
   description: string
   tags: string[]
+  publicInteractions: {
+    goingUserIDs: string[]
+    interestedUserIDs: string
+  } | null
+  privateInteractions: {
+    members: string[]
+    invitedUserIDs: string[]
+    requestedUserID: string[]
+  } | null
   privacy: 'public' | 'private'
   mode: 'onetime' | 'recurring'
   coordinate: {
@@ -49,9 +67,18 @@ export class Activity {
       return undefined
     }
 
-    const { timestampms, ...rest } = docSnapShot.data() as RawActivityValue
+    const {
+      timestampms,
+      publicInteractions,
+      privateInteractions,
+      ...rest
+    } = docSnapShot.data() as RawActivityValue
     return new Activity(docSnapShot.ref, {
       ...rest,
+      publicInteractions: publicInteractions ? publicInteractions : undefined,
+      privateInteractions: privateInteractions
+        ? privateInteractions
+        : undefined,
       time: new Date(timestampms * 1000),
     })
   }
@@ -71,8 +98,18 @@ export class Activity {
     return new Activity(docRef, value)
   }
 
-  private static toJson({ time, ...rest }: ActivityValue): RawActivityValue {
-    return { ...rest, timestampms: time.getTime() }
+  private static toJson({
+    time,
+    publicInteractions,
+    privateInteractions,
+    ...rest
+  }: ActivityValue): RawActivityValue {
+    return {
+      ...rest,
+      publicInteractions: publicInteractions ? publicInteractions : null,
+      privateInteractions: privateInteractions ? privateInteractions : null,
+      timestampms: time.getTime(),
+    }
   }
 
   @observable
