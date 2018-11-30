@@ -67,78 +67,90 @@ class SignUpScreenComp extends React.Component<
     return (
       <ScrollView style={styles.container}>
         <Title style={styles.title}>Sign Up</Title>
-        <Text style={{ marginTop: 10 }}>Step 1 / 2: Basic Information</Text>
+        <Text style={styles.subTitle}>Step 1 / 2: Basic Information</Text>
 
-        <Text style={styles.socialTitle}>
-          Sign Up with existing Social Accont
-        </Text>
-        <View style={styles.socialImageView}>
-          <TouchableOpacity
-            onPress={() => this.signUpWithSocialAcc('facebook')}
+        <View style={styles.section}>
+          <Text style={styles.socialTitle}>
+            Sign Up with existing Social Accont
+          </Text>
+          <View style={styles.socialImageView}>
+            <TouchableOpacity
+              onPress={() => this.signUpWithSocialAcc('facebook')}
+            >
+              <Image
+                source={require('../../resources/facebook.png')}
+                fadeDuration={0}
+                style={styles.fbImage}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => this.signUpWithSocialAcc('google')}
+            >
+              <Image
+                source={require('../../resources/google.png')}
+                fadeDuration={0}
+                style={styles.googleImage}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.socialTitle}>Or create new Actify account</Text>
+          <View style={styles.inputNameView}>
+            <TextInput
+              label="Fist Name"
+              style={[
+                styles.nameInput,
+                styles.firstNameInput,
+                styles.inputField,
+              ]}
+              mode="outlined"
+              autoCorrect={false}
+              onChangeText={firstname => this.setState({ firstname })}
+              placeholder="Your First Name"
+            />
+            <TextInput
+              label="Last Name"
+              style={[styles.nameInput, styles.inputField]}
+              mode="outlined"
+              autoCorrect={false}
+              onChangeText={lastname => this.setState({ lastname })}
+              placeholder="Your Last Name"
+            />
+          </View>
+
+          <TextInput
+            label="Email address"
+            autoCapitalize="none"
+            mode="outlined"
+            autoCorrect={false}
+            style={styles.inputField}
+            onChangeText={email => this.setState({ email })}
+            placeholder="Please enter your email address"
+          />
+          <TextInput
+            label="Password"
+            mode="outlined"
+            secureTextEntry={true}
+            autoCapitalize="none"
+            autoCorrect={false}
+            style={styles.inputField}
+            onChangeText={password => this.setState({ password })}
+            placeholder="Please enter your password"
+          />
+        </View>
+        <View style={styles.section}>
+          <Text style={styles.error}> {this.state.error}</Text>
+          <Button
+            disabled={!this.validateInput()}
+            onPress={this.signUpWithEmailPassword}
+            mode="contained"
+            style={styles.buttonsignup}
           >
-            <Image
-              source={require('../../resources/facebook.png')}
-              fadeDuration={0}
-              style={styles.fbImage}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => this.signUpWithSocialAcc('google')}>
-            <Image
-              source={require('../../resources/google.png')}
-              fadeDuration={0}
-              style={styles.googleImage}
-            />
-          </TouchableOpacity>
+            <Text style={styles.btnText}>Next</Text>
+          </Button>
         </View>
-
-        <Text style={styles.socialTitle}>
-          Or create new acconnt with your email and password
-        </Text>
-        <View style={styles.inputNameView}>
-          <TextInput
-            label="Fist Name"
-            style={[styles.nameInput, styles.firstNameInput]}
-            mode="outlined"
-            autoCorrect={false}
-            onChangeText={firstname => this.setState({ firstname })}
-            placeholder="Your First Name"
-          />
-          <TextInput
-            label="Last Name"
-            style={styles.nameInput}
-            mode="outlined"
-            autoCorrect={false}
-            onChangeText={lastname => this.setState({ lastname })}
-            placeholder="Your Last Name"
-          />
-        </View>
-
-        <TextInput
-          label="Email address"
-          autoCapitalize="none"
-          mode="outlined"
-          autoCorrect={false}
-          onChangeText={email => this.setState({ email })}
-          placeholder="Please enter your email address"
-        />
-        <TextInput
-          label="Password"
-          mode="outlined"
-          secureTextEntry={true}
-          autoCapitalize="none"
-          autoCorrect={false}
-          onChangeText={password => this.setState({ password })}
-          placeholder="Please enter your password"
-        />
-        <Text style={styles.error}> {this.state.error}</Text>
-        <Button
-          disabled={!this.validateInput()}
-          onPress={this.signUpWithEmailPassword}
-          mode="contained"
-          style={styles.buttonsignup}
-        >
-          <Text style={styles.btnText}>Next</Text>
-        </Button>
       </ScrollView>
     )
   }
@@ -200,12 +212,17 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors!.background,
   },
   title: { fontSize: 32, color: theme.colors!.primary },
+  subTitle: {
+    marginTop: theme.spacing.tiny,
+  },
+  section: {
+    marginTop: theme.spacing.spacious,
+  },
   texttitle: {
     marginTop: 16,
   },
-  textInput: {
-    marginTop: 1,
-    height: 46,
+  inputField: {
+    marginTop: theme.spacing.tight,
   },
   error: {
     textAlign: 'center',
@@ -221,7 +238,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   buttonsignup: {
-    marginTop: 20,
     height: 40,
     width: 140,
     alignSelf: 'center',
@@ -246,7 +262,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   socialTitle: {
-    marginTop: 32,
     fontWeight: '600',
   },
   socialImageView: {
