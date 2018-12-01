@@ -7,9 +7,9 @@ export interface ActivityValue {
     interestedUserIDs: string
   }
   privateInteractions?: {
-    members: string[]
+    memberIDs: string[]
     invitedUserIDs: string[]
-    requestedUserID: string[]
+    requestedUserIDs: string[]
   }
   title: string
   description: string
@@ -35,9 +35,9 @@ interface RawActivityValue {
     interestedUserIDs: string
   } | null
   privateInteractions: {
-    members: string[]
+    memberIDs: string[]
     invitedUserIDs: string[]
-    requestedUserID: string[]
+    requestedUserIDs: string[]
   } | null
   privacy: 'public' | 'private'
   mode: 'onetime' | 'recurring'

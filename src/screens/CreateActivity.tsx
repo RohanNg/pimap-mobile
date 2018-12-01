@@ -396,6 +396,7 @@ class CreateActivityComp extends React.Component<
       privateActivity,
       recurrningActivity,
       coverImage,
+      invitedUsers,
     } = this.state
 
     let imageURL
@@ -417,6 +418,11 @@ class CreateActivityComp extends React.Component<
       privacy: privateActivity ? 'private' : 'public',
       creatorID: user.uid,
       coverImage: imageURL,
+      privateInteractions: {
+        memberIDs: [],
+        requestedUserIDs: [],
+        invitedUserIDs: invitedUsers.map(u => u.id),
+      },
     }
 
     const { id } = await this.props.activityStore.createActivity(activity)
