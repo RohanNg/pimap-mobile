@@ -53,7 +53,7 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
 
   public render(): React.ReactNode {
     return (
-      <ScrollView scrollEventThrottle={16} style={styles.container}>
+      <ScrollView style={styles.container}>
         <Title style={styles.title}>Sign In</Title>
         <SocialLoginSection loginWithSocialAcc={this.loginWithSocialAcc} />
         <EmailPasswordLoginSecion
@@ -219,7 +219,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.tight,
     textAlign: 'center',
     fontSize: 14,
-    marginBottom: 30,
+    marginBottom: theme.spacing.extravagant,
   },
   loginButton: {
     height: 40,

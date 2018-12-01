@@ -68,13 +68,6 @@ export class User {
     }
   }
 
-  // private static fromRawEditHobby({ interests, ...rest }: RawUserValue): UserValue {
-  //   return {
-  //     ...rest,
-  //     interests: interests,
-  //   }
-  // }
-
   private static fromRaw({ profilePicture, ...rest }: RawUserValue): UserValue {
     return {
       ...rest,

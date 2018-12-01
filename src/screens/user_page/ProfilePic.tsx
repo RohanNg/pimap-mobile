@@ -23,7 +23,7 @@ export const ProfilePic: React.SFC<{ user: User }> = ({
           source={
             profilePicture
               ? { uri: profilePicture }
-              : require('../../resources/namanh.jpg')
+              : require('../../assets/place_holder/user.png')
           }
         />
       </View>
