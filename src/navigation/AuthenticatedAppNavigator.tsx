@@ -15,6 +15,8 @@ import { MeScreen, UserScreen } from '../screens/user_page/'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
 
+import { LoadingPeopleSelectionScreen } from '../screens/people_selection'
+
 const AuthedNearbyActivities = withAuthenticatedUser(NearbyActivities)
 const AuthedCreateActivity = withAuthenticatedUser(CreateActivity)
 const AuthedMeScreen = withAuthenticatedUser(MeScreen)
@@ -27,7 +29,7 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen: AuthedMeScreen,
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'CreateActivity',
     shifting: false,
     barStyle: {
       backgroundColor: 'white',
@@ -52,6 +54,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
     LoadingActivityList,
     HobbyScreen,
     UserScreen,
+    LoadingPeopleSelectionScreen,
   },
   {
     headerMode: 'none',
