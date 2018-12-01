@@ -30,6 +30,7 @@ import { inject, observer } from 'mobx-react'
 
 import { ActivityCard } from '../components/card/ActivityCard'
 import { Chat } from '../components/chat/Chat'
+import ResponeItem from '../components/notification/responeItem'
 
 interface MeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -62,14 +63,7 @@ export class MeScreen extends React.Component<MeScreenProps> {
     }
   }
 
-  componentDidMount() {
-    const user = firebase.auth().currentUser
-    if (user != null) {
-      const uid = user.uid
-      const usr = this.props.userStore.getUser(uid)
-      console.log(usr)
-    }
-  }
+  
 
   public render(): React.ReactNode {
     return (

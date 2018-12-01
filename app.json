@@ -11,6 +11,7 @@
     "name": "Actify",
     "slug": "actify",
     "version": "0.1.0",
-    "description": ""
+    "description": "",
+    "privacy": "public"
   }
 }
