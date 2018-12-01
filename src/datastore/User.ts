@@ -21,11 +21,24 @@ export class User {
     docRef: firebase.firestore.DocumentReference,
   ): Promise<User | undefined> {
     const data = await docRef.get()
-    if (!data.exists) {
+    return this.retrieveFromDocSnapShot(data)
+  }
+
+  public static retrieveFromDocSnapShot(
+    docSnapShot: firebase.firestore.DocumentSnapshot,
+  ): User | undefined {
+    if (!docSnapShot.exists) {
       return undefined
     }
-    const savedData = data.data() as RawUserValue
-    return new User(this.fromRaw(savedData), docRef.id)
+    const savedData = docSnapShot.data() as RawUserValue
+    return new User(this.fromRaw(savedData), docSnapShot.id)
+  }
+
+  public static retrieveFromQueryDocumentSnapShot(
+    queryDocSnapShot: firebase.firestore.QueryDocumentSnapshot,
+  ): User {
+    // queryDocSnapShot is guaranteed to have data
+    return this.retrieveFromDocSnapShot(queryDocSnapShot)!
   }
 
   public static async createUser(
@@ -33,7 +46,6 @@ export class User {
     value: UserValue,
   ): Promise<User> {
     const result = await docRef.set(User.toJson(value))
-    // console.log(docRef.id)
     return new User(value, docRef.id)
   }
 

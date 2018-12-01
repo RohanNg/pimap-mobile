@@ -38,7 +38,13 @@ import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
 
-import { Activity, ActivityStore, ActivityValue } from '../datastore'
+import {
+  Activity,
+  ActivityStore,
+  ActivityValue,
+  User,
+  UserStore,
+} from '../datastore'
 import { AppStateStore } from '../datastore'
 import { uploadImage } from '../services/FireBase'
 import { theme } from '../theme'
@@ -57,16 +63,18 @@ interface CreateActivityState {
   }
   creatingInprogress: boolean
   coverImage: string
+  invitedUsers: User[]
 }
 
 interface CreateActivityProps {
   navigation: NavigationScreenProp<
     {},
     {
-      coordinate: {
+      coordinate?: {
         lat: number
         lon: number
       }
+      invitedUsers?: User[]
     }
   >
   user: firebase.User
@@ -86,15 +94,21 @@ class CreateActivityComp extends React.Component<
     props: CreateActivityProps,
     state: CreateActivityState,
   ): CreateActivityState | null {
-    const propsCoordinate = props.navigation.getParam('coordinate')
-    if (propsCoordinate) {
-      return {
-        ...state,
-        coordinate: propsCoordinate,
-      }
+    const coordinate = props.navigation.getParam('coordinate')
+    const invitedUsers = props.navigation.getParam('invitedUsers')
+
+    let newState = null
+    if (coordinate && state.coordinate !== coordinate) {
+      newState = { ...state, coordinate }
     }
 
-    return null
+    if (invitedUsers && state.invitedUsers !== invitedUsers) {
+      newState = newState
+        ? { ...newState, invitedUsers }
+        : { ...state, invitedUsers }
+    }
+
+    return newState
   }
 
   public state: CreateActivityState = {
@@ -106,11 +120,11 @@ class CreateActivityComp extends React.Component<
     description: '',
     creatingInprogress: false,
     coverImage: '',
+    invitedUsers: [],
   }
 
   public render(): React.ReactNode {
-    const { date, creatingInprogress, coverImage } = this.state
-
+    const { date, creatingInprogress, coverImage, invitedUsers } = this.state
     if (creatingInprogress) {
       return (
         <View style={styles.wrapper}>
@@ -130,6 +144,7 @@ class CreateActivityComp extends React.Component<
         </Header>
         <ScrollView
           style={styles.container}
+          contentContainerStyle={styles.contentContainer}
           removeClippedSubviews={false}
           keyboardShouldPersistTaps={'always'}
         >
@@ -243,6 +258,41 @@ class CreateActivityComp extends React.Component<
               <Paragraph>This activity happens once.</Paragraph>
             )}
           </View>
+          <View style={{ flexDirection: 'row' }}>
+            {invitedUsers.map(({ id, value: { profilePicture } }) => {
+              return (
+                <Image
+                  key={id}
+                  source={
+                    profilePicture
+                      ? { uri: profilePicture }
+                      : require('../assets/activity_image/nooke.jpg')
+                  }
+                  style={{
+                    width: 54,
+                    height: 54,
+                    borderRadius: 8,
+                    marginLeft: 12,
+                  }}
+                  resizeMode="cover"
+                />
+              )
+            })}
+            <Button
+              mode="contained"
+              style={styles.submitButton}
+              onPress={() =>
+                this.props.navigation.navigate('LoadingPeopleSelectionScreen', {
+                  title: 'Invitations',
+                  userCollectionQuery: this.queryUserForInvitation,
+                  goBack: this.goBackFromPeopleSelectionScreen,
+                })
+              }
+            >
+              {' '}
+              Invite Friends
+            </Button>
+          </View>
           <View style={styles.submitButtonContainer}>
             <Button
               mode="contained"
@@ -256,6 +306,20 @@ class CreateActivityComp extends React.Component<
         </ScrollView>
       </View>
     )
+  }
+
+  private goBackFromPeopleSelectionScreen = (invitedUsers: User[]) => {
+    this.props.navigation.navigate('CreateActivity', {
+      invitedUsers,
+    })
+  }
+
+  private queryUserForInvitation: (
+    userColl: UserStore,
+  ) => Promise<User[]> = async c => {
+    const currentUserID = this.props.user.uid
+    const allUsers = await c.getAllUsers()
+    return allUsers.filter(u => u.id !== currentUserID)
   }
 
   private pickImage = async () => {
@@ -413,7 +477,9 @@ const styles = StyleSheet.create({
   },
   wrapper: {
     flex: 1,
-    paddingBottom: 32,
+  },
+  contentContainer: {
+    paddingBottom: theme.spacing.extravagant,
   },
   inputContainerStyle: {
     margin: 8,

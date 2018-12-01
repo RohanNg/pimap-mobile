@@ -30,18 +30,47 @@ export class UserStore {
       return undefined
     }
 
-    return this.store(user, userId)
+    return this.store(user)
   }
 
   @action
   public async createUser(value: UserValue, uid: string): Promise<User> {
     const user = await User.createUser(this.userCollection.doc(uid), value)
-    return this.store(user, uid)
+    return this.store(user)
+  }
+
+  public async query(
+    f: (
+      collectionRef: firebase.firestore.CollectionReference,
+    ) => firebase.firestore.Query,
+  ): Promise<User[]> {
+    const query = f(this.userCollection)
+    const result = await query.get()
+
+    const activities = runInAction(() => {
+      return result.docs.map(doc => {
+        const user = User.retrieveFromQueryDocumentSnapShot(doc)
+        return this.store(user)
+      })
+    })
+
+    return activities
+  }
+
+  public async getAllUsers(): Promise<User[]> {
+    const result = await this.userCollection.get()
+    const users = runInAction(() => {
+      return result.docs.map(doc => {
+        const user = User.retrieveFromQueryDocumentSnapShot(doc)
+        return this.store(user)
+      })
+    })
+    return users
   }
 
   @action
-  private store(user: User, uid: string): User {
-    this.users[uid] = user
+  private store(user: User): User {
+    this.users[user.id] = user
     return user
   }
 }
