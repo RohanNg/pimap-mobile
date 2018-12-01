@@ -281,16 +281,7 @@ class CreateActivityComp extends React.Component<
                 <MaterialIcons
                   name={'group-add'}
                   size={42}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: 'black',
-                    width: 54,
-                    height: 54,
-                    borderRadius: 8,
-                    lineHeight: 54,
-                    paddingLeft: 4,
-                    marginRight: 12,
-                  }}
+                  style={styles.inviteUserButt}
                   color={theme.colors!.primary}
                 />
               </TouchableOpacity>
@@ -304,12 +295,7 @@ class CreateActivityComp extends React.Component<
                         ? { uri: profilePicture }
                         : require('../assets/activity_image/nooke.jpg')
                     }
-                    style={{
-                      width: 54,
-                      height: 54,
-                      borderRadius: 8,
-                      marginRight: 12,
-                    }}
+                    style={styles.invitedUserImage}
                     resizeMode="cover"
                   />
                 )
@@ -515,6 +501,22 @@ const styles = StyleSheet.create({
   },
   invitedUsers: {
     flexDirection: 'row',
+  },
+  inviteUserButt: {
+    borderWidth: 1,
+    borderColor: 'black',
+    width: 54,
+    height: 54,
+    borderRadius: 8,
+    lineHeight: 54,
+    paddingLeft: 4,
+    marginRight: 12,
+  },
+  invitedUserImage: {
+    width: 54,
+    height: 54,
+    borderRadius: 8,
+    marginRight: 12,
   },
   submitButtonContainer: {
     marginTop: 24,
