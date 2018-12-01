@@ -74,43 +74,7 @@ export class ActivityPage extends React.Component<
   }
 
   public async componentDidMount(): Promise<void> {
-    try {
-      const activity = await this.props.activityStore.getActivity(
-        this.props.navigation.getParam('activityID')!,
-      )
-      if (!activity) {
-        return this.setState({
-          activityInfo: new Error('Activity does not exist'),
-        })
-      }
-      const creator = await this.props.userStore.getUser(
-        activity.value.creatorID,
-      )
-      if (!creator) {
-        return this.setState({
-          activityInfo: new Error('Activity creator does not exist'),
-        })
-      }
-      this.setState({ activityInfo: { activity, creator } })
-    } catch (err) {
-      console.error(err)
-      this.setState({ activityInfo: new Error('Data loading failed.') })
-    }
-  }
-
-  private renderScreen: (
-    _: { activity: Activity; creator: User },
-  ) => (props: { route: RouteProps }) => React.ReactNode = ({
-    activity,
-    creator,
-  }) => ({ route: { key } }) => {
-    if (key === 'chat') {
-      return <Chat />
-    } else if (key === 'images') {
-      return <Albums />
-    } else {
-      return <ActivityDetail activity={activity} creator={creator} />
-    }
+    this.fetchActivity()
   }
 
   public render(): React.ReactNode {
@@ -118,13 +82,13 @@ export class ActivityPage extends React.Component<
 
     if (activityInfo === 'loading') {
       return (
-        <View style={styles.container}>
+        <View style={styles.containerCentering}>
           <ActivityIndicator />
         </View>
       )
     } else if (activityInfo instanceof Error) {
       return (
-        <View style={styles.container}>
+        <View style={styles.containerCentering}>
           <Text>Something went wrong: {activityInfo.message} </Text>
         </View>
       )
@@ -173,12 +137,58 @@ export class ActivityPage extends React.Component<
       />
     )
   }
+
+  private renderScreen: (
+    _: { activity: Activity; creator: User },
+  ) => (props: { route: RouteProps }) => React.ReactNode = ({
+    activity,
+    creator,
+  }) => ({ route: { key } }) => {
+    if (key === 'chat') {
+      return <Chat />
+    } else if (key === 'images') {
+      return <Albums />
+    } else {
+      return <ActivityDetail activity={activity} creator={creator} />
+    }
+  }
+
+  private fetchActivity = async () => {
+    try {
+      const activity = await this.props.activityStore.getActivity(
+        this.props.navigation.getParam('activityID')! || 'KLk2YcntqOibx83RmX1K',
+      )
+      if (!activity) {
+        return this.setState({
+          activityInfo: new Error('Activity does not exist'),
+        })
+      }
+      const creator = await this.props.userStore.getUser(
+        activity.value.creatorID,
+      )
+      if (!creator) {
+        return this.setState({
+          activityInfo: new Error('Activity creator does not exist'),
+        })
+      }
+      this.setState({ activityInfo: { activity, creator } })
+    } catch (err) {
+      console.error(err)
+      this.setState({ activityInfo: new Error('Data loading failed.') })
+    }
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.colors!.background,
+  },
+  containerCentering: {
+    flex: 1,
+    backgroundColor: theme.colors!.background,
+    alignContent: 'center',
+    justifyContent: 'center',
   },
   tabbar: {
     backgroundColor: 'white',

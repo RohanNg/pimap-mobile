@@ -423,6 +423,12 @@ class CreateActivityComp extends React.Component<
         requestedUserIDs: [],
         invitedUserIDs: invitedUsers.map(u => u.id),
       },
+      publicInteractions: privateActivity
+        ? undefined
+        : {
+            goingUserIDs: [],
+            interestedUserIDs: [],
+          },
     }
 
     const { id } = await this.props.activityStore.createActivity(activity)
