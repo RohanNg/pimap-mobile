@@ -35,7 +35,7 @@ export class UserStore {
 
   @action
   public async updateUserHobby(uid: string, hobby: string[]) {
-    await User.addHobby(this.userCollection.doc(uid), hobby)
+    await User.addInterests(this.userCollection.doc(uid), hobby)
   }
 
   @action

@@ -60,7 +60,7 @@ export class HobbyScreen extends React.Component<
     }
   }
 
-  private additem = (item: string) => {
+  private addInterests = (item: string) => {
     let a = this.state.hobby.concat(item) //creates the clone of the state
 
     this.setState({ hobby: a })
@@ -79,7 +79,7 @@ export class HobbyScreen extends React.Component<
                 mode="outlined"
                 style={styles.chipitem}
                 onPress={() => {
-                  this.additem(item)
+                  this.addInterests(item)
                   console.log(this.state.hobby)
                 }}
                 key={item}
@@ -104,15 +104,13 @@ export class HobbyScreen extends React.Component<
   private addHobby = async () => {
     const hobbies = this.state.hobby
     const user = firebase.auth().currentUser
-    //console.log(hobbies)
     if (user != null) {
       const uid = user.uid
       console.log(uid)
 
-      await this.props.userStore.updateUserHobby(uid, hobbies)
+      this.props.userStore.updateUserHobby(uid, hobbies)
       await this.props.navigation.navigate('Home')
     }
-    return undefined
   }
 }
 

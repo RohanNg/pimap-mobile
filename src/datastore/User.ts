@@ -42,14 +42,12 @@ export class User {
     return this.retrieveFromDocSnapShot(queryDocSnapShot)!
   }
 
-  public static async addHobby(
+  public static async addInterests(
     docRef: firebase.firestore.DocumentReference,
-    newhobby: string[],
+    newInterests: string[],
   ) {
-    const data = await docRef.get()
-    const hobbies = data.data() as UserValue
     await docRef.update({
-      interests: newhobby,
+      interests: newInterests,
     })
   }
 
