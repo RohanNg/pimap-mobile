@@ -73,6 +73,34 @@ class ActivityDetailComp extends React.Component<
   }
 
   private renderActionButton = () => {
+    const { error, actions } = this.getReaction()
+    return (
+      <React.Fragment>
+        {error && <Text>{error}</Text>}
+        {!actions
+          ? null
+          : actions.map(({ message, onPress }, idx) => {
+              return (
+                <Button
+                  key={idx}
+                  mode="contained"
+                  onPress={onPress}
+                  icon={this.flightIcon}
+                  style={styles.reactionButton}
+                >
+                  <Text style={styles.acceptButtom}>{message}</Text>
+                </Button>
+              )
+            })}
+      </React.Fragment>
+    )
+  }
+
+  private flightIcon = ({ color, size }: { color: string; size: number }) => {
+    return <Ionicons size={size} color="white" name={'md-paper-plane'} />
+  }
+
+  private getReaction = () => {
     const {
       user: { uid },
       activity,
@@ -82,8 +110,8 @@ class ActivityDetailComp extends React.Component<
       value: { privacy, privateInteractions, publicInteractions },
     } = activity
 
-    let errorMessage: string
-    let actions: Array<{ message: string; onPress: () => void }>
+    let errorMessage: string | undefined
+    let actions: Array<{ message: string; onPress: () => void }> | undefined
 
     if (uid === creatorID) {
       actions = [
@@ -211,30 +239,10 @@ class ActivityDetailComp extends React.Component<
       errorMessage = 'Something is wrong: unknown kind of activity'
     }
 
-    return (
-      <React.Fragment>
-        {errorMessage && <Text>{errorMessage}</Text>}
-        {!actions
-          ? null
-          : actions.map(({ message, onPress }, idx) => {
-              return (
-                <Button
-                  key={idx}
-                  mode="contained"
-                  onPress={onPress}
-                  icon={this.flightIcon}
-                  style={styles.reactionButton}
-                >
-                  <Text style={styles.acceptButtom}>{message}</Text>
-                </Button>
-              )
-            })}
-      </React.Fragment>
-    )
-  }
-
-  private flightIcon = ({ color, size }: { color: string; size: number }) => {
-    return <Ionicons size={size} color="white" name={'md-paper-plane'} />
+    return {
+      error: errorMessage,
+      actions,
+    }
   }
 }
 
