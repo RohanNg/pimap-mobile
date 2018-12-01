@@ -45,6 +45,9 @@ const hobbyList = [
   'Outdoor',
 ]
 
+@inject<AppStateStore, HobbyScreenProps>(allStores => ({
+  userStore: allStores.userStore,
+}))
 @observer
 export class HobbyScreen extends React.Component<
   HobbyScreenProps,
