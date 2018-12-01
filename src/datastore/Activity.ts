@@ -1,10 +1,17 @@
-import { action, autorun, computed, observable } from 'mobx'
+import {
+  action,
+  autorun,
+  computed,
+  observable,
+  reaction,
+  IReactionDisposer,
+} from 'mobx'
 
 export interface ActivityValue {
   creatorID: string
   publicInteractions?: {
     goingUserIDs: string[]
-    interestedUserIDs: string
+    interestedUserIDs: string[]
   }
   privateInteractions?: {
     memberIDs: string[]
@@ -32,7 +39,7 @@ interface RawActivityValue {
   tags: string[]
   publicInteractions: {
     goingUserIDs: string[]
-    interestedUserIDs: string
+    interestedUserIDs: string[]
   } | null
   privateInteractions: {
     memberIDs: string[]
@@ -127,5 +134,14 @@ export class Activity {
 
   public delete(): Promise<void> {
     return this.docRef.delete()
+  }
+
+  public async update<K extends keyof ActivityValue>(
+    changes: Pick<ActivityValue, K>,
+  ): Promise<void> {
+    await this.docRef.set(changes, { merge: true })
+    // now do the local merge
+    this.value = Object.assign(this.value, changes)
+    console.info('updated')
   }
 }

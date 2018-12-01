@@ -32,7 +32,9 @@ import { NavigationInjectedProps, withNavigation } from 'react-navigation'
 import { tabBarIcon } from '../../components/navigation/tabBarIcon'
 import { TagList } from '../../components/tags'
 import { Activity, User } from '../../datastore'
+import { withAuthenticatedUser } from '../../services/AuthService'
 import { theme } from '../../theme'
+import { peopleData, PeopleList } from './PeopleList'
 
 interface ActivityDetailProps {
   activity: Activity
@@ -41,7 +43,9 @@ interface ActivityDetailProps {
 }
 
 @observer
-class ActivityDetailComp extends React.Component<ActivityDetailProps> {
+class ActivityDetailComp extends React.Component<
+  ActivityDetailProps & { user: firebase.User }
+> {
   public render(): React.ReactNode {
     const { title, description, tags } = this.props.activity.value
 
@@ -61,20 +65,176 @@ class ActivityDetailComp extends React.Component<ActivityDetailProps> {
         >
           <TagList values={tags} />
         </ScrollView>
-        <View style={styles.buttonContainer}>
-          <Button
-            mode="contained"
-            onPress={() => console.info('cool')}
-            icon={flightIcon}
-            style={styles.backButton}
-          >
-            <Text style={styles.acceptButtom}>Accept Invitation</Text>
-          </Button>
-        </View>
+        <View style={styles.buttonsContainer}>{this.renderActionButton()}</View>
         <PeopleList people={peopleData} caption={'Interested'} />
         <PeopleList people={peopleData} caption={'Going'} />
       </ScrollView>
     )
+  }
+
+  private renderActionButton = () => {
+    const {
+      user: { uid },
+      activity,
+      creator: { id: creatorID },
+    } = this.props
+    const {
+      value: { privacy, privateInteractions, publicInteractions },
+    } = activity
+
+    let errorMessage: string
+    let actions: Array<{ message: string; onPress: () => void }>
+
+    if (uid === creatorID) {
+      actions = [
+        {
+          message: 'Edit',
+          onPress: () => console.info('Edited'),
+        },
+      ]
+    } else if (privacy === 'private') {
+      if (!privateInteractions) {
+        errorMessage = 'Something is wrong: no data for private activity'
+      } else if (privateInteractions.invitedUserIDs.some(id => id === uid)) {
+        actions = [
+          {
+            message: 'Accept invitation',
+            onPress: () =>
+              activity.update({
+                privateInteractions: {
+                  ...privateInteractions,
+                  memberIDs: [...privateInteractions.memberIDs, uid],
+                  invitedUserIDs: privateInteractions.invitedUserIDs.filter(
+                    id => id !== uid,
+                  ),
+                },
+              }),
+          },
+        ]
+      } else if (privateInteractions.requestedUserIDs.some(id => id === uid)) {
+        actions = [
+          {
+            message: 'Cancel request to join',
+            onPress: () =>
+              activity.update({
+                privateInteractions: {
+                  ...privateInteractions,
+                  requestedUserIDs: privateInteractions.requestedUserIDs.filter(
+                    id => id !== uid,
+                  ),
+                },
+              }),
+          },
+        ]
+      } else if (privateInteractions.memberIDs.some(id => id === uid)) {
+        actions = [
+          {
+            message: 'You are a member',
+            onPress: console.info,
+          },
+        ]
+      } else {
+        actions = [
+          {
+            message: 'Request to join',
+            onPress: () =>
+              activity.update({
+                privateInteractions: {
+                  ...privateInteractions,
+                  requestedUserIDs: [...privateInteractions.memberIDs, uid],
+                },
+              }),
+          },
+        ]
+      }
+    } else if (privacy === 'public') {
+      if (!publicInteractions) {
+        errorMessage = 'Something is wrong: no data for public activity'
+      } else if (publicInteractions.goingUserIDs.some(id => id === uid)) {
+        actions = [
+          {
+            message: 'You are going',
+            onPress: () =>
+              activity.update({
+                publicInteractions: {
+                  ...publicInteractions,
+                  goingUserIDs: publicInteractions.goingUserIDs.filter(
+                    id => id !== uid,
+                  ),
+                },
+              }),
+          },
+        ]
+      } else if (publicInteractions.interestedUserIDs.some(id => id === uid)) {
+        actions = [
+          {
+            message: 'You are interested',
+            onPress: () =>
+              activity.update({
+                publicInteractions: {
+                  ...publicInteractions,
+                  interestedUserIDs: publicInteractions.interestedUserIDs.filter(
+                    id => id !== uid,
+                  ),
+                },
+              }),
+          },
+        ]
+      } else {
+        actions = [
+          {
+            message: 'Going',
+            onPress: () =>
+              activity.update({
+                publicInteractions: {
+                  ...publicInteractions,
+                  goingUserIDs: [...publicInteractions.goingUserIDs, uid],
+                },
+              }),
+          },
+          {
+            message: 'Interested',
+            onPress: () =>
+              activity.update({
+                publicInteractions: {
+                  ...publicInteractions,
+                  interestedUserIDs: [
+                    ...publicInteractions.interestedUserIDs,
+                    uid,
+                  ],
+                },
+              }),
+          },
+        ]
+      }
+    } else {
+      errorMessage = 'Something is wrong: unknown kind of activity'
+    }
+
+    return (
+      <React.Fragment>
+        {errorMessage && <Text>{errorMessage}</Text>}
+        {!actions
+          ? null
+          : actions.map(({ message, onPress }, idx) => {
+              return (
+                <Button
+                  key={idx}
+                  mode="contained"
+                  onPress={onPress}
+                  icon={this.flightIcon}
+                  style={styles.reactionButton}
+                >
+                  <Text style={styles.acceptButtom}>{message}</Text>
+                </Button>
+              )
+            })}
+      </React.Fragment>
+    )
+  }
+
+  private flightIcon = ({ color, size }: { color: string; size: number }) => {
+    return <Ionicons size={size} color="white" name={'md-paper-plane'} />
   }
 }
 
@@ -99,7 +259,11 @@ const CreatorInfoWithNav: React.SFC<
       style={{ flexDirection: 'row', marginTop: 12 }}
     >
       <Image
-        source={{ uri: profilePicture }}
+        source={
+          profilePicture
+            ? { uri: profilePicture }
+            : require('../../assets/place_holder/user.png')
+        }
         style={{ width: 28, height: 28, borderRadius: 14 }}
       />
       <Subheading style={styles.placeTimeInfo}>
@@ -111,61 +275,8 @@ const CreatorInfoWithNav: React.SFC<
 }
 const CreatorInfo = withNavigation(CreatorInfoWithNav)
 
-const flightIcon = ({ color, size }: { color: string; size: number }) => {
-  return <Ionicons size={size} color={color} name={'md-paper-plane'} />
-}
-
-interface Person {
-  name: string
-  image: ImageSourcePropType
-}
-interface PeopleListProps {
-  style?: ViewStyle
-  caption: string
-  people: Person[]
-}
-
-const PeopleList: React.SFC<PeopleListProps> = ({ style, caption, people }) => {
-  return (
-    <View style={styles.peopleListContainer}>
-      <Headline>{caption}</Headline>
-      <ScrollView horizontal={true} style={styles.peopleList_scrollView}>
-        {people.map(({ name, image }) => {
-          return (
-            <Image
-              key={name}
-              source={image}
-              resizeMethod={'resize'}
-              style={styles.peopleImage}
-            />
-          )
-        })}
-      </ScrollView>
-    </View>
-  )
-}
-
-const peopleData: Person[] = [
-  {
-    name: 'Dang Nguyen',
-    image: require('../../resources/nooke.jpg'),
-  },
-  {
-    name: 'Thanh Nguyen',
-    image: require('../../resources/nooke.jpg'),
-  },
-  {
-    name: 'Nam Anh Nguyen',
-    image: require('../../resources/nooke.jpg'),
-  },
-  {
-    name: 'Samuli Holstrom',
-    image: require('../../resources/nooke.jpg'),
-  },
-]
-
-const SECTION_SPACING = 16
-const SUB_SECTION_SPACING = 8
+const SECTION_SPACING = theme.spacing.tight
+const SUB_SECTION_SPACING = theme.spacing.tiny
 
 const styles = StyleSheet.create({
   container: {
@@ -192,15 +303,11 @@ const styles = StyleSheet.create({
     marginTop: SECTION_SPACING,
     fontSize: 16,
   },
-  buttonContainer: {
+  buttonsContainer: {
     marginTop: SECTION_SPACING,
-    alignItems: 'center',
-  },
-  peopleListContainer: {
-    marginTop: SECTION_SPACING,
-  },
-  peopleList_scrollView: {
-    marginTop: SUB_SECTION_SPACING,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    paddingHorizontal: 20,
   },
   peopleImage: {
     height: 60,
@@ -208,7 +315,9 @@ const styles = StyleSheet.create({
     borderRadius: theme.roundness,
     marginRight: 12,
   },
-  backButton: {},
+  reactionButton: {
+    marginLeft: 12,
+  },
   tagListContainer: {
     marginTop: SECTION_SPACING,
     marginLeft: -4,
@@ -219,6 +328,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export const ActivityDetail: React.ComponentType<
-  ActivityDetailProps
-> = withNavigation(ActivityDetailComp)
+export const ActivityDetail = withAuthenticatedUser(ActivityDetailComp)
