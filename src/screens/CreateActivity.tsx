@@ -33,6 +33,7 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
+import { MaterialIcons } from '@expo/vector-icons'
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
 import { ActivityTaggingInput } from '../components/tags'
 
@@ -258,41 +259,64 @@ class CreateActivityComp extends React.Component<
               <Paragraph>This activity happens once.</Paragraph>
             )}
           </View>
-          <View style={{ flexDirection: 'row' }}>
-            {invitedUsers.map(({ id, value: { profilePicture } }) => {
-              return (
-                <Image
-                  key={id}
-                  source={
-                    profilePicture
-                      ? { uri: profilePicture }
-                      : require('../assets/activity_image/nooke.jpg')
-                  }
+          <View style={styles.inputContainerStyle}>
+            <Subheading>Send invitations</Subheading>
+            <ScrollView
+              style={styles.invitedUsers}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigation.navigate(
+                    'LoadingPeopleSelectionScreen',
+                    {
+                      title: 'Invitations',
+                      userCollectionQuery: this.queryUserForInvitation,
+                      goBack: this.goBackFromPeopleSelectionScreen,
+                    },
+                  )
+                }
+              >
+                <MaterialIcons
+                  name={'group-add'}
+                  size={42}
                   style={{
+                    borderWidth: 1,
+                    borderColor: 'black',
                     width: 54,
                     height: 54,
                     borderRadius: 8,
-                    marginLeft: 12,
+                    lineHeight: 54,
+                    paddingLeft: 4,
+                    marginRight: 12,
                   }}
-                  resizeMode="cover"
+                  color={theme.colors!.primary}
                 />
-              )
-            })}
-            <Button
-              mode="contained"
-              style={styles.submitButton}
-              onPress={() =>
-                this.props.navigation.navigate('LoadingPeopleSelectionScreen', {
-                  title: 'Invitations',
-                  userCollectionQuery: this.queryUserForInvitation,
-                  goBack: this.goBackFromPeopleSelectionScreen,
-                })
-              }
-            >
-              {' '}
-              Invite Friends
-            </Button>
+              </TouchableOpacity>
+
+              {invitedUsers.map(({ id, value: { profilePicture } }) => {
+                return (
+                  <Image
+                    key={id}
+                    source={
+                      profilePicture
+                        ? { uri: profilePicture }
+                        : require('../assets/activity_image/nooke.jpg')
+                    }
+                    style={{
+                      width: 54,
+                      height: 54,
+                      borderRadius: 8,
+                      marginRight: 12,
+                    }}
+                    resizeMode="cover"
+                  />
+                )
+              })}
+            </ScrollView>
           </View>
+
           <View style={styles.submitButtonContainer}>
             <Button
               mode="contained"
@@ -489,10 +513,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  invitedUsers: {
+    flexDirection: 'row',
+  },
   submitButtonContainer: {
     marginTop: 24,
     alignItems: 'center',
   },
+  invitationButton: { width: 42, height: 42, borderRadius: 21 },
   submitButton: { width: 120 },
   coverImageContainer: {
     margin: 8,
