@@ -13,7 +13,7 @@ interface RawUserValue {
   firstname: string
   lastname: string
   email: string
-  profilePicture?: string
+  profilePicture: string | null
   interests: string[]
 }
 
@@ -22,12 +22,24 @@ export class User {
     docRef: firebase.firestore.DocumentReference,
   ): Promise<User | undefined> {
     const data = await docRef.get()
-    if (!data.exists) {
+    return this.retrieveFromDocSnapShot(data)
+  }
+
+  public static retrieveFromDocSnapShot(
+    docSnapShot: firebase.firestore.DocumentSnapshot,
+  ): User | undefined {
+    if (!docSnapShot.exists) {
       return undefined
     }
+    const savedData = docSnapShot.data() as RawUserValue
+    return new User(this.fromRaw(savedData), docSnapShot.id)
+  }
 
-    const { ...rest } = data.data() as RawUserValue
-    return new User({ ...rest }, docRef.id)
+  public static retrieveFromQueryDocumentSnapShot(
+    queryDocSnapShot: firebase.firestore.QueryDocumentSnapshot,
+  ): User {
+    // queryDocSnapShot is guaranteed to have data
+    return this.retrieveFromDocSnapShot(queryDocSnapShot)!
   }
 
   public static async addHobby(
@@ -35,9 +47,9 @@ export class User {
     newhobby: string[],
   ) {
     const data = await docRef.get()
-    const hobbies = data.data() as RawUserValue
-    const newHobby = await docRef.update({
-      hobby: firebase.firestore.FieldValue.arrayUnion(newhobby),
+    const hobbies = data.data() as UserValue
+    await docRef.update({
+      interests: newhobby,
     })
   }
 
@@ -46,12 +58,28 @@ export class User {
     value: UserValue,
   ): Promise<User> {
     const result = await docRef.set(User.toJson(value))
-    // console.log(docRef.id)
     return new User(value, docRef.id)
   }
 
-  private static toJson({ ...rest }: UserValue): RawUserValue {
-    return { ...rest }
+  private static toJson({ profilePicture, ...rest }: UserValue): RawUserValue {
+    return {
+      ...rest,
+      profilePicture: profilePicture || null,
+    }
+  }
+
+  // private static fromRawEditHobby({ interests, ...rest }: RawUserValue): UserValue {
+  //   return {
+  //     ...rest,
+  //     interests: interests,
+  //   }
+  // }
+
+  private static fromRaw({ profilePicture, ...rest }: RawUserValue): UserValue {
+    return {
+      ...rest,
+      profilePicture: profilePicture || undefined,
+    }
   }
 
   @observable

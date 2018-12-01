@@ -1,6 +1,7 @@
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ScrollView,
@@ -22,7 +23,13 @@ import { NavigationScreenProp } from 'react-navigation'
 import { Ionicons } from '@expo/vector-icons'
 import { Chat } from '../../components/chat/Chat'
 import { Header } from '../../components/header'
-import { Activity, ActivityStore, AppStateStore } from '../../datastore'
+import {
+  Activity,
+  ActivityStore,
+  AppStateStore,
+  User,
+  UserStore,
+} from '../../datastore'
 import { theme } from '../../theme'
 import { ActivityDetail } from './ActivityDetail'
 import { Albums } from './Album'
@@ -35,6 +42,7 @@ interface ActivityPageProps {
     }
   >
   activityStore: ActivityStore
+  userStore: UserStore
 }
 
 type RouteProps = Route<{
@@ -43,11 +51,12 @@ type RouteProps = Route<{
 }>
 
 type ActivityPageState = NavigationState<RouteProps> & {
-  activity: Activity | 'not-exist' | 'loading' | 'loading-failed'
+  activityInfo: { activity: Activity; creator: User } | 'loading' | Error
 }
 
 @inject<AppStateStore, ActivityPageProps>(allStores => ({
   activityStore: allStores.activityStore,
+  userStore: allStores.userStore,
 }))
 @observer
 export class ActivityPage extends React.Component<
@@ -61,7 +70,7 @@ export class ActivityPage extends React.Component<
       { key: 'chat', icon: 'md-chatbubbles' },
       { key: 'images', icon: 'md-photos' },
     ],
-    activity: 'loading',
+    activityInfo: 'loading',
   }
 
   public async componentDidMount(): Promise<void> {
@@ -70,66 +79,75 @@ export class ActivityPage extends React.Component<
         this.props.navigation.getParam('activityID')!,
       )
       if (!activity) {
-        this.setState({ activity: 'not-exist' })
-      } else {
-        this.setState({ activity })
+        return this.setState({
+          activityInfo: new Error('Activity does not exist'),
+        })
       }
+      const creator = await this.props.userStore.getUser(
+        activity.value.creatorID,
+      )
+      if (!creator) {
+        return this.setState({
+          activityInfo: new Error('Activity creator does not exist'),
+        })
+      }
+      this.setState({ activityInfo: { activity, creator } })
     } catch (err) {
-      this.setState({ activity: 'loading-failed' })
+      console.error(err)
+      this.setState({ activityInfo: new Error('Data loading failed.') })
     }
   }
 
   private renderScreen: (
-    activity: Activity,
-  ) => (props: { route: RouteProps }) => React.ReactNode = activity => ({
-    route: { key },
-  }) => {
+    _: { activity: Activity; creator: User },
+  ) => (props: { route: RouteProps }) => React.ReactNode = ({
+    activity,
+    creator,
+  }) => ({ route: { key } }) => {
     if (key === 'chat') {
       return <Chat />
     } else if (key === 'images') {
       return <Albums />
     } else {
-      return <ActivityDetail activity={activity!} />
+      return <ActivityDetail activity={activity} creator={creator} />
     }
   }
 
   public render(): React.ReactNode {
-    const { activity } = this.state
+    const { activityInfo } = this.state
 
-    if (!(activity instanceof Activity)) {
-      let message = 'Loading...'
-      if (activity === 'loading-failed') {
-        message = 'Loading failed!'
-      } else if (activity === 'not-exist') {
-        message = 'Activity not exist'
-      }
+    if (activityInfo === 'loading') {
       return (
         <View style={styles.container}>
-          <Text>{message}</Text>
+          <ActivityIndicator />
+        </View>
+      )
+    } else if (activityInfo instanceof Error) {
+      return (
+        <View style={styles.container}>
+          <Text>Something went wrong: {activityInfo.message} </Text>
         </View>
       )
     }
 
     return (
       <View style={styles.container}>
-        <React.Fragment>
-          <Header
-            title={'Activity page'}
-            goBack={() => this.props.navigation.goBack()}
-          />
-          <Image
-            source={{ uri: activity.value.coverImage }}
-            style={styles.coverImage}
-            resizeMode="cover"
-          />
-          <TabView
-            style={styles.container}
-            navigationState={this.state}
-            renderScene={this.renderScreen(activity)}
-            onIndexChange={this.handleIndexChange}
-            renderTabBar={this.renderTabBar}
-          />
-        </React.Fragment>
+        <Header
+          title={'Activity page'}
+          goBack={() => this.props.navigation.goBack()}
+        />
+        <Image
+          source={{ uri: activityInfo.activity.value.coverImage }}
+          style={styles.coverImage}
+          resizeMode="cover"
+        />
+        <TabView
+          style={styles.container}
+          navigationState={this.state}
+          renderScene={this.renderScreen(activityInfo)}
+          onIndexChange={this.handleIndexChange}
+          renderTabBar={this.renderTabBar}
+        />
       </View>
     )
   }

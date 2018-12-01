@@ -45,6 +45,7 @@ const hobbyList = [
   'Outdoor',
 ]
 
+@observer
 export class HobbyScreen extends React.Component<
   HobbyScreenProps,
   HobbyScreenState
@@ -56,6 +57,12 @@ export class HobbyScreen extends React.Component<
     }
   }
 
+  private additem = (item: string) => {
+    let a = this.state.hobby.concat(item) //creates the clone of the state
+
+    this.setState({ hobby: a })
+  }
+
   public render(): React.ReactNode {
     return (
       <View style={styles.container}>
@@ -65,7 +72,15 @@ export class HobbyScreen extends React.Component<
         <View style={styles.chip}>
           {hobbyList.map(item => {
             return (
-              <Chip mode="outlined" style={styles.chipitem} key={item}>
+              <Chip
+                mode="outlined"
+                style={styles.chipitem}
+                onPress={() => {
+                  this.additem(item)
+                  console.log(this.state.hobby)
+                }}
+                key={item}
+              >
                 {item}
               </Chip>
             )
@@ -75,7 +90,7 @@ export class HobbyScreen extends React.Component<
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={() => this.props.navigation.navigate('Home')}
+          onPress={this.addHobby}
         >
           <Text style={styles.btnText}>I'M DONE!</Text>
         </Button>
@@ -83,7 +98,19 @@ export class HobbyScreen extends React.Component<
     )
   }
 
-  
+  private addHobby = async () => {
+    const hobbies = this.state.hobby
+    const user = firebase.auth().currentUser
+    //console.log(hobbies)
+    if (user != null) {
+      const uid = user.uid
+      console.log(uid)
+
+      await this.props.userStore.updateUserHobby(uid, hobbies)
+      await this.props.navigation.navigate('Home')
+    }
+    return undefined
+  }
 }
 
 const styles = StyleSheet.create({

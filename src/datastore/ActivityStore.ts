@@ -33,6 +33,10 @@ export class ActivityStore {
     return this.store(activity)
   }
 
+  public async getActivityForUser(userID: string): Promise<Activity[]> {
+    return this.query(c => c.where('creatorID', '==', userID))
+  }
+
   @action
   public async createActivity(value: ActivityValue): Promise<Activity> {
     const activity = await Activity.create(this.activityCollection.doc(), value)

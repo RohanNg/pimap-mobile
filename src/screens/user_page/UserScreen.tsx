@@ -1,78 +1,91 @@
 import { Constants, Facebook, Location, Permissions } from 'expo'
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
 import { Card, Colors, IconButton, Paragraph } from 'react-native-paper'
-
 import {
-  createStackNavigator,
   NavigationBottomTabScreenOptions,
-  NavigationContainer,
-  NavigationScreenConfig,
   NavigationScreenProp,
 } from 'react-navigation'
 
-import { ProfilePic } from '../components/ProfilePic'
-
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { UserValue, User, UserStore } from '../datastore'
-import { AppStateStore } from '../datastore'
-import * as firebase from 'firebase'
-import { inject, observer } from 'mobx-react'
-
-import { ActivityCard } from '../components/card/ActivityCard'
-import { Chat } from '../components/chat/Chat'
-import ResponeItem from '../components/notification/responeItem'
+import { ActivityCard } from '../../components/card/ActivityCard'
+import {
+  Activity,
+  ActivityStore,
+  AppStateStore,
+  User,
+  UserStore,
+} from '../../datastore'
+import { ProfilePic } from './ProfilePic'
 
 interface MeScreenProps {
-  navigation: NavigationScreenProp<{}, {}>
-  userStore: UserStore
-  user: User
-}
-
-interface UserInformation {
-  firstname: string
-  lastname: string
-  photoUrl?: string
-}
-
-@inject<AppStateStore, MeScreenProps>(allStores => ({
-  userStore: allStores.userStore,
-}))
-@observer
-export class MeScreen extends React.Component<MeScreenProps> {
-  public static navigationOptions: NavigationBottomTabScreenOptions = {
-    title: 'Me',
-    tabBarIcon: tabBarIcon('person'),
-  }
-
-  constructor(props: MeScreenProps) {
-    super(props)
-    this.state = {
-      firstname: '',
-      lastname: '',
-      photoUrl: '',
+  navigation: NavigationScreenProp<
+    {},
+    {
+      userID?: string
     }
+  >
+  userID?: string
+  activityStore: ActivityStore
+  userStore: UserStore
+}
+
+interface UserScreenState {
+  loadedData:
+    | {
+        user: User
+        activities: Activity[]
+      }
+    | 'loading'
+    | Error
+}
+
+@observer
+class UserScreenComp extends React.Component<MeScreenProps, UserScreenState> {
+  public state: UserScreenState = {
+    loadedData: 'loading',
   }
 
-  
+  public componentDidMount(): void {
+    this.fetchUserData()
+  }
 
   public render(): React.ReactNode {
+    const { loadedData } = this.state
+    if (loadedData instanceof Error) {
+      return (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Text>Loading failed because {loadedData.message}!</Text>
+        </View>
+      )
+    } else if (loadedData === 'loading') {
+      return (
+        <View
+          style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <ActivityIndicator />
+        </View>
+      )
+    }
+
+    const { user, activities } = loadedData
+    const organizer = `${user.value.firstname} ${user.value.lastname}`
+
     return (
-      <ScrollView scrollEventThrottle={16}>
+      <ScrollView>
         <View style={styles.header}>
-          <ProfilePic
-            image={require('../resources/namanh.jpg')}
-            name="Anh Nguyen Le"
-          />
+          <ProfilePic user={user} />
           <Text style={styles.textdetail}>Verified user</Text>
           <Text style={styles.textdetail}>Joined since 08/2018</Text>
 
@@ -102,7 +115,7 @@ export class MeScreen extends React.Component<MeScreenProps> {
                   height: 30,
                   borderRadius: 15,
                 }}
-                source={require('../resources/nooke.jpg')}
+                source={require('../../resources/nooke.jpg')}
               />
               <Paragraph style={styles.reviewer}>Nooke Parviainen</Paragraph>
             </Card.Content>
@@ -130,18 +143,49 @@ export class MeScreen extends React.Component<MeScreenProps> {
             showsHorizontalScrollIndicator={false}
             style={{ height: 200, marginTop: 20 }}
           >
-            <ActivityCard
-              activity={{
-                organizer: 'Nooke',
-                title: 'Aurora Watcher',
-                privacy: 'public',
-                image: require('../assets/activity_image/aurora.jpg'),
-              }}
-            />
+            {activities.map(({ id, value: { title, privacy, coverImage } }) => (
+              <ActivityCard
+                key={id}
+                activity={{
+                  organizer,
+                  title,
+                  privacy,
+                  image: { uri: coverImage },
+                }}
+                onPress={() =>
+                  this.props.navigation.navigate('ActivityPage', {
+                    activityID: id,
+                  })
+                }
+              />
+            ))}
           </ScrollView>
         </View>
       </ScrollView>
     )
+  }
+
+  private fetchUserData = async () => {
+    const { activityStore, userStore, userID, navigation } = this.props
+    const uid = userID || navigation.getParam('userID')
+    if (!uid) {
+      return this.setState({ loadedData: new Error('No User ID found') })
+    }
+
+    try {
+      const user = await userStore.getUser(uid)
+      if (!user) {
+        this.setState({ loadedData: new Error(`Use ${uid} does not exist`) })
+        return
+      }
+      const activities = await activityStore.getActivityForUser(uid)
+      this.setState({ loadedData: { activities, user } })
+    } catch (error) {
+      console.error(error)
+      this.setState({
+        loadedData: new Error('error loading user and activities'),
+      })
+    }
   }
 }
 
@@ -185,3 +229,8 @@ const styles = StyleSheet.create({
     fontWeight: '300',
   },
 })
+
+export const UserScreen = inject<AppStateStore, MeScreenProps>(allStores => ({
+  activityStore: allStores.activityStore,
+  userStore: allStores.userStore,
+}))(UserScreenComp)
