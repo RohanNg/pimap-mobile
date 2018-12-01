@@ -50,11 +50,11 @@ export const AuthenticatedAppNavigator = createStackNavigator(
   {
     authenticatedApp: MainTabNavigator,
     LocationSelection,
-    ActivityPage,
     LoadingActivityList,
     HobbyScreen,
     UserScreen,
     LoadingPeopleSelectionScreen,
+    ActivityPage,
   },
   {
     headerMode: 'none',
