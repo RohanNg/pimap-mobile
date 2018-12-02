@@ -11,7 +11,7 @@ export const Header: React.SFC<{ title: string; goBack?: () => void }> = ({
 }) => {
   return (
     <SafeAreaView style={styles.container}>
-      <Appbar>
+      <Appbar style={styles.appBar}>
         {goBack && <Appbar.BackAction onPress={goBack} />}
         <Appbar.Content titleStyle={styles.appBarTitleContent} title={title} />
         {children}
@@ -24,7 +24,10 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors!.primary,
   },
+  appBar: {
+    height: 42,
+  },
   appBarTitleContent: {
-    fontSize: 24,
+    fontSize: 22,
   },
 })

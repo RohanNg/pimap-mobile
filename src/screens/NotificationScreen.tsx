@@ -29,6 +29,7 @@ interface NotificationScreenProps {
 }
 
 import { Chat } from '../components/chat/Chat'
+import { Header } from '../components/header'
 
 export class NotificationScreen extends React.Component<
   NotificationScreenProps
@@ -40,43 +41,37 @@ export class NotificationScreen extends React.Component<
 
   public render(): React.ReactNode {
     return (
-      <SafeAreaView>
-        <Appbar.Header>
-          <Appbar.Content title="Notifications" />
-        </Appbar.Header>
-        <View>
-          <ScrollView scrollEventThrottle={16}>
-            <View style={styles.importantContent}>
-              <View style={{ paddingHorizontal: 17 }}>
-                <Text style={styles.importantText}>Important</Text>
+      <View>
+        <Header title={'Notifications'} />
+        <ScrollView>
+          <View style={styles.importantContent}>
+            <View style={{ paddingHorizontal: 17 }}>
+              <Text style={styles.importantText}>Important</Text>
 
-                <View
-                  style={{ height: 220, marginTop: 5, alignItems: 'center' }}
+              <View style={{ height: 220, marginTop: 5, alignItems: 'center' }}>
+                <ScrollView
+                  horizontal={true}
+                  showsHorizontalScrollIndicator={false}
                 >
-                  <ScrollView
-                    horizontal={true}
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    <RequestItem />
-                  </ScrollView>
-                </View>
-              </View>
-              <View style={{ marginTop: 8, paddingHorizontal: 17 }}>
-                <Text style={{ fontSize: 20, fontWeight: '700' }}>
-                  Activities
-                </Text>
-
-                <View style={{ height: 110, marginTop: 5 }}>
-                  <ReviewItem />
-                </View>
-                <View style={{ height: 120, marginTop: 5, marginBottom: 100 }}>
-                  <ResponeItem />
-                </View>
+                  <RequestItem />
+                </ScrollView>
               </View>
             </View>
-          </ScrollView>
-        </View>
-      </SafeAreaView>
+            <View style={{ marginTop: 8, paddingHorizontal: 17 }}>
+              <Text style={{ fontSize: 20, fontWeight: '700' }}>
+                Activities
+              </Text>
+
+              <View style={{ height: 110, marginTop: 5 }}>
+                <ReviewItem />
+              </View>
+              <View style={{ height: 120, marginTop: 5, marginBottom: 100 }}>
+                <ResponeItem />
+              </View>
+            </View>
+          </View>
+        </ScrollView>
+      </View>
     )
   }
 }
