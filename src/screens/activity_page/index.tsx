@@ -156,7 +156,7 @@ export class ActivityPage extends React.Component<
   private fetchActivity = async () => {
     try {
       const activity = await this.props.activityStore.getActivity(
-        this.props.navigation.getParam('activityID')! || 'KLk2YcntqOibx83RmX1K',
+        this.props.navigation.getParam('activityID')!,
       )
       if (!activity) {
         return this.setState({
