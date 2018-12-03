@@ -146,7 +146,7 @@ class ActivityDetailComp extends React.Component<
     } = activity
 
     let errorMessage: string | undefined
-    let actions: Array<{ message: string; onPress: () => void }> | undefined
+    let actions: Array<{ message: string; onPress?: () => void }> | undefined
 
     if (uid === creatorID) {
       actions = [
@@ -193,7 +193,6 @@ class ActivityDetailComp extends React.Component<
         actions = [
           {
             message: 'You are a member',
-            onPress: console.info,
           },
         ]
       } else {

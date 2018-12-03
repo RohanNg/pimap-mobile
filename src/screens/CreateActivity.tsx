@@ -39,6 +39,7 @@ import { ActivityTaggingInput } from '../components/tags'
 
 import { Header } from '../components/header'
 
+import { AwesomeContentContainer } from '../components/container/AwesomeContentContainer'
 import {
   Activity,
   ActivityStore,
@@ -139,182 +140,166 @@ class CreateActivityComp extends React.Component<
     }
 
     return (
-      <View style={styles.wrapper}>
-        <Header title="Create Activity">
-          <Appbar.Action icon="add-a-photo" onPress={this.pickImage} />
-        </Header>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-          removeClippedSubviews={false}
-          keyboardShouldPersistTaps={'always'}
-        >
-          {coverImage && (
-            <View style={styles.coverImageContainer}>
-              <Image
-                source={{
-                  uri: coverImage,
-                }}
-                style={styles.coverImage}
-                resizeMode={'cover'}
-              />
-            </View>
-          )}
+      <AwesomeContentContainer
+        title={'Create Activity'}
+        onImageClicked={this.pickImage}
+        image={
+          coverImage
+            ? { uri: coverImage }
+            : require('../assets/place_holder/upload_activity_image.png')
+        }
+        contentContainerStyle={styles.contentContainer}
+      >
+        <TextInput
+          mode="outlined"
+          label="Activity Name"
+          style={styles.inputContainerStyle}
+          placeholder="Short name of your activities"
+          value={undefined}
+          onChangeText={this.activityTitleChanged}
+        />
+        <TextInput
+          mode="outlined"
+          label="Description"
+          style={styles.inputContainerStyle}
+          placeholder="Please describe your activities"
+          value={undefined}
+          multiline={true}
+          onChangeText={this.activityDescChanged}
+        />
+        <View style={[styles.inputContainerStyle, styles.row]}>
+          <Subheading>Location</Subheading>
+          <Button
+            onPress={this.navigateToLocationSelectionView}
+            mode={'outlined'}
+            icon={locationIcon}
+            style={{ minWidth: 180 }}
+          >
+            <Text>
+              {this.state.coordinate
+                ? `${this.state.coordinate.lat.toFixed(
+                    4,
+                  )},${this.state.coordinate.lon.toFixed(4)}`
+                : 'Set'}
+            </Text>
+          </Button>
+        </View>
 
-          <TextInput
-            mode="outlined"
-            label="Activity Name"
-            style={styles.inputContainerStyle}
-            placeholder="Short name of your activities"
-            value={undefined}
-            onChangeText={this.activityTitleChanged}
+        <View style={[styles.inputContainerStyle, styles.row]}>
+          <Subheading>Time</Subheading>
+          <Button
+            onPress={this.showDateTimePicker}
+            mode={'outlined'}
+            icon={getIcon}
+            style={{ minWidth: 180 }}
+          >
+            <Text>{date ? this.format(date) : 'Set'}</Text>
+          </Button>
+          <DateTimePicker
+            isVisible={this.state.isDateTimePickerVisible}
+            onConfirm={this.handleDatePicked}
+            onCancel={this.hideDateTimePicker}
+            minimumDate={new Date()}
+            minuteInterval={5}
+            mode={'datetime'}
           />
-          <TextInput
-            mode="outlined"
-            label="Description"
-            style={styles.inputContainerStyle}
-            placeholder="Please describe your activities"
-            value={undefined}
-            multiline={true}
-            onChangeText={this.activityDescChanged}
-          />
-          <View style={[styles.inputContainerStyle, styles.row]}>
-            <Subheading>Location</Subheading>
-            <Button
-              onPress={this.navigateToLocationSelectionView}
-              mode={'outlined'}
-              icon={locationIcon}
-              style={{ minWidth: 180 }}
-            >
-              <Text>
-                {this.state.coordinate
-                  ? `${this.state.coordinate.lat.toFixed(
-                      4,
-                    )},${this.state.coordinate.lon.toFixed(4)}`
-                  : 'Set'}
-              </Text>
-            </Button>
-          </View>
-
-          <View style={[styles.inputContainerStyle, styles.row]}>
-            <Subheading>Time</Subheading>
-            <Button
-              onPress={this.showDateTimePicker}
-              mode={'outlined'}
-              icon={getIcon}
-              style={{ minWidth: 180 }}
-            >
-              <Text>{date ? this.format(date) : 'Set'}</Text>
-            </Button>
-            <DateTimePicker
-              isVisible={this.state.isDateTimePickerVisible}
-              onConfirm={this.handleDatePicked}
-              onCancel={this.hideDateTimePicker}
-              minimumDate={new Date()}
-              minuteInterval={5}
-              mode={'datetime'}
+        </View>
+        <ActivityTaggingInput
+          style={{ marginHorizontal: 8 }}
+          tagSetChanged={this.tagSetChanged}
+        />
+        <View style={styles.inputContainerStyle}>
+          <View style={styles.row}>
+            <Subheading>
+              {this.state.privateActivity ? 'Private' : 'Public'}
+            </Subheading>
+            <Switch
+              value={!this.state.privateActivity}
+              onValueChange={() =>
+                this.setState(({ privateActivity }) => {
+                  return {
+                    privateActivity: !privateActivity,
+                  }
+                })
+              }
             />
           </View>
-          <ActivityTaggingInput
-            style={{ marginHorizontal: 8 }}
-            tagSetChanged={this.tagSetChanged}
-          />
-          <View style={styles.inputContainerStyle}>
-            <View style={styles.row}>
-              <Subheading>
-                {this.state.privateActivity ? 'Private' : 'Public'}
-              </Subheading>
-              <Switch
-                value={!this.state.privateActivity}
-                onValueChange={() =>
-                  this.setState(({ privateActivity }) => {
-                    return {
-                      privateActivity: !privateActivity,
-                    }
-                  })
-                }
-              />
-            </View>
+          <Paragraph>
+            {this.state.privateActivity
+              ? 'To join private activity, one needs to request or invite.\nSensitive activity information is protected.'
+              : 'Anyone can mark theirselve as going or interested in this public activity. All information is public visible.'}
+          </Paragraph>
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <View style={styles.row}>
+            <Subheading>
+              {this.state.recurrningActivity ? 'Recurrning' : 'One time'}
+            </Subheading>
+            <Switch
+              value={!this.state.recurrningActivity}
+              onValueChange={this.toggleRecurringActivity}
+            />
+          </View>
+          {this.state.recurrningActivity ? (
             <Paragraph>
-              {this.state.privateActivity
-                ? 'To join private activity, one needs to request or invite.\nSensitive activity information is protected.'
-                : 'Anyone can mark theirselve as going or interested in this public activity. All information is public visible.'}
+              You will be asked to confirm the next occurence.
             </Paragraph>
-          </View>
-          <View style={styles.inputContainerStyle}>
-            <View style={styles.row}>
-              <Subheading>
-                {this.state.recurrningActivity ? 'Recurrning' : 'One time'}
-              </Subheading>
-              <Switch
-                value={!this.state.recurrningActivity}
-                onValueChange={this.toggleRecurringActivity}
+          ) : (
+            <Paragraph>This activity happens once.</Paragraph>
+          )}
+        </View>
+        <View style={styles.inputContainerStyle}>
+          <Subheading>Send invitations</Subheading>
+          <ScrollView
+            style={styles.invitedUsers}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+          >
+            <TouchableOpacity
+              onPress={() =>
+                this.props.navigation.navigate('LoadingPeopleSelectionScreen', {
+                  title: 'Invitations',
+                  userCollectionQuery: this.queryUserForInvitation,
+                  goBack: this.goBackFromPeopleSelectionScreen,
+                })
+              }
+            >
+              <MaterialIcons
+                name={'group-add'}
+                size={42}
+                style={styles.inviteUserButt}
+                color={theme.colors!.primary}
               />
-            </View>
-            {this.state.recurrningActivity ? (
-              <Paragraph>
-                You will be asked to confirm the next occurence.
-              </Paragraph>
-            ) : (
-              <Paragraph>This activity happens once.</Paragraph>
-            )}
-          </View>
-          <View style={styles.inputContainerStyle}>
-            <Subheading>Send invitations</Subheading>
-            <ScrollView
-              style={styles.invitedUsers}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-            >
-              <TouchableOpacity
-                onPress={() =>
-                  this.props.navigation.navigate(
-                    'LoadingPeopleSelectionScreen',
-                    {
-                      title: 'Invitations',
-                      userCollectionQuery: this.queryUserForInvitation,
-                      goBack: this.goBackFromPeopleSelectionScreen,
-                    },
-                  )
-                }
-              >
-                <MaterialIcons
-                  name={'group-add'}
-                  size={42}
-                  style={styles.inviteUserButt}
-                  color={theme.colors!.primary}
+            </TouchableOpacity>
+
+            {invitedUsers.map(({ id, value: { profilePicture } }) => {
+              return (
+                <Image
+                  key={id}
+                  source={
+                    profilePicture
+                      ? { uri: profilePicture }
+                      : require('../assets/place_holder/user.png')
+                  }
+                  style={styles.invitedUserImage}
+                  resizeMode="cover"
                 />
-              </TouchableOpacity>
+              )
+            })}
+          </ScrollView>
+        </View>
 
-              {invitedUsers.map(({ id, value: { profilePicture } }) => {
-                return (
-                  <Image
-                    key={id}
-                    source={
-                      profilePicture
-                        ? { uri: profilePicture }
-                        : require('../assets/activity_image/nooke.jpg')
-                    }
-                    style={styles.invitedUserImage}
-                    resizeMode="cover"
-                  />
-                )
-              })}
-            </ScrollView>
-          </View>
-
-          <View style={styles.submitButtonContainer}>
-            <Button
-              mode="contained"
-              style={styles.submitButton}
-              onPress={this.createActivity}
-              disabled={!this.isInputValid()}
-            >
-              <Text>Create</Text>
-            </Button>
-          </View>
-        </ScrollView>
-      </View>
+        <View style={styles.submitButtonContainer}>
+          <Button
+            mode="contained"
+            style={styles.submitButton}
+            onPress={this.createActivity}
+            disabled={!this.isInputValid()}
+          >
+            <Text>Create</Text>
+          </Button>
+        </View>
+      </AwesomeContentContainer>
     )
   }
 
@@ -493,14 +478,8 @@ const locationIcon = ({ color, size }: { color: string; size: number }) => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 8,
-  },
-  wrapper: {
-    flex: 1,
-  },
   contentContainer: {
+    paddingHorizontal: 8,
     paddingBottom: theme.spacing.extravagant,
   },
   inputContainerStyle: {
