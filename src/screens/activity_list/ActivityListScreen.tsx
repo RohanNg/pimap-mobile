@@ -7,6 +7,7 @@ import { LoadingActivityList } from './LoadingActivityList'
 
 import { NavigationInjectedProps } from 'react-navigation'
 import { Header } from '../../components/header'
+import { theme } from '../../theme'
 
 interface ActivityListScreenProps
   extends NavigationInjectedProps<{
@@ -59,6 +60,7 @@ class ActivityListScreenComp extends React.Component<
         <LoadingActivityList
           fetchActivities={fetchActivities}
           onActivityPressed={this.onActivityPressed}
+          style={styles.contentContainer}
         />
       </View>
     )
@@ -73,6 +75,9 @@ class ActivityListScreenComp extends React.Component<
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
+    paddingVertical: theme.spacing.spacious,
   },
 })
 

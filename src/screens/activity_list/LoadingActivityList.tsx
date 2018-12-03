@@ -1,6 +1,6 @@
 import { inject, observer } from 'mobx-react'
 import * as React from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, ViewStyle } from 'react-native'
 import { Activity, ActivityStore, AppStateStore } from '../../datastore'
 import { ActivityList } from './ActivityList'
 
@@ -10,6 +10,9 @@ import { NavigationScreenProp } from 'react-navigation'
 interface LoadingActivityListProps {
   fetchActivities: () => Promise<Activity[]>
   onActivityPressed?: (activity: Activity) => void
+  horizontallyScrollable?: boolean
+  ParentComp?: React.SFC<{}>
+  style?: ViewStyle
 }
 
 interface LoadingActivityListState {
@@ -43,11 +46,15 @@ export class LoadingActivityList extends React.Component<
     })
   }
 
-  // private onActivityPressed = (id: string) => {
-  //   this.props.navigation.navigate('ActivityPage', { activityID: id })
-  // }
-
   private renderLoading = () => {
+    const { ParentComp } = this.props
+    if (ParentComp) {
+      return (
+        <ParentComp>
+          <Text>Loading... </Text>
+        </ParentComp>
+      )
+    }
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Loading... </Text>
@@ -56,6 +63,15 @@ export class LoadingActivityList extends React.Component<
   }
 
   private renderError = (err: Error) => {
+    const { ParentComp } = this.props
+    if (ParentComp) {
+      return (
+        <ParentComp>
+          <Text>Loading... </Text>
+        </ParentComp>
+      )
+    }
+
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Loading failed... </Text>
@@ -64,11 +80,24 @@ export class LoadingActivityList extends React.Component<
   }
 
   private renderActivities = (activities: Activity[]) => {
-    return (
+    if (activities.length === 0) {
+      return null
+    }
+
+    const { ParentComp, style } = this.props
+    const child = (
       <ActivityList
         activitities={activities}
         onActivityPressed={this.props.onActivityPressed}
+        horizontallyScrollable={this.props.horizontallyScrollable}
+        style={style}
       />
     )
+
+    if (ParentComp) {
+      return <ParentComp>{child}</ParentComp>
+    }
+
+    return child
   }
 }
