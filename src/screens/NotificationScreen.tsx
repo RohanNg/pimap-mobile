@@ -29,7 +29,7 @@ interface NotificationScreenProps extends NavigationInjectedProps {
 }
 
 import { Header } from '../components/header'
-import { ActivityStore, AppStateStore, Activity } from '../datastore'
+import { Activity, ActivityStore, AppStateStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
 
