@@ -10,7 +10,10 @@ import {
   Text,
   View,
 } from 'react-native'
-import { NavigationBottomTabScreenOptions } from 'react-navigation'
+import {
+  NavigationBottomTabScreenOptions,
+  NavigationInjectedProps,
+} from 'react-navigation'
 
 import { Title } from 'react-native-paper'
 
@@ -20,13 +23,13 @@ import { tabBarIcon } from '../components/navigation/tabBarIcon'
 
 import { LoadingActivityList } from './activity_list'
 
-interface NotificationScreenProps {
+interface NotificationScreenProps extends NavigationInjectedProps {
   user: firebase.User
   activityStore: ActivityStore
 }
 
 import { Header } from '../components/header'
-import { ActivityStore, AppStateStore } from '../datastore'
+import { ActivityStore, AppStateStore, Activity } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
 
@@ -48,26 +51,31 @@ class NotificationScreenComp extends React.Component<NotificationScreenProps> {
             horizontallyScrollable={true}
             fetchActivities={this.fetchCreatedActivities}
             ParentComp={this.parentComponent('You have created')}
+            onActivityPressed={this.onActivityPressed}
           />
           <LoadingActivityList
             horizontallyScrollable={true}
             fetchActivities={this.fetchInvitedActivities}
             ParentComp={this.parentComponent('You are invited to')}
+            onActivityPressed={this.onActivityPressed}
           />
           <LoadingActivityList
             horizontallyScrollable={true}
             fetchActivities={this.fetchMemberOfActivities}
             ParentComp={this.parentComponent('You are member of')}
+            onActivityPressed={this.onActivityPressed}
           />
           <LoadingActivityList
             horizontallyScrollable={true}
             fetchActivities={this.fetchGoingToActivities}
             ParentComp={this.parentComponent('You are  going to')}
+            onActivityPressed={this.onActivityPressed}
           />
 
           <LoadingActivityList
             fetchActivities={this.fetchInterestedInActivities}
             ParentComp={this.parentComponent('You are interested in')}
+            onActivityPressed={this.onActivityPressed}
           />
         </ScrollView>
       </View>
@@ -115,14 +123,14 @@ class NotificationScreenComp extends React.Component<NotificationScreenProps> {
     )
   }
 
-  public fetchGoingToActivities = () => {
+  private fetchGoingToActivities = () => {
     const { user, activityStore } = this.props
     return activityStore.query(c =>
       c.where('publicInteractions.goingUserIDs', 'array-contains', user.uid),
     )
   }
 
-  public fetchInterestedInActivities = () => {
+  private fetchInterestedInActivities = () => {
     const { user, activityStore } = this.props
     return activityStore.query(c =>
       c.where(
@@ -131,6 +139,12 @@ class NotificationScreenComp extends React.Component<NotificationScreenProps> {
         user.uid,
       ),
     )
+  }
+
+  private onActivityPressed = (activity: Activity) => {
+    this.props.navigation.navigate('ActivityPage', {
+      activityID: activity.id,
+    })
   }
 }
 

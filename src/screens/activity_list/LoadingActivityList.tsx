@@ -84,12 +84,17 @@ export class LoadingActivityList extends React.Component<
       return null
     }
 
-    const { ParentComp, style } = this.props
+    const {
+      ParentComp,
+      style,
+      onActivityPressed,
+      horizontallyScrollable,
+    } = this.props
     const child = (
       <ActivityList
         activitities={activities}
-        onActivityPressed={this.props.onActivityPressed}
-        horizontallyScrollable={this.props.horizontallyScrollable}
+        onActivityPressed={onActivityPressed}
+        horizontallyScrollable={horizontallyScrollable}
         style={style}
       />
     )
