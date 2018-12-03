@@ -27,7 +27,7 @@ import {
 } from '../../datastore'
 import { ProfilePic } from './ProfilePic'
 
-interface MeScreenProps {
+interface UserScreenProps {
   navigation: NavigationScreenProp<
     {},
     {
@@ -50,7 +50,7 @@ interface UserScreenState {
 }
 
 @observer
-class UserScreenComp extends React.Component<MeScreenProps, UserScreenState> {
+class UserScreenComp extends React.Component<UserScreenProps, UserScreenState> {
   public state: UserScreenState = {
     loadedData: 'loading',
   }
@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export const UserScreen = inject<AppStateStore, MeScreenProps>(allStores => ({
+export const UserScreen = inject<AppStateStore, UserScreenProps>(allStores => ({
   activityStore: allStores.activityStore,
   userStore: allStores.userStore,
 }))(UserScreenComp)
