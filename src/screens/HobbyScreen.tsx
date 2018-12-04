@@ -13,16 +13,27 @@ import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
+import {
+  NavigationState,
+  Route,
+  SceneMap,
+  SceneRendererProps,
+  TabBar,
+  TabView,
+} from 'react-native-tab-view'
 
 import { inject, observer } from 'mobx-react'
+import { withAuthenticatedUser } from '../services/AuthService'
 
 import { theme } from '../theme'
 import { UserValue, User, UserStore } from '../datastore'
 import { AppStateStore } from '../datastore'
+import { userInfo } from 'os'
 
 interface HobbyScreenProps {
-  navigation: NavigationScreenProp<{}, {}>
+  navigation: NavigationScreenProp<{}, { uid: string }>
   userStore: UserStore
+  newUser: User
 }
 
 interface HobbyScreenState {
@@ -49,24 +60,23 @@ const hobbyList = [
   userStore: allStores.userStore,
 }))
 @observer
-export class HobbyScreen extends React.Component<
-  HobbyScreenProps,
+class AddHobbyScreen extends React.Component<
+  HobbyScreenProps & { user: firebase.User },
   HobbyScreenState
 > {
-  constructor(props: HobbyScreenProps) {
-    super(props)
-    this.state = {
-      hobby: [],
-    }
+  public state: HobbyScreenState = {
+    hobby: [],
   }
 
   private addInterests = (item: string) => {
-    let a = this.state.hobby.concat(item) //creates the clone of the state
+    const a = this.state.hobby.concat(item) //creates the clone of the state
 
     this.setState({ hobby: a })
   }
+  
 
   public render(): React.ReactNode {
+    
     return (
       <View style={styles.container}>
         <Title style={{ fontSize: 24 }}>Sign Up</Title>
@@ -80,7 +90,6 @@ export class HobbyScreen extends React.Component<
                 style={styles.chipitem}
                 onPress={() => {
                   this.addInterests(item)
-                  console.log(this.state.hobby)
                 }}
                 key={item}
               >
@@ -103,14 +112,9 @@ export class HobbyScreen extends React.Component<
 
   private addHobby = async () => {
     const hobbies = this.state.hobby
-    const user = firebase.auth().currentUser
-    if (user != null) {
-      const uid = user.uid
-      console.log(uid)
-
-      this.props.userStore.updateUserHobby(uid, hobbies)
-      await this.props.navigation.navigate('Home')
-    }
+    const uid = this.props.user.uid
+    this.props.userStore.updateUserHobby(uid, hobbies)
+    await this.props.navigation.navigate('Home')
   }
 }
 
@@ -156,3 +160,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 })
+
+export const HobbyScreen = withAuthenticatedUser(AddHobbyScreen)

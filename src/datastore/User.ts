@@ -32,7 +32,7 @@ export class User {
       return undefined
     }
     const savedData = docSnapShot.data() as RawUserValue
-    return new User(this.fromRaw(savedData), docSnapShot.id)
+    return new User(this.fromRaw(savedData), docSnapShot.ref)
   }
 
   public static retrieveFromQueryDocumentSnapShot(
@@ -56,7 +56,7 @@ export class User {
     value: UserValue,
   ): Promise<User> {
     const result = await docRef.set(User.toJson(value))
-    return new User(value, docRef.id)
+    return new User(value, docRef)
   }
 
   private static toJson({ profilePicture, ...rest }: UserValue): RawUserValue {
@@ -77,8 +77,20 @@ export class User {
   public value: UserValue
   public readonly id: string
 
-  public constructor(value: UserValue, id: string) {
-    this.id = id
+  public constructor(
+    value: UserValue,
+    private readonly docRef: firebase.firestore.DocumentReference,
+  ) {
+    this.id = docRef.id
     this.value = value
+  }
+
+  public async update<K extends keyof UserValue>(
+    changes: Pick<UserValue, K>,
+  ): Promise<void> {
+    await this.docRef.set(changes, { merge: true })
+    // now do the local merge
+    this.value = Object.assign(this.value, changes)
+    console.info('updated')
   }
 }

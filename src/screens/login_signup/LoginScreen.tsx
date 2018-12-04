@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
   },
   inputField: {
     marginTop: theme.spacing.tight,
+    height: 50,
   },
   error: {
     textAlign: 'center',
