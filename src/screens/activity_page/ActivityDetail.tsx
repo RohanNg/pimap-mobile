@@ -34,7 +34,8 @@ import { TagList } from '../../components/tags'
 import { Activity, User } from '../../datastore'
 import { withAuthenticatedUser } from '../../services/AuthService'
 import { theme } from '../../theme'
-import { peopleData, PeopleList } from './PeopleList'
+import { LoadingUser } from './LoadingUser'
+import { LoadingUsers } from './LoadingUsers'
 
 interface ActivityDetailProps {
   activity: Activity
@@ -47,7 +48,14 @@ class ActivityDetailComp extends React.Component<
   ActivityDetailProps & { user: firebase.User }
 > {
   public render(): React.ReactNode {
-    const { title, description, tags } = this.props.activity.value
+    const {
+      title,
+      description,
+      tags,
+      privacy,
+      publicInteractions,
+      privateInteractions,
+    } = this.props.activity.value
 
     return (
       <ScrollView
@@ -66,8 +74,35 @@ class ActivityDetailComp extends React.Component<
           <TagList values={tags} />
         </ScrollView>
         <View style={styles.buttonsContainer}>{this.renderActionButton()}</View>
-        <PeopleList people={peopleData} caption={'Interested'} />
-        <PeopleList people={peopleData} caption={'Going'} />
+        {privacy === 'private'
+          ? privateInteractions && (
+              <React.Fragment>
+                <LoadingUsers
+                  title={'Invited'}
+                  userIDs={privateInteractions.invitedUserIDs}
+                />
+                <LoadingUsers
+                  title={'Members'}
+                  userIDs={privateInteractions.memberIDs}
+                />
+                <LoadingUsers
+                  title={'Requested to join'}
+                  userIDs={privateInteractions.requestedUserIDs}
+                />
+              </React.Fragment>
+            )
+          : publicInteractions && (
+              <React.Fragment>
+                <LoadingUsers
+                  title={'Going'}
+                  userIDs={publicInteractions.goingUserIDs}
+                />
+                <LoadingUsers
+                  title={'Interested'}
+                  userIDs={publicInteractions.interestedUserIDs}
+                />
+              </React.Fragment>
+            )}
       </ScrollView>
     )
   }
@@ -111,7 +146,7 @@ class ActivityDetailComp extends React.Component<
     } = activity
 
     let errorMessage: string | undefined
-    let actions: Array<{ message: string; onPress: () => void }> | undefined
+    let actions: Array<{ message: string; onPress?: () => void }> | undefined
 
     if (uid === creatorID) {
       actions = [
@@ -158,7 +193,6 @@ class ActivityDetailComp extends React.Component<
         actions = [
           {
             message: 'You are a member',
-            onPress: console.info,
           },
         ]
       } else {

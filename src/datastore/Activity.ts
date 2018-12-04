@@ -2,9 +2,9 @@ import {
   action,
   autorun,
   computed,
+  IReactionDisposer,
   observable,
   reaction,
-  IReactionDisposer,
 } from 'mobx'
 
 export interface ActivityValue {
