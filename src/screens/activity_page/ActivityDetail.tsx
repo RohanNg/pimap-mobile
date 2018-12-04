@@ -41,6 +41,7 @@ interface ActivityDetailProps {
   activity: Activity
   creator: User
   style?: ViewStyle
+  goBack?: () => void
 }
 
 @observer
@@ -58,10 +59,7 @@ class ActivityDetailComp extends React.Component<
     } = this.props.activity.value
 
     return (
-      <ScrollView
-        style={[styles.container, this.props.style]}
-        contentContainerStyle={styles.contentContainerStyle}
-      >
+      <View style={[styles.container, this.props.style]}>
         <CreatorInfo creator={this.props.creator} />
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
@@ -103,7 +101,14 @@ class ActivityDetailComp extends React.Component<
                 />
               </React.Fragment>
             )}
-      </ScrollView>
+        <Button
+          mode="contained"
+          onPress={this.props.goBack}
+          style={styles.goBackButton}
+        >
+          <Text style={styles.button}>Go Back</Text>
+        </Button>
+      </View>
     )
   }
 
@@ -123,7 +128,7 @@ class ActivityDetailComp extends React.Component<
                   icon={this.flightIcon}
                   style={styles.reactionButton}
                 >
-                  <Text style={styles.acceptButtom}>{message}</Text>
+                  <Text style={styles.reactionButton}>{message}</Text>
                 </Button>
               )
             })}
@@ -323,8 +328,6 @@ const SUB_SECTION_SPACING = theme.spacing.tiny
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainerStyle: {
     paddingHorizontal: 16,
     paddingBottom: 42,
     backgroundColor: theme.colors!.background,
@@ -365,8 +368,11 @@ const styles = StyleSheet.create({
     marginLeft: -4,
     flexDirection: 'row',
   },
-  acceptButtom: {
+  button: {
     color: 'white',
+  },
+  goBackButton: {
+    marginTop: theme.spacing.tight,
   },
 })
 

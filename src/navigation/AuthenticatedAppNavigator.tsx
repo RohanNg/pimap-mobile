@@ -29,16 +29,11 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen: AuthedMeScreen,
   },
   {
-    initialRouteName: 'CreateActivity',
+    initialRouteName: 'Home',
     shifting: false,
     barStyle: {
+      height: 50,
       backgroundColor: 'white',
-      borderColor: 'black',
-      borderWidth: 1,
-      borderRadius: 4,
-      marginBottom: 2,
-      marginLeft: 2,
-      marginRight: 2,
       // TODO: add card style
     },
     labeled: false,
