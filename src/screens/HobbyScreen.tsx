@@ -70,10 +70,11 @@ export class HobbyScreenComp extends React.Component<
     const { interests } = this.state
     return (
       <View style={styles.container}>
-        <Title style={{ fontSize: 24 }}>Sign Up</Title>
-        <Text style={{ marginTop: 10 }}>Step 2 / 2</Text>
-        <Text style={styles.textHeader}>Tell us your interest</Text>
-        <View style={styles.chip}>
+        <Title style={styles.title}>Sign Up</Title>
+        <Text style={styles.subTitle}>
+          Step 2 / 2: Tell us about your interest
+        </Text>
+        <View style={styles.chipContainer}>
           {hobbyList.map(item => {
             return (
               <Chip
@@ -121,22 +122,20 @@ export class HobbyScreenComp extends React.Component<
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 17,
-    marginTop: 30,
-    marginBottom: 20,
+    flex: 1,
+    paddingTop: 90,
+    paddingHorizontal: 16,
+    backgroundColor: theme.colors!.background,
   },
-  textHeader: {
-    marginTop: 5,
-    color: '#F27979',
-    fontWeight: '600',
-    fontSize: 18,
+  title: { fontSize: 32, color: theme.colors!.primary },
+  subTitle: {
+    marginTop: theme.spacing.tiny,
   },
-  chip: {
-    marginTop: 15,
+  chipContainer: {
+    marginTop: theme.spacing.spacious,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-
   texttitle: {
     marginTop: 16,
   },
