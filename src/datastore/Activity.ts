@@ -142,6 +142,5 @@ export class Activity {
     await this.docRef.set(changes, { merge: true })
     // now do the local merge
     this.value = Object.assign(this.value, changes)
-    console.info('updated')
   }
 }

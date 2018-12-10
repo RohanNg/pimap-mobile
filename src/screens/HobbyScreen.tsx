@@ -14,19 +14,23 @@ import {
   NavigationStackScreenOptions,
 } from 'react-navigation'
 
+import * as Immutable from 'immutable'
+
 import { inject, observer } from 'mobx-react'
 
-import { theme } from '../theme'
-import { UserValue, User, UserStore } from '../datastore'
 import { AppStateStore } from '../datastore'
+import { User, UserStore } from '../datastore'
+import { withAuthenticatedUser } from '../services/AuthService'
+import { theme } from '../theme'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
   userStore: UserStore
+  user: firebase.User
 }
 
 interface HobbyScreenState {
-  hobby: string[]
+  interests: Immutable.OrderedSet<string>
 }
 
 const hobbyList = [
@@ -45,28 +49,25 @@ const hobbyList = [
   'Outdoor',
 ]
 
-@inject<AppStateStore, HobbyScreenProps>(allStores => ({
-  userStore: allStores.userStore,
-}))
-@observer
-export class HobbyScreen extends React.Component<
+export class HobbyScreenComp extends React.Component<
   HobbyScreenProps,
   HobbyScreenState
 > {
   constructor(props: HobbyScreenProps) {
     super(props)
     this.state = {
-      hobby: [],
+      interests: Immutable.OrderedSet(),
     }
   }
 
-  private addInterests = (item: string) => {
-    let a = this.state.hobby.concat(item) //creates the clone of the state
-
-    this.setState({ hobby: a })
+  private addInterests = (interest: string) => {
+    this.setState(({ interests }) => ({
+      interests: interests.add(interest),
+    }))
   }
 
   public render(): React.ReactNode {
+    const { interests } = this.state
     return (
       <View style={styles.container}>
         <Title style={{ fontSize: 24 }}>Sign Up</Title>
@@ -80,9 +81,9 @@ export class HobbyScreen extends React.Component<
                 style={styles.chipitem}
                 onPress={() => {
                   this.addInterests(item)
-                  console.log(this.state.hobby)
                 }}
                 key={item}
+                selected={interests.has(item)}
               >
                 {item}
               </Chip>
@@ -93,24 +94,28 @@ export class HobbyScreen extends React.Component<
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={this.addHobby}
+          onPress={this.addInterest}
         >
-          <Text style={styles.btnText}>I'M DONE!</Text>
+          <Text style={styles.btnText}>Done!</Text>
         </Button>
       </View>
     )
   }
 
-  private addHobby = async () => {
-    const hobbies = this.state.hobby
-    const user = firebase.auth().currentUser
-    if (user != null) {
-      const uid = user.uid
-      console.log(uid)
+  private addInterest = async () => {
+    const { interests } = this.state
+    const { user, userStore } = this.props
 
-      this.props.userStore.updateUserHobby(uid, hobbies)
-      await this.props.navigation.navigate('Home')
+    const u = await userStore.getUser(user.uid)
+    if (!u) {
+      return console.error('User does not exist')
     }
+
+    await u.update({
+      interests: interests.toArray(),
+    })
+
+    await this.props.navigation.navigate('Home')
   }
 }
 
@@ -156,3 +161,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 })
+
+export const HobbyScreen = inject<AppStateStore, HobbyScreenProps>(
+  allStores => ({
+    userStore: allStores.userStore,
+  }),
+)(observer(withAuthenticatedUser(HobbyScreenComp)))
