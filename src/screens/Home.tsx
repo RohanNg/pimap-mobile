@@ -126,8 +126,9 @@ export class Home extends React.Component<HomeScreenProps> {
       c: firebase.firestore.CollectionReference,
     ) => firebase.firestore.Query = c =>
       c.where('tags', 'array-contains', topic.toLocaleLowerCase())
-    console.info('navigating to LoadingActivityList')
-    navigation.navigate('LoadingActivityList', {
+    console.info('navigating to ActivityListScreen')
+
+    navigation.navigate('ActivityListScreen', {
       activityCollectionQuery: query,
       title: `Discover ${topic} activities`,
     })

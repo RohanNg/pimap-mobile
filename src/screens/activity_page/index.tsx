@@ -34,6 +34,8 @@ import { theme } from '../../theme'
 import { ActivityDetail } from './ActivityDetail'
 import { Albums } from './Album'
 
+import { AwesomeContentContainer } from '../../components/container/AwesomeContentContainer'
+
 interface ActivityPageProps {
   navigation: NavigationScreenProp<
     {},
@@ -95,16 +97,11 @@ export class ActivityPage extends React.Component<
     }
 
     return (
-      <View style={styles.container}>
-        <Header
-          title={'Activity page'}
-          goBack={() => this.props.navigation.goBack()}
-        />
-        <Image
-          source={{ uri: activityInfo.activity.value.coverImage }}
-          style={styles.coverImage}
-          resizeMode="cover"
-        />
+      <AwesomeContentContainer
+        title={'Activity page'}
+        onImageClicked={this.goBack}
+        image={{ uri: activityInfo.activity.value.coverImage }}
+      >
         <TabView
           style={styles.container}
           navigationState={this.state}
@@ -112,9 +109,11 @@ export class ActivityPage extends React.Component<
           onIndexChange={this.handleIndexChange}
           renderTabBar={this.renderTabBar}
         />
-      </View>
+      </AwesomeContentContainer>
     )
   }
+
+  private goBack = () => this.props.navigation.goBack()
 
   private handleIndexChange = (index: number) =>
     this.setState({
@@ -149,14 +148,20 @@ export class ActivityPage extends React.Component<
     } else if (key === 'images') {
       return <Albums />
     } else {
-      return <ActivityDetail activity={activity} creator={creator} />
+      return (
+        <ActivityDetail
+          activity={activity}
+          creator={creator}
+          goBack={this.goBack}
+        />
+      )
     }
   }
 
   private fetchActivity = async () => {
     try {
       const activity = await this.props.activityStore.getActivity(
-        this.props.navigation.getParam('activityID')! || 'KLk2YcntqOibx83RmX1K',
+        this.props.navigation.getParam('activityID')!,
       )
       if (!activity) {
         return this.setState({

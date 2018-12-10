@@ -34,12 +34,14 @@ import { TagList } from '../../components/tags'
 import { Activity, User } from '../../datastore'
 import { withAuthenticatedUser } from '../../services/AuthService'
 import { theme } from '../../theme'
-import { peopleData, PeopleList } from './PeopleList'
+import { LoadingUser } from './LoadingUser'
+import { LoadingUsers } from './LoadingUsers'
 
 interface ActivityDetailProps {
   activity: Activity
   creator: User
   style?: ViewStyle
+  goBack?: () => void
 }
 
 @observer
@@ -47,13 +49,17 @@ class ActivityDetailComp extends React.Component<
   ActivityDetailProps & { user: firebase.User }
 > {
   public render(): React.ReactNode {
-    const { title, description, tags } = this.props.activity.value
+    const {
+      title,
+      description,
+      tags,
+      privacy,
+      publicInteractions,
+      privateInteractions,
+    } = this.props.activity.value
 
     return (
-      <ScrollView
-        style={[styles.container, this.props.style]}
-        contentContainerStyle={styles.contentContainerStyle}
-      >
+      <View style={[styles.container, this.props.style]}>
         <CreatorInfo creator={this.props.creator} />
         <Title style={styles.headLine}>{title}</Title>
         <Subheading style={styles.placeTimeInfo}>Helsinki • Tonight</Subheading>
@@ -66,9 +72,43 @@ class ActivityDetailComp extends React.Component<
           <TagList values={tags} />
         </ScrollView>
         <View style={styles.buttonsContainer}>{this.renderActionButton()}</View>
-        <PeopleList people={peopleData} caption={'Interested'} />
-        <PeopleList people={peopleData} caption={'Going'} />
-      </ScrollView>
+        {privacy === 'private'
+          ? privateInteractions && (
+              <React.Fragment>
+                <LoadingUsers
+                  title={'Invited'}
+                  userIDs={privateInteractions.invitedUserIDs}
+                />
+                <LoadingUsers
+                  title={'Members'}
+                  userIDs={privateInteractions.memberIDs}
+                />
+                <LoadingUsers
+                  title={'Requested to join'}
+                  userIDs={privateInteractions.requestedUserIDs}
+                />
+              </React.Fragment>
+            )
+          : publicInteractions && (
+              <React.Fragment>
+                <LoadingUsers
+                  title={'Going'}
+                  userIDs={publicInteractions.goingUserIDs}
+                />
+                <LoadingUsers
+                  title={'Interested'}
+                  userIDs={publicInteractions.interestedUserIDs}
+                />
+              </React.Fragment>
+            )}
+        <Button
+          mode="contained"
+          onPress={this.props.goBack}
+          style={styles.goBackButton}
+        >
+          <Text style={styles.button}>Go Back</Text>
+        </Button>
+      </View>
     )
   }
 
@@ -88,7 +128,7 @@ class ActivityDetailComp extends React.Component<
                   icon={this.flightIcon}
                   style={styles.reactionButton}
                 >
-                  <Text style={styles.acceptButtom}>{message}</Text>
+                  <Text style={styles.reactionButton}>{message}</Text>
                 </Button>
               )
             })}
@@ -111,7 +151,7 @@ class ActivityDetailComp extends React.Component<
     } = activity
 
     let errorMessage: string | undefined
-    let actions: Array<{ message: string; onPress: () => void }> | undefined
+    let actions: Array<{ message: string; onPress?: () => void }> | undefined
 
     if (uid === creatorID) {
       actions = [
@@ -158,7 +198,6 @@ class ActivityDetailComp extends React.Component<
         actions = [
           {
             message: 'You are a member',
-            onPress: console.info,
           },
         ]
       } else {
@@ -289,8 +328,6 @@ const SUB_SECTION_SPACING = theme.spacing.tiny
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainerStyle: {
     paddingHorizontal: 16,
     paddingBottom: 42,
     backgroundColor: theme.colors!.background,
@@ -331,8 +368,11 @@ const styles = StyleSheet.create({
     marginLeft: -4,
     flexDirection: 'row',
   },
-  acceptButtom: {
+  button: {
     color: 'white',
+  },
+  goBackButton: {
+    marginTop: theme.spacing.tight,
   },
 })
 

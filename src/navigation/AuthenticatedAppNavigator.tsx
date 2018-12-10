@@ -3,7 +3,7 @@ import * as React from 'react'
 import { createStackNavigator, NavigationContainer } from 'react-navigation'
 import { createMaterialBottomTabNavigator } from 'react-navigation-material-bottom-tabs'
 
-import { LoadingActivityList } from '../screens/activity_list/LoadingActivitiList'
+import { ActivityListScreen } from '../screens/activity_list'
 import { ActivityPage } from '../screens/activity_page'
 import { CreateActivity } from '../screens/CreateActivity'
 import { HobbyScreen } from '../screens/HobbyScreen'
@@ -29,16 +29,11 @@ export const MainTabNavigator: NavigationContainer = createMaterialBottomTabNavi
     MeScreen: AuthedMeScreen,
   },
   {
-    initialRouteName: 'CreateActivity',
+    initialRouteName: 'Home',
     shifting: false,
     barStyle: {
+      height: 50,
       backgroundColor: 'white',
-      borderColor: 'black',
-      borderWidth: 1,
-      borderRadius: 4,
-      marginBottom: 2,
-      marginLeft: 2,
-      marginRight: 2,
       // TODO: add card style
     },
     labeled: false,
@@ -50,7 +45,7 @@ export const AuthenticatedAppNavigator = createStackNavigator(
   {
     authenticatedApp: MainTabNavigator,
     LocationSelection,
-    LoadingActivityList,
+    ActivityListScreen,
     HobbyScreen,
     UserScreen,
     LoadingPeopleSelectionScreen,
