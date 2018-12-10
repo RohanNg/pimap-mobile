@@ -13,10 +13,24 @@ import {
   NavigationScreenProp,
   NavigationStackScreenOptions,
 } from 'react-navigation'
-import { theme } from '../../theme'
+
+import * as Immutable from 'immutable'
+
+import { inject, observer } from 'mobx-react'
+
+import { AppStateStore } from '../datastore'
+import { User, UserStore } from '../datastore'
+import { withAuthenticatedUser } from '../services/AuthService'
+import { theme } from '../theme'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
+  userStore: UserStore
+  user: firebase.User
+}
+
+interface HobbyScreenState {
+  interests: Immutable.OrderedSet<string>
 }
 
 const hobbyList = [
@@ -35,17 +49,43 @@ const hobbyList = [
   'Outdoor',
 ]
 
-export class HobbyScreen extends React.Component<HobbyScreenProps> {
+export class HobbyScreenComp extends React.Component<
+  HobbyScreenProps,
+  HobbyScreenState
+> {
+  constructor(props: HobbyScreenProps) {
+    super(props)
+    this.state = {
+      interests: Immutable.OrderedSet(),
+    }
+  }
+
+  private addInterests = (interest: string) => {
+    this.setState(({ interests }) => ({
+      interests: interests.add(interest),
+    }))
+  }
+
   public render(): React.ReactNode {
+    const { interests } = this.state
     return (
       <View style={styles.container}>
-        <Title style={{ fontSize: 24 }}>Sign Up</Title>
-        <Text style={{ marginTop: 10 }}>Step 2 / 2</Text>
-        <Text style={styles.textHeader}>Tell us your interest</Text>
-        <View style={styles.chip}>
+        <Title style={styles.title}>Sign Up</Title>
+        <Text style={styles.subTitle}>
+          Step 2 / 2: Tell us about your interest
+        </Text>
+        <View style={styles.chipContainer}>
           {hobbyList.map(item => {
             return (
-              <Chip mode="outlined" style={styles.chipitem} key={item}>
+              <Chip
+                mode="outlined"
+                style={styles.chipitem}
+                onPress={() => {
+                  this.addInterests(item)
+                }}
+                key={item}
+                selected={interests.has(item)}
+              >
                 {item}
               </Chip>
             )
@@ -55,33 +95,47 @@ export class HobbyScreen extends React.Component<HobbyScreenProps> {
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={() => this.props.navigation.navigate('Home')}
+          onPress={this.addInterest}
         >
-          <Text style={styles.btnText}>I'M DONE!</Text>
+          <Text style={styles.btnText}>Done!</Text>
         </Button>
       </View>
     )
+  }
+
+  private addInterest = async () => {
+    const { interests } = this.state
+    const { user, userStore } = this.props
+
+    const u = await userStore.getUser(user.uid)
+    if (!u) {
+      return console.error('User does not exist')
+    }
+
+    await u.update({
+      interests: interests.toArray(),
+    })
+
+    await this.props.navigation.navigate('Home')
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 17,
-    marginTop: 30,
-    marginBottom: 20,
+    flex: 1,
+    paddingTop: 90,
+    paddingHorizontal: 16,
+    backgroundColor: theme.colors!.background,
   },
-  textHeader: {
-    marginTop: 5,
-    color: '#F27979',
-    fontWeight: '600',
-    fontSize: 18,
+  title: { fontSize: 32, color: theme.colors!.primary },
+  subTitle: {
+    marginTop: theme.spacing.tiny,
   },
-  chip: {
-    marginTop: 15,
+  chipContainer: {
+    marginTop: theme.spacing.spacious,
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-
   texttitle: {
     marginTop: 16,
   },
@@ -106,3 +160,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 })
+
+export const HobbyScreen = inject<AppStateStore, HobbyScreenProps>(
+  allStores => ({
+    userStore: allStores.userStore,
+  }),
+)(observer(withAuthenticatedUser(HobbyScreenComp)))

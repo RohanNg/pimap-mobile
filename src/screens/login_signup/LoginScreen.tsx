@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     marginTop: theme.spacing.tight,
     textAlign: 'center',
     fontSize: 14,
+    marginBottom: theme.spacing.extravagant,
   },
   loginButton: {
     height: 40,

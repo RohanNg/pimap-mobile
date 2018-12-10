@@ -99,7 +99,7 @@ class SignUpScreenComp extends React.Component<
           <Text style={styles.socialTitle}>Or create new Actify account</Text>
           <View style={styles.inputNameView}>
             <TextInput
-              label="Fist Name"
+              label="First Name"
               style={[
                 styles.nameInput,
                 styles.firstNameInput,
