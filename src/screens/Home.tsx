@@ -19,6 +19,8 @@ import {
   NavigationScreenProp,
 } from 'react-navigation'
 
+import { SimpleLineIcons } from '@expo/vector-icons'
+
 import {
   Appbar,
   Headline,
@@ -42,6 +44,10 @@ interface HomeScreenProps {
   navigation: NavigationScreenProp<{}, {}>
 }
 
+const LogOutIcon = ({ color, size }: { color: string; size: number }) => (
+  <SimpleLineIcons name={'logout'} color={color} size={size} />
+)
+
 export class Home extends React.Component<HomeScreenProps> {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Home',
@@ -53,10 +59,7 @@ export class Home extends React.Component<HomeScreenProps> {
       <View style={styles.container}>
         <Header
           title="Home"
-          goBack={async () => {
-            await firebase.auth().signOut()
-            this.props.navigation.navigate('Login')
-          }}
+          left={<Appbar.Action onPress={this.logOut} icon={LogOutIcon} />}
         />
         <ScrollView contentContainerStyle={styles.bodyContainer}>
           <HorizontallyScrollableSection title={'Topics'}>
@@ -132,6 +135,11 @@ export class Home extends React.Component<HomeScreenProps> {
       activityCollectionQuery: query,
       title: `Discover ${topic} activities`,
     })
+  }
+
+  private logOut = async () => {
+    await firebase.auth().signOut()
+    this.props.navigation.navigate('Login')
   }
 }
 

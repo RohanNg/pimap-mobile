@@ -11,41 +11,40 @@ import {
   View,
 } from 'react-native'
 import {
-  createStackNavigator,
   NavigationBottomTabScreenOptions,
-  NavigationContainer,
-  NavigationScreenConfig,
-  NavigationScreenProp,
+  NavigationInjectedProps,
 } from 'react-navigation'
 
+import { inject, observer } from 'mobx-react'
 import MapView, { Marker } from 'react-native-maps'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
+import { ActivityStore, AppStateStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 
-interface NearByActivitiesState {
+interface NearByActivitiesScreenState {
   location?: {
-    lat: number
-    lon: number
+    latitude: number
+    longitude: number
   }
   errorMessage?: string
 }
 
-interface NearByActivityProps {
-  navigation: NavigationScreenProp<{}, {}>
+interface NearByActivitiesScreenProps extends NavigationInjectedProps {
+  activityStore: ActivityStore
   user: firebase.User
 }
 
-export class NearbyActivities extends React.Component<
-  NearByActivityProps,
-  NearByActivitiesState
+class NearbyActivitiesScreenComp extends React.Component<
+  NearByActivitiesScreenProps,
+  NearByActivitiesScreenState
 > {
   public static navigationOptions: NavigationBottomTabScreenOptions = {
     title: 'Nearby',
     tabBarIcon: tabBarIcon('near-me'),
   }
 
-  constructor(props: NearByActivityProps) {
+  constructor(props: NearByActivitiesScreenProps) {
     super(props)
     this.onMapPress = this.onMapPress.bind(this)
 
@@ -62,40 +61,34 @@ export class NearbyActivities extends React.Component<
           'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
       })
     } else {
-      this.getLocationAsync()
+      this.getNearbyActivities()
     }
   }
 
   public render(): React.ReactNode {
     const { navigation, user } = this.props
+    const { errorMessage, location } = this.state
+    if (!location) {
+      return (
+        <View style={[styles.wrapper, styles.centering]}>
+          {errorMessage ? <Text>{errorMessage}</Text> : <ActivityIndicator />}
+        </View>
+      )
+    }
 
     return (
       <View style={styles.wrapper}>
-        {!this.state.location ? (
-          <View
-            style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <ActivityIndicator />
-          </View>
-        ) : (
-          <MapView
-            style={{ flex: 1 }}
-            initialRegion={{
-              latitude: this.state.location.lat,
-              longitude: this.state.location.lon,
-              latitudeDelta: 0.0422,
-              longitudeDelta: 0.0221,
-            }}
-            onPress={this.onMapPress}
-          >
-            <Marker
-              coordinate={{
-                latitude: this.state.location.lat,
-                longitude: this.state.location.lon,
-              }}
-            />
-          </MapView>
-        )}
+        <MapView
+          style={styles.wrapper}
+          initialRegion={{
+            ...location,
+            latitudeDelta: 0.0422,
+            longitudeDelta: 0.0221,
+          }}
+          onPress={this.onMapPress}
+        >
+          <Marker coordinate={location} />
+        </MapView>
       </View>
     )
   }
@@ -103,13 +96,13 @@ export class NearbyActivities extends React.Component<
   private onMapPress = e => {
     this.setState({
       location: {
-        lat: e.nativeEvent.coordinate.latitude,
-        lon: e.nativeEvent.coordinate.longitude,
+        latitude: e.nativeEvent.coordinate.latitude,
+        longitude: e.nativeEvent.coordinate.longitude,
       },
     })
   }
 
-  private getLocationAsync = async () => {
+  private getNearbyActivities = async () => {
     const { status } = await Permissions.askAsync(Permissions.LOCATION)
     if (status !== 'granted') {
       this.setState({
@@ -120,15 +113,19 @@ export class NearbyActivities extends React.Component<
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({})
-    this.setState({
-      location: {
-        lat: latitude,
-        lon: longitude,
-      },
-    })
+    this.setState({ location: { latitude, longitude } })
+    // this.props.activityStore.query(c => c.where(''))
   }
 }
 
 const styles = StyleSheet.create({
   wrapper: { flex: 1 },
+  centering: { alignItems: 'center', justifyContent: 'center' },
 })
+
+export const NearbyActivitiesScreen = inject<
+  AppStateStore,
+  NearByActivitiesScreenProps
+>(allStores => ({
+  activityStore: allStores.activityStore,
+}))(observer(withAuthenticatedUser(NearbyActivitiesScreenComp)))
