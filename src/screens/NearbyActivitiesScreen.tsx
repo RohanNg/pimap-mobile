@@ -19,14 +19,15 @@ import { inject, observer } from 'mobx-react'
 import MapView, { Marker } from 'react-native-maps'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityStore, AppStateStore } from '../datastore'
+import { ActivityStore, Activity, AppStateStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 
 interface NearByActivitiesScreenState {
-  location?: {
+  userLoc?: {
     latitude: number
     longitude: number
   }
+  nearbyActivities: Activity[]
   errorMessage?: string
 }
 
@@ -34,6 +35,9 @@ interface NearByActivitiesScreenProps extends NavigationInjectedProps {
   activityStore: ActivityStore
   user: firebase.User
 }
+
+const LatitudeDelta = 0.0422
+const LongitudeDelta = 0.0221
 
 class NearbyActivitiesScreenComp extends React.Component<
   NearByActivitiesScreenProps,
@@ -44,14 +48,8 @@ class NearbyActivitiesScreenComp extends React.Component<
     tabBarIcon: tabBarIcon('near-me'),
   }
 
-  constructor(props: NearByActivitiesScreenProps) {
-    super(props)
-    this.onMapPress = this.onMapPress.bind(this)
-
-    this.state = {
-      location: undefined,
-      errorMessage: undefined,
-    }
+  public state: NearByActivitiesScreenState = {
+    nearbyActivities: [],
   }
 
   public componentWillMount(): void {
@@ -67,8 +65,8 @@ class NearbyActivitiesScreenComp extends React.Component<
 
   public render(): React.ReactNode {
     const { navigation, user } = this.props
-    const { errorMessage, location } = this.state
-    if (!location) {
+    const { errorMessage, userLoc, nearbyActivities } = this.state
+    if (!userLoc) {
       return (
         <View style={[styles.wrapper, styles.centering]}>
           {errorMessage ? <Text>{errorMessage}</Text> : <ActivityIndicator />}
@@ -81,13 +79,29 @@ class NearbyActivitiesScreenComp extends React.Component<
         <MapView
           style={styles.wrapper}
           initialRegion={{
-            ...location,
-            latitudeDelta: 0.0422,
-            longitudeDelta: 0.0221,
+            ...userLoc,
+            latitudeDelta: LatitudeDelta,
+            longitudeDelta: LongitudeDelta,
           }}
-          onPress={this.onMapPress}
         >
-          <Marker coordinate={location} />
+          {nearbyActivities.map(
+            ({
+              id,
+              value: {
+                coordinate: { lat, lon },
+              },
+            }) => (
+              <Marker
+                key={id}
+                coordinate={{ latitude: lat, longitude: lon }}
+                onPress={() =>
+                  this.props.navigation.navigate('ActivityPage', {
+                    activityID: id,
+                  })
+                }
+              />
+            ),
+          )}
         </MapView>
       </View>
     )
@@ -95,7 +109,7 @@ class NearbyActivitiesScreenComp extends React.Component<
 
   private onMapPress = e => {
     this.setState({
-      location: {
+      userLoc: {
         latitude: e.nativeEvent.coordinate.latitude,
         longitude: e.nativeEvent.coordinate.longitude,
       },
@@ -113,8 +127,18 @@ class NearbyActivitiesScreenComp extends React.Component<
     const {
       coords: { latitude, longitude },
     } = await Location.getCurrentPositionAsync({})
-    this.setState({ location: { latitude, longitude } })
-    // this.props.activityStore.query(c => c.where(''))
+
+    // Unfortunately, range filter only work for single field
+    const activities = await this.props.activityStore.query(c =>
+      c
+        .where('coordinate.lat', '<=', latitude + LatitudeDelta * 2)
+        .where('coordinate.lat', '>=', latitude - LatitudeDelta * 2),
+    )
+
+    this.setState({
+      userLoc: { latitude, longitude },
+      nearbyActivities: activities,
+    })
   }
 }
 
