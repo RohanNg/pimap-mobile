@@ -100,7 +100,7 @@ export class NearbyActivities extends React.Component<
     )
   }
 
-  private onMapPress(e: any): void {
+  private onMapPress = e => {
     this.setState({
       location: {
         lat: e.nativeEvent.coordinate.latitude,
