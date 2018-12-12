@@ -223,7 +223,6 @@ const styles = StyleSheet.create({
   },
   inputField: {
     marginTop: theme.spacing.tight,
-    height: 50,
   },
   error: {
     textAlign: 'center',
@@ -243,7 +242,6 @@ const styles = StyleSheet.create({
     width: 140,
     alignSelf: 'center',
     justifyContent: 'center',
-    marginBottom: 50,
   },
   btnText: {
     color: 'white',

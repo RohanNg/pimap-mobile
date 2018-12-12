@@ -34,11 +34,6 @@ export class UserStore {
   }
 
   @action
-  public async updateUserHobby(uid: string, hobby: string[]) {
-    await User.addInterests(this.userCollection.doc(uid), hobby)
-  }
-
-  @action
   public async createUser(value: UserValue, uid: string): Promise<User> {
     const user = await User.createUser(this.userCollection.doc(uid), value)
     return this.store(user)

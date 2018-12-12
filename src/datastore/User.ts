@@ -1,5 +1,5 @@
-import { action, autorun, computed, observable } from 'mobx'
 import * as firebase from 'firebase'
+import { action, autorun, computed, observable } from 'mobx'
 
 export interface UserValue {
   firstname: string
@@ -42,15 +42,6 @@ export class User {
     return this.retrieveFromDocSnapShot(queryDocSnapShot)!
   }
 
-  public static async addInterests(
-    docRef: firebase.firestore.DocumentReference,
-    newInterests: string[],
-  ) {
-    await docRef.update({
-      interests: newInterests,
-    })
-  }
-
   public static async createUser(
     docRef: firebase.firestore.DocumentReference,
     value: UserValue,
@@ -91,6 +82,9 @@ export class User {
     await this.docRef.set(changes, { merge: true })
     // now do the local merge
     this.value = Object.assign(this.value, changes)
+<<<<<<< HEAD
     console.info('updated')
+=======
+>>>>>>> b1f9f0f91abb7141e3af7c16328f5f160f77cdbb
   }
 }

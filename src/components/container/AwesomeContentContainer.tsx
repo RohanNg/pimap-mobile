@@ -129,6 +129,7 @@ export class AwesomeContentContainer extends Component<
           contentOffset={{
             y: -HEADER_MAX_HEIGHT,
           }}
+          keyboardShouldPersistTaps={'handled'}
         >
           {children}
         </Animated.ScrollView>
