@@ -19,7 +19,7 @@ import { inject, observer } from 'mobx-react'
 import MapView, { Marker } from 'react-native-maps'
 
 import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityStore, Activity, AppStateStore } from '../datastore'
+import { Activity, ActivityStore, AppStateStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 
 interface NearByActivitiesScreenState {
