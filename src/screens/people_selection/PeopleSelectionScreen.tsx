@@ -59,7 +59,7 @@ export const PeopleSelectionScreen: React.SFC<PeopleSelectionScreenProps> = ({
                   source={
                     imageURL
                       ? { url: imageURL }
-                      : require('../../assets/activity_image/nooke.jpg')
+                      : require('../../assets/place_holder/user.png')
                   }
                   style={styles.userImage}
                 />

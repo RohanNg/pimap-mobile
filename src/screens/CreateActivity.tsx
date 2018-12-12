@@ -1,5 +1,4 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { ImagePicker, Permissions } from 'expo'
 import * as Immutable from 'immutable'
 import { inject, observer } from 'mobx-react'
 import moment from 'moment'
@@ -34,12 +33,11 @@ import {
 } from 'react-navigation'
 
 import { MaterialIcons } from '@expo/vector-icons'
-import { tabBarIcon } from '../components/navigation/tabBarIcon'
-import { ActivityTaggingInput } from '../components/tags'
-
-import { Header } from '../components/header'
 
 import { AwesomeContentContainer } from '../components/container/AwesomeContentContainer'
+import { Header } from '../components/header'
+import { tabBarIcon } from '../components/navigation/tabBarIcon'
+import { ActivityTaggingInput } from '../components/tags'
 import {
   Activity,
   ActivityStore,
@@ -50,6 +48,7 @@ import {
 import { AppStateStore } from '../datastore'
 import { uploadImage } from '../services/FireBase'
 import { theme } from '../theme'
+import { pickImage } from '../utils'
 
 interface CreateActivityState {
   title: string
@@ -129,12 +128,15 @@ class CreateActivityComp extends React.Component<
     const { date, creatingInprogress, coverImage, invitedUsers } = this.state
     if (creatingInprogress) {
       return (
-        <View style={styles.wrapper}>
-          <View
-            style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}
-          >
-            <ActivityIndicator />
-          </View>
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            flex: 1,
+            backgroundColor: theme.colors!.background,
+          }}
+        >
+          <ActivityIndicator />
         </View>
       )
     }
@@ -142,7 +144,7 @@ class CreateActivityComp extends React.Component<
     return (
       <AwesomeContentContainer
         title={'Create Activity'}
-        onImageClicked={this.pickImage}
+        onImageClicked={this.pickActivityImage}
         image={
           coverImage
             ? { uri: coverImage }
@@ -317,20 +319,8 @@ class CreateActivityComp extends React.Component<
     return allUsers.filter(u => u.id !== currentUserID)
   }
 
-  private pickImage = async () => {
-    // Example https://github.com/expo/firebase-storage-upload-example/blob/master/App.js
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-
-    if (status !== 'granted') {
-      alert(
-        'Hey! You might want to enable camera roll access for my app, they are good.',
-      )
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    })
+  private pickActivityImage = async () => {
+    const result = await pickImage()
 
     if (!result.cancelled) {
       this.setState({ coverImage: result.uri })

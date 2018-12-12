@@ -1,4 +1,6 @@
 import * as firebase from 'firebase'
+import * as Immutable from 'immutable'
+import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
   Alert,
@@ -7,6 +9,8 @@ import {
   StyleSheet,
   Text,
   View,
+  Image,
+  TouchableOpacity,
 } from 'react-native'
 import { Button, Chip, TextInput, Title } from 'react-native-paper'
 import {
@@ -14,14 +18,12 @@ import {
   NavigationStackScreenOptions,
 } from 'react-navigation'
 
-import * as Immutable from 'immutable'
-
-import { inject, observer } from 'mobx-react'
-
 import { AppStateStore } from '../datastore'
 import { User, UserStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
 import { theme } from '../theme'
+import { pickImage } from '../utils'
+import { uploadImage } from '../services/FireBase'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -31,6 +33,7 @@ interface HobbyScreenProps {
 
 interface HobbyScreenState {
   interests: Immutable.OrderedSet<string>
+  profileImageURL?: string
 }
 
 const hobbyList = [
@@ -53,49 +56,77 @@ export class HobbyScreenComp extends React.Component<
   HobbyScreenProps,
   HobbyScreenState
 > {
-  constructor(props: HobbyScreenProps) {
-    super(props)
-    this.state = {
-      interests: Immutable.OrderedSet(),
-    }
-  }
-
-  private addInterests = (interest: string) => {
-    this.setState(({ interests }) => ({
-      interests: interests.add(interest),
-    }))
+  public state: HobbyScreenState = {
+    interests: Immutable.OrderedSet(),
   }
 
   public render(): React.ReactNode {
-    const { interests } = this.state
+    const { interests, profileImageURL } = this.state
     return (
       <View style={styles.container}>
         <Title style={styles.title}>Sign Up</Title>
         <Text style={styles.subTitle}>
-          Step 2 / 2: Tell us about your interest
+          Step 2 / 2: Tell us about your interest and image upload
         </Text>
-        <View style={styles.chipContainer}>
-          {hobbyList.map(item => {
-            return (
-              <Chip
-                mode="outlined"
-                style={styles.chipitem}
-                onPress={() => {
-                  this.addInterests(item)
-                }}
-                key={item}
-                selected={interests.has(item)}
-              >
-                {item}
-              </Chip>
-            )
-          })}
+        <View style={styles.section}>
+          <Title>Interest</Title>
+          <View style={styles.chipContainer}>
+            {hobbyList.map(item => {
+              const selected = interests.has(item)
+              return (
+                <Chip
+                  mode="outlined"
+                  style={styles.chipitem}
+                  onPress={() => this.updateInterests(item, !selected)}
+                  key={item}
+                  selected={selected}
+                >
+                  {item}
+                </Chip>
+              )
+            })}
+          </View>
         </View>
-
+        <View style={styles.section}>
+          <Title>Profile Image</Title>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              style={{ marginRight: 40 }}
+              mode="outlined"
+              onPress={this.pickProfileImage}
+            >
+              Upload
+            </Button>
+            <TouchableOpacity
+              style={{
+                borderRadius: theme.roundness,
+                borderColor: theme.colors!.primary,
+                borderWidth: 1,
+                flexDirection: 'row',
+              }}
+              onPress={this.pickProfileImage}
+            >
+              <Image
+                source={
+                  profileImageURL
+                    ? { uri: profileImageURL }
+                    : require('../assets/place_holder/user.png')
+                }
+                style={{ resizeMode: 'cover', width: 90, height: 90 }}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
         <Button
           mode="contained"
           style={styles.buttonsignup}
-          onPress={this.addInterest}
+          onPress={this.updateUserProfile}
+          disabled={!profileImageURL}
         >
           <Text style={styles.btnText}>Done!</Text>
         </Button>
@@ -103,8 +134,14 @@ export class HobbyScreenComp extends React.Component<
     )
   }
 
-  private addInterest = async () => {
-    const { interests } = this.state
+  private updateInterests = (interest: string, add: boolean) => {
+    this.setState(({ interests }) => ({
+      interests: add ? interests.add(interest) : interests.remove(interest),
+    }))
+  }
+
+  private updateUserProfile = async () => {
+    const { interests, profileImageURL } = this.state
     const { user, userStore } = this.props
 
     const u = await userStore.getUser(user.uid)
@@ -112,11 +149,27 @@ export class HobbyScreenComp extends React.Component<
       return console.error('User does not exist')
     }
 
+    let imageURL
+    try {
+      imageURL = await uploadImage(profileImageURL!)
+    } catch (err) {
+      Alert.alert('Uploading image failed.')
+      return
+    }
+
     await u.update({
       interests: interests.toArray(),
+      profilePicture: profileImageURL,
     })
 
     await this.props.navigation.navigate('Home')
+  }
+
+  private pickProfileImage = async () => {
+    const result = await pickImage()
+    if (!result.cancelled) {
+      this.setState({ profileImageURL: result.uri })
+    }
   }
 }
 
@@ -131,8 +184,10 @@ const styles = StyleSheet.create({
   subTitle: {
     marginTop: theme.spacing.tiny,
   },
-  chipContainer: {
+  section: {
     marginTop: theme.spacing.spacious,
+  },
+  chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
