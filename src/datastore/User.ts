@@ -82,9 +82,6 @@ export class User {
     await this.docRef.set(changes, { merge: true })
     // now do the local merge
     this.value = Object.assign(this.value, changes)
-<<<<<<< HEAD
     console.info('updated')
-=======
->>>>>>> b1f9f0f91abb7141e3af7c16328f5f160f77cdbb
   }
 }
