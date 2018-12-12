@@ -4,13 +4,14 @@ import { inject, observer } from 'mobx-react'
 import * as React from 'react'
 import {
   Alert,
+  Image,
   SafeAreaView,
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
-  View,
-  Image,
   TouchableOpacity,
+  View,
 } from 'react-native'
 import { Button, Chip, TextInput, Title } from 'react-native-paper'
 import {
@@ -21,9 +22,10 @@ import {
 import { AppStateStore } from '../datastore'
 import { User, UserStore } from '../datastore'
 import { withAuthenticatedUser } from '../services/AuthService'
+import { uploadImage } from '../services/FireBase'
+import { registerForPushNotificationsAsync } from '../services/Notification'
 import { theme } from '../theme'
 import { pickImage } from '../utils'
-import { uploadImage } from '../services/FireBase'
 
 interface HobbyScreenProps {
   navigation: NavigationScreenProp<{}, {}>
@@ -53,7 +55,7 @@ const hobbyList = [
   'Outdoor',
 ]
 
-export class HobbyScreenComp extends React.Component<
+class HobbyScreenComp extends React.Component<
   HobbyScreenProps,
   HobbyScreenState
 > {
@@ -77,7 +79,16 @@ export class HobbyScreenComp extends React.Component<
   }
 
   public render(): React.ReactNode {
-    const { interests, profileImageURL } = this.state
+    const { interests, profileImageURL, user } = this.state
+    if (user === 'loading' || user === 'error') {
+      return (
+        <View
+          style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+        >
+          {user === 'loading' ? <ActivityIndicator /> : <Text>{user}</Text>}
+        </View>
+      )
+    }
     return (
       <View style={styles.container}>
         <Title style={styles.title}>Sign Up</Title>
@@ -163,6 +174,7 @@ export class HobbyScreenComp extends React.Component<
     const update: {
       interests: string[]
       profilePicture?: string
+      pushNotificationToken?: string
     } = {
       interests: interests.toArray(),
     }
@@ -175,6 +187,16 @@ export class HobbyScreenComp extends React.Component<
         Alert.alert('Uploading image failed.')
         return
       }
+    }
+
+    try {
+      const pushNotificationToken = await registerForPushNotificationsAsync()
+      if (pushNotificationToken) {
+        // user allow to recieve push notification
+        update.pushNotificationToken = pushNotificationToken
+      }
+    } catch (err) {
+      console.error(err)
     }
 
     await user.update(update)

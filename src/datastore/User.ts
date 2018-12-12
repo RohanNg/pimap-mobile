@@ -7,6 +7,7 @@ export interface UserValue {
   email: string
   profilePicture?: string
   interests: string[]
+  pushNotificationToken?: string
 }
 
 interface RawUserValue {
@@ -15,6 +16,7 @@ interface RawUserValue {
   email: string
   profilePicture: string | null
   interests: string[]
+  pushNotificationToken: string | null
 }
 
 export class User {
@@ -50,17 +52,27 @@ export class User {
     return new User(value, docRef)
   }
 
-  private static toJson({ profilePicture, ...rest }: UserValue): RawUserValue {
+  private static toJson({
+    profilePicture,
+    pushNotificationToken,
+    ...rest
+  }: UserValue): RawUserValue {
     return {
       ...rest,
       profilePicture: profilePicture || null,
+      pushNotificationToken: pushNotificationToken || null,
     }
   }
 
-  private static fromRaw({ profilePicture, ...rest }: RawUserValue): UserValue {
+  private static fromRaw({
+    profilePicture,
+    pushNotificationToken,
+    ...rest
+  }: RawUserValue): UserValue {
     return {
       ...rest,
       profilePicture: profilePicture || undefined,
+      pushNotificationToken: pushNotificationToken || undefined,
     }
   }
 
