@@ -1,4 +1,4 @@
-# Application Idea
+# Actify Application Idea
 
 We believe that the world is missing an application focusing on only doing things with friends, an application that excites people to start sustained, meaningful activities that can be developed into hobbies.
 
@@ -22,9 +22,9 @@ From high level point of view, the application enables everyone to:
 
 ## Architectures
 
-This is a React Application written in Typescrypt. State management is managed using [Mobx library](https://mobx.js.org/). For navigation, [React Navigation](https://reactnavigation.org/docs/en/api-reference.html) is exploied. This app also leverage [Firebase](https://firebase.google.com) for NoSQL data storages, object storage, and authentication services.
+This is a React Application written in Typescrypt. State management is managed using [Mobx library](https://mobx.js.org/). For navigation, [React Navigation](https://reactnavigation.org/docs/en/api-reference.html) is exploited. This app also leverage [Firebase](https://firebase.google.com) for NoSQL data storages, object storage, and authentication services.
 
-This project was bootstrapped with [CRNA - Create React Native App](https://github.com/react-community/create-react-native-app). For a deepdive into the application set up and integration, please read the CRNA documentation and Expo [documentation](https://expo.io).
+This project was bootstrapped with [CRNA - Create React Native App](https://github.com/react-community/create-react-native-app). For a deep dive into the application set up and integration, please read the CRNA documentation and Expo [documentation](https://expo.io).
 
 ## Codebase structure
 
