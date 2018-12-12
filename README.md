@@ -17,6 +17,7 @@ From high level point of view, the application enables everyone to:
   - Private activity that product members data and member access (Request/Invite)
 
 [DEMO](https://xd.adobe.com/view/862012d4-22c8-470c-55f2-2493c932db92-f011/?fullscreen)
+
 [Publised Expo App](https://expo.io/@camcanh/actify)
 
 ## Architectures
@@ -27,6 +28,7 @@ This project was bootstrapped with [CRNA - Create React Native App](https://gith
 
 ## Codebase structure
 
+```
 src
 |-- `App.tsx` is the entry to the application where all code pieces are wired
 |-- `assets` directory contains static resources: .e.g. images, font
@@ -38,6 +40,7 @@ src
 |-- `services` directory contains code for external services like authentication, database, file upload...
 |-- `theme.ts` defines the theme of the application .e.g. background color, primary color
 |-- `types` directory contains custom typescript definition files
+```
 
 ## Available Scripts
 
