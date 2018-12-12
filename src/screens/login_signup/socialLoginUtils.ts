@@ -107,7 +107,7 @@ async function signInWithGoogle(): Promise<SignInData> {
     throw new Error("Plase DON'T cancen the login if you wanna do it")
   }
 
-  const { email, familyName, givenName, name, photoUrl, id } = res.user
+  const { email, familyName, givenName, photoUrl, id } = res.user
 
   const credential = firebase.auth.GoogleAuthProvider.credential(
     res.idToken,
@@ -136,22 +136,19 @@ async function signInWithFacebook(): Promise<SignInData> {
   }
 
   const response = await fetch(
-    `https://graph.facebook.com/me?access_token=${token}&fields=name,email,first_name,last_name`,
+    `https://graph.facebook.com/me?access_token=${token}&fields=email,first_name,last_name`,
   )
 
   const fbProfile: {
     email: string
     first_name: string
     last_name: string
-    name: string
     id: string
     picture: string
-    short_name: string
   } = await response.json()
   const { email, first_name, last_name, picture } = fbProfile
 
   console.info(fbProfile)
-  Alert.alert('Logged in!', `Hi ${name}!`)
 
   return await signInWithCredential(
     firebase.auth.FacebookAuthProvider.credential(token),

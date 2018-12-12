@@ -32,6 +32,7 @@ interface HobbyScreenProps {
 }
 
 interface HobbyScreenState {
+  user: User | 'loading' | 'error'
   interests: Immutable.OrderedSet<string>
   profileImageURL?: string
 }
@@ -57,7 +58,22 @@ export class HobbyScreenComp extends React.Component<
   HobbyScreenState
 > {
   public state: HobbyScreenState = {
+    user: 'loading',
     interests: Immutable.OrderedSet(),
+  }
+
+  public async componentDidMount(): Promise<void> {
+    const { user, userStore } = this.props
+    const u = await userStore.getUser(user.uid)
+    if (!u) {
+      return this.setState({ user: 'error' })
+    }
+
+    this.setState({
+      user: u,
+      interests: Immutable.OrderedSet(u.value.interests),
+      profileImageURL: u.value.profilePicture,
+    })
   }
 
   public render(): React.ReactNode {
@@ -141,26 +157,27 @@ export class HobbyScreenComp extends React.Component<
   }
 
   private updateUserProfile = async () => {
-    const { interests, profileImageURL } = this.state
-    const { user, userStore } = this.props
-
-    const u = await userStore.getUser(user.uid)
-    if (!u) {
-      return console.error('User does not exist')
-    }
-
-    let imageURL
-    try {
-      imageURL = await uploadImage(profileImageURL!)
-    } catch (err) {
-      Alert.alert('Uploading image failed.')
-      return
-    }
-
-    await u.update({
+    const { interests, profileImageURL, user: u } = this.state
+    const user = u as User
+    let imageURL = (user as User).value.profilePicture
+    const update: {
+      interests: string[]
+      profilePicture?: string
+    } = {
       interests: interests.toArray(),
-      profilePicture: profileImageURL,
-    })
+    }
+
+    if (imageURL !== profileImageURL) {
+      try {
+        imageURL = await uploadImage(profileImageURL!)
+        update.profilePicture = profileImageURL
+      } catch (err) {
+        Alert.alert('Uploading image failed.')
+        return
+      }
+    }
+
+    await user.update(update)
 
     await this.props.navigation.navigate('Home')
   }

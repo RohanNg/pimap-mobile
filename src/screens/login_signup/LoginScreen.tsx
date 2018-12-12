@@ -99,6 +99,7 @@ class LoginScreenComp extends Component<LoginScreenProps, LoginScreenState> {
       const signInData = await signInWithSocialAccount(acc)
       const user = await createUserIfNeeded(signInData, this.props.userStore)
       if (user) {
+        // new user was created
         this.props.navigation.navigate('HobbyScreen')
       } else {
         this.props.navigation.navigate('Home')
