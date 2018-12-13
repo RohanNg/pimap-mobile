@@ -182,7 +182,7 @@ class HobbyScreenComp extends React.Component<
     if (imageURL !== profileImageURL) {
       try {
         imageURL = await uploadImage(profileImageURL!)
-        update.profilePicture = profileImageURL
+        update.profilePicture = imageURL
       } catch (err) {
         Alert.alert('Uploading image failed.')
         return
